@@ -1,4 +1,12 @@
+from datetime import datetime, timedelta, timezone
+import secrets
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+
+import httpx
+import jwt
+from jwt import PyJWTError
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import RedirectResponse
 from uuid import UUID
 
 from app.api.dependencies import get_audit_log_repository, get_refresh_session_repository, get_user_repository
@@ -16,7 +24,7 @@ from app.models.auth import (
     UserLoginRequest,
     UserRegisterRequest,
 )
-from app.models.integration import SsoExchangeRequest
+from app.models.integration import OAuthAuthorizeResponse, SsoExchangeRequest
 from app.repositories.audit_log_repository import AuditLogRepository
 from app.repositories.refresh_session_repository import RefreshSessionRepository
 from app.repositories.user_repository import UserRepository
@@ -31,6 +39,312 @@ def get_auth_service(
 ) -> AuthService:
     return AuthService(repository=repository, refresh_repository=refresh_repository)
 
+
+def _build_oauth_state(provider: str, return_to: str) -> str:
+    settings = get_settings()
+    now = datetime.now(timezone.utc)
+    payload = {
+        "iss": settings.jwt_issuer,
+        "type": "oauth_state",
+        "provider": provider,
+        "return_to": return_to,
+        "nonce": secrets.token_urlsafe(16),
+        "iat": int(now.timestamp()),
+        "exp": now + timedelta(seconds=settings.oauth_state_ttl_seconds),
+    }
+    return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
+
+
+def _decode_oauth_state(state: str) -> dict[str, str]:
+    settings = get_settings()
+    try:
+        payload = jwt.decode(
+            state,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+            issuer=settings.jwt_issuer,
+        )
+    except PyJWTError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid OAuth state") from exc
+    if payload.get("type") != "oauth_state":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid OAuth state type")
+    return payload
+
+
+def _merge_query_params(url: str, new_params: dict[str, str]) -> str:
+    parsed = urlparse(url)
+    query = dict(parse_qsl(parsed.query, keep_blank_values=True))
+    query.update({key: value for key, value in new_params.items() if value is not None})
+    return urlunparse(parsed._replace(query=urlencode(query)))
+
+
+async def _issue_sso_tokens(
+    *,
+    provider: str,
+    email: str,
+    external_subject: str,
+    service: AuthService,
+    users: UserRepository,
+    audit_logs: AuditLogRepository,
+) -> AuthTokenResponse:
+    settings = get_settings()
+    allowed_domains = {item.strip().lower() for item in settings.sso_allowed_domains.split(",") if item.strip()}
+    if "@" not in email:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid SSO email")
+
+    domain = email.split("@", 1)[1].lower()
+    if allowed_domains and domain not in allowed_domains:
+        await audit_logs.create(
+            event_type="auth.sso.exchange",
+            success=False,
+            user_email=email,
+            detail="domain_not_allowed",
+        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="SSO domain not allowed")
+
+    user = await users.get_by_email(email)
+    if user is None:
+        temp_password = service.hash_password(f"sso::{provider}::{external_subject}")
+        user = await users.create(
+            email=email,
+            hashed_password=temp_password,
+            role="engineer",
+            auth_method="sso",
+        )
+
+    tokens = await service.issue_tokens(user_id=user.id, email=user.email, role=UserRole(user.role))
+    await audit_logs.create(
+        event_type="auth.sso.exchange",
+        success=True,
+        user_id=user.id,
+        user_email=user.email,
+        detail=f"provider={provider}",
+    )
+    return tokens
+
+
+def _provider_oauth_config(provider: str) -> tuple[str, str, str, str | None, str | None]:
+    settings = get_settings()
+    normalized = provider.strip().lower()
+    if normalized == "google":
+        return (
+            normalized,
+            settings.oauth_google_authorize_url,
+            settings.oauth_google_token_url,
+            settings.oauth_google_client_id,
+            settings.oauth_google_client_secret,
+        )
+    if normalized == "apple":
+        return (
+            normalized,
+            settings.oauth_apple_authorize_url,
+            settings.oauth_apple_token_url,
+            settings.oauth_apple_client_id,
+            settings.oauth_apple_client_secret,
+        )
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unsupported OAuth provider")
+
+
+def _provider_redirect_uri(provider: str) -> str:
+    settings = get_settings()
+    if provider == "google":
+        return settings.oauth_google_redirect_uri or ""
+    if provider == "apple":
+        return settings.oauth_apple_redirect_uri or ""
+    return ""
+
+
+@router.get("/oauth/{provider}/authorize", response_model=OAuthAuthorizeResponse)
+async def oauth_authorize(
+    provider: str,
+    return_to: str | None = None,
+    login_hint: str | None = None,
+) -> OAuthAuthorizeResponse:
+    settings = get_settings()
+    normalized_provider, authorize_url, _, client_id, client_secret = _provider_oauth_config(provider)
+    redirect_uri = _provider_redirect_uri(normalized_provider)
+
+    if not client_id or not client_secret or not redirect_uri:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="OAuth provider is not configured")
+
+    callback_url = return_to or settings.oauth_frontend_callback_url
+    state = _build_oauth_state(normalized_provider, callback_url)
+
+    if normalized_provider == "google":
+        params: dict[str, str] = {
+            "client_id": client_id,
+            "redirect_uri": redirect_uri,
+            "response_type": "code",
+            "scope": "openid email profile",
+            "state": state,
+            "access_type": "offline",
+            "prompt": "consent select_account",
+        }
+        if login_hint:
+            params["login_hint"] = login_hint
+    else:
+        params = {
+            "client_id": client_id,
+            "redirect_uri": redirect_uri,
+            "response_type": "code",
+            "scope": "name email",
+            "response_mode": "query",
+            "state": state,
+        }
+
+    authorization_url = f"{authorize_url}?{urlencode(params)}"
+    return OAuthAuthorizeResponse(provider=normalized_provider, authorization_url=authorization_url)
+
+
+@router.get("/oauth/{provider}/start")
+async def oauth_start(
+    provider: str,
+    return_to: str | None = None,
+    login_hint: str | None = None,
+) -> RedirectResponse:
+    payload = await oauth_authorize(provider=provider, return_to=return_to, login_hint=login_hint)
+    return RedirectResponse(url=str(payload.authorization_url), status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+
+@router.get("/oauth/{provider}/callback")
+async def oauth_callback(
+    provider: str,
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None,
+    error_description: str | None = None,
+    service: AuthService = Depends(get_auth_service),
+    users: UserRepository = Depends(get_user_repository),
+    audit_logs: AuditLogRepository = Depends(get_audit_log_repository),
+) -> RedirectResponse:
+    settings = get_settings()
+    normalized_provider, _, token_url, client_id, client_secret = _provider_oauth_config(provider)
+    redirect_uri = _provider_redirect_uri(normalized_provider)
+
+    if not state:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Missing OAuth state")
+    state_payload = _decode_oauth_state(state)
+    return_to = str(state_payload.get("return_to") or settings.oauth_frontend_callback_url)
+
+    if error:
+        redirect_url = _merge_query_params(return_to, {
+            "error": error,
+            "error_description": error_description or "OAuth provider returned an error",
+        })
+        return RedirectResponse(url=redirect_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+    if not code:
+        redirect_url = _merge_query_params(return_to, {
+            "error": "missing_code",
+            "error_description": "OAuth code was not provided by provider",
+        })
+        return RedirectResponse(url=redirect_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+    if not client_id or not client_secret or not redirect_uri:
+        redirect_url = _merge_query_params(return_to, {
+            "error": "provider_not_configured",
+            "error_description": "OAuth provider is not configured",
+        })
+        return RedirectResponse(url=redirect_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+    token_payload = {
+        "code": code,
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "redirect_uri": redirect_uri,
+        "grant_type": "authorization_code",
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            token_response = await client.post(token_url, data=token_payload)
+            token_response.raise_for_status()
+            token_data = token_response.json()
+    except Exception:
+        redirect_url = _merge_query_params(return_to, {
+            "error": "token_exchange_failed",
+            "error_description": "Unable to exchange authorization code",
+        })
+        return RedirectResponse(url=redirect_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+    email = ""
+    external_subject = ""
+
+    if normalized_provider == "google":
+        access_token = str(token_data.get("access_token", ""))
+        if not access_token:
+            redirect_url = _merge_query_params(return_to, {
+                "error": "google_access_token_missing",
+                "error_description": "Google token response missing access token",
+            })
+            return RedirectResponse(url=redirect_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+        try:
+            async with httpx.AsyncClient(timeout=15) as client:
+                userinfo_response = await client.get(
+                    settings.oauth_google_userinfo_url,
+                    headers={"Authorization": f"Bearer {access_token}"},
+                )
+                userinfo_response.raise_for_status()
+                userinfo = userinfo_response.json()
+            email = str(userinfo.get("email", "")).strip().lower()
+            external_subject = str(userinfo.get("sub", ""))
+        except Exception:
+            redirect_url = _merge_query_params(return_to, {
+                "error": "google_userinfo_failed",
+                "error_description": "Unable to fetch Google user profile",
+            })
+            return RedirectResponse(url=redirect_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+    else:
+        id_token = str(token_data.get("id_token", ""))
+        if not id_token:
+            redirect_url = _merge_query_params(return_to, {
+                "error": "apple_id_token_missing",
+                "error_description": "Apple token response missing id_token",
+            })
+            return RedirectResponse(url=redirect_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+        try:
+            claims = jwt.decode(id_token, options={"verify_signature": False, "verify_aud": False})
+            email = str(claims.get("email", "")).strip().lower()
+            external_subject = str(claims.get("sub", ""))
+        except Exception:
+            redirect_url = _merge_query_params(return_to, {
+                "error": "apple_claims_failed",
+                "error_description": "Unable to decode Apple identity token",
+            })
+            return RedirectResponse(url=redirect_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+    if not email or not external_subject:
+        redirect_url = _merge_query_params(return_to, {
+            "error": "identity_missing",
+            "error_description": "Provider did not return required identity claims",
+        })
+        return RedirectResponse(url=redirect_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+    try:
+        tokens = await _issue_sso_tokens(
+            provider=normalized_provider,
+            email=email,
+            external_subject=external_subject,
+            service=service,
+            users=users,
+            audit_logs=audit_logs,
+        )
+    except HTTPException as exc:
+        redirect_url = _merge_query_params(return_to, {
+            "error": "sso_exchange_failed",
+            "error_description": str(exc.detail),
+        })
+        return RedirectResponse(url=redirect_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+    redirect_url = _merge_query_params(return_to, {
+        "access_token": tokens.access_token,
+        "refresh_token": tokens.refresh_token,
+        "token_type": tokens.token_type,
+        "provider": normalized_provider,
+    })
+    return RedirectResponse(url=redirect_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
 
 @router.post("/register/request-otp", response_model=RegistrationOtpChallengeResponse)
 async def request_registration_otp(
@@ -249,37 +563,11 @@ async def sso_exchange(
     users: UserRepository = Depends(get_user_repository),
     audit_logs: AuditLogRepository = Depends(get_audit_log_repository),
 ) -> AuthTokenResponse:
-    settings = get_settings()
-    allowed_domains = {item.strip().lower() for item in settings.sso_allowed_domains.split(",") if item.strip()}
-    if "@" not in payload.email:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid SSO email")
-
-    domain = payload.email.split("@", 1)[1].lower()
-    if allowed_domains and domain not in allowed_domains:
-        await audit_logs.create(
-            event_type="auth.sso.exchange",
-            success=False,
-            user_email=payload.email,
-            detail="domain_not_allowed",
-        )
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="SSO domain not allowed")
-
-    user = await users.get_by_email(payload.email)
-    if user is None:
-        temp_password = service.hash_password(f"sso::{payload.provider}::{payload.external_subject}")
-        user = await users.create(
-            email=payload.email,
-            hashed_password=temp_password,
-            role="engineer",
-            auth_method="sso",
-        )
-
-    tokens = await service.issue_tokens(user_id=user.id, email=user.email, role=UserRole(user.role))
-    await audit_logs.create(
-        event_type="auth.sso.exchange",
-        success=True,
-        user_id=user.id,
-        user_email=user.email,
-        detail=f"provider={payload.provider}",
+    return await _issue_sso_tokens(
+        provider=payload.provider,
+        email=payload.email,
+        external_subject=payload.external_subject,
+        service=service,
+        users=users,
+        audit_logs=audit_logs,
     )
-    return tokens

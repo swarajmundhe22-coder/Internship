@@ -17,6 +17,8 @@ import "mapbox-gl/dist/mapbox-gl.css";
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const isOutsourceHome = router.pathname === "/";
+  const isAuthRoute = router.pathname.startsWith("/auth");
+  const shouldDisableCinematicBackdrop = isOutsourceHome || isAuthRoute;
   const routeTone = getRouteTone(router.pathname);
   const routePage = getRoutePage(router.pathname);
   const timingProfile = onLookersBrandDirection.timingByPage[routePage] ?? onLookersBrandDirection.timingByPage.default;
@@ -28,8 +30,8 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <CinematicQualityProvider>
-      {!isOutsourceHome && <CinematicWebGLBackdrop tone={routeTone} />}
-      {!isOutsourceHome && <CinematicQualityControl />}
+      {!shouldDisableCinematicBackdrop && <CinematicWebGLBackdrop tone={routeTone} />}
+      {!shouldDisableCinematicBackdrop && <CinematicQualityControl />}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={router.asPath}

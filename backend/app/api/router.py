@@ -5,6 +5,7 @@ from app.api import (
 	audit_logs_routes,
 	auth_routes,
 	billing_routes,
+	demo_routes,
 	copilot_routes,
 	integration_routes,
 	intelligence_routes,
@@ -39,6 +40,7 @@ api_router.include_router(consortium_routes.router)
 api_router.include_router(compare_routes.router)
 api_router.include_router(comparison_sets_routes.router)
 api_router.include_router(auth_routes.router)
+api_router.include_router(demo_routes.router)
 api_router.include_router(integration_routes.router)
 api_router.include_router(intelligence_routes.router)
 api_router.include_router(tenant_routes.router)

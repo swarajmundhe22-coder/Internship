@@ -3,8 +3,11 @@
    Minimal top bar with logo, sound toggle, CTA, and menu
    ============================================================ */
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Menu, Volume2, VolumeX } from "lucide-react";
+import { normalizeDemoBookingUrl } from "../../utils/demoBookingUrl";
 
 const navLinks = [
   { label: "Platform", href: "#platform" },
@@ -24,7 +27,15 @@ const menuItems = [
   { label: "Roadmap", sub: "4 Phases" },
 ];
 
-export default function Navigation() {
+type NavigationProps = {
+  onRequestDemo?: () => void;
+};
+
+const DEMO_BOOKING_URL = normalizeDemoBookingUrl(process.env.NEXT_PUBLIC_DEMO_BOOKING_URL ?? "https://calendly.com");
+
+export default function Navigation({ onRequestDemo }: NavigationProps) {
+  const router = useRouter();
+  const isAuthRoute = router.pathname.startsWith("/auth");
   const [menuOpen, setMenuOpen] = useState(false);
   const [muted, setMuted] = useState(true);
   const [scrolled, setScrolled] = useState(false);
@@ -67,13 +78,17 @@ export default function Navigation() {
         </a>
 
         {/* Center nav links — desktop */}
-        <nav className="hidden lg:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a key={link.label} href={link.href} className="nav-link animated-underline">
-              {link.label}
-            </a>
-          ))}
-        </nav>
+        {!isAuthRoute ? (
+          <nav className="hidden lg:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <a key={link.label} href={link.href} className="nav-link animated-underline">
+                {link.label}
+              </a>
+            ))}
+          </nav>
+        ) : (
+          <div className="hidden lg:block section-number">Authentication</div>
+        )}
 
         {/* Right controls */}
         <div className="flex items-center gap-4">
@@ -86,9 +101,23 @@ export default function Navigation() {
             <span className="hidden sm:inline text-xs tracking-widest uppercase">{muted ? "Sound Off" : "Sound On"}</span>
           </button>
 
-          <a href="mailto:hello@gifip.io?subject=Request%20Demo" className="btn-primary hidden sm:block text-xs">
-            Request Demo
-          </a>
+          {onRequestDemo ? (
+            <button type="button" onClick={onRequestDemo} className="btn-primary hidden sm:block text-xs">
+              Request Demo
+            </button>
+          ) : (
+            <Link href="/demo" className="btn-primary hidden sm:inline-flex text-xs">
+              Request Demo
+            </Link>
+          )}
+
+          <Link href="/auth/login" className="btn-outline hidden md:inline-flex text-xs">
+            Login
+          </Link>
+
+          <Link href="/auth/register" className="btn-outline hidden md:inline-flex text-xs">
+            Register
+          </Link>
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -116,6 +145,28 @@ export default function Navigation() {
             <div className="flex-1 flex flex-col justify-center px-10 md:px-20">
               <div className="section-number mb-8">Navigation</div>
               <nav className="space-y-1">
+                <motion.div
+                  initial={{ x: -40, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -40, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex gap-2 pb-4"
+                >
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="btn-outline text-xs"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/auth/register"
+                    onClick={() => setMenuOpen(false)}
+                    className="btn-outline text-xs"
+                  >
+                    Register
+                  </Link>
+                </motion.div>
                 {menuItems.map((item, i) => (
                   <motion.a
                     key={item.label}
@@ -175,8 +226,8 @@ export default function Navigation() {
               </div>
               <div>
                 <div className="section-number mb-3">Contact</div>
-                <a href="mailto:hello@gifip.io" className="text-sm text-white/60 hover:text-teal-400 transition-colors">
-                  hello@gifip.io
+                <a href={DEMO_BOOKING_URL} target="_blank" rel="noreferrer" className="text-sm text-white/60 hover:text-teal-400 transition-colors">
+                  Book via Calendar
                 </a>
               </div>
             </motion.div>

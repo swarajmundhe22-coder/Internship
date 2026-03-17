@@ -6,10 +6,16 @@ import { useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { toast } from "sonner";
+import { normalizeDemoBookingUrl } from "../../utils/demoBookingUrl";
 
 const bigWords = ["Is", "Your", "Infrastructure", "Ready", "to", "be", "Protected?"];
+const DEMO_BOOKING_URL = normalizeDemoBookingUrl(process.env.NEXT_PUBLIC_DEMO_BOOKING_URL ?? "https://calendly.com");
 
-export default function FooterSection() {
+type FooterSectionProps = {
+  onRequestDemo?: () => void;
+};
+
+export default function FooterSection({ onRequestDemo }: FooterSectionProps) {
   const [email, setEmail] = useState("");
   const titleRef = useRef(null);
   const titleInView = useInView(titleRef, { once: true });
@@ -66,8 +72,17 @@ export default function FooterSection() {
               transition={{ duration: 0.7, delay: 0.9 }}
               className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <a href="mailto:hello@gifip.io" className="btn-primary text-sm">
-                Request a Demo
+              {onRequestDemo ? (
+                <button type="button" onClick={onRequestDemo} className="btn-primary text-sm">
+                  Request a Demo
+                </button>
+              ) : (
+                <a href="/demo" className="btn-primary text-sm">
+                  Request a Demo
+                </a>
+              )}
+              <a href={DEMO_BOOKING_URL} target="_blank" rel="noreferrer" className="btn-outline text-sm">
+                Book Calendar Slot
               </a>
               <a href="#platform" className="btn-outline text-sm">
                 Explore Platform

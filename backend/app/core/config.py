@@ -69,6 +69,23 @@ class Settings(BaseSettings):
 
     export_artifacts_dir: str = Field(default="artifacts/visualization_exports")
     export_mp4_duration_seconds: int = Field(default=8)
+    demo_booking_url: str = Field(default="https://calendly.com")
+
+    oauth_state_ttl_seconds: int = Field(default=300)
+    oauth_frontend_callback_url: str = Field(default="http://localhost:3000/auth/oauth/callback")
+
+    oauth_google_client_id: str | None = Field(default=None)
+    oauth_google_client_secret: str | None = Field(default=None)
+    oauth_google_redirect_uri: str | None = Field(default=None)
+    oauth_google_authorize_url: str = Field(default="https://accounts.google.com/o/oauth2/v2/auth")
+    oauth_google_token_url: str = Field(default="https://oauth2.googleapis.com/token")
+    oauth_google_userinfo_url: str = Field(default="https://www.googleapis.com/oauth2/v3/userinfo")
+
+    oauth_apple_client_id: str | None = Field(default=None)
+    oauth_apple_client_secret: str | None = Field(default=None)
+    oauth_apple_redirect_uri: str | None = Field(default=None)
+    oauth_apple_authorize_url: str = Field(default="https://appleid.apple.com/auth/authorize")
+    oauth_apple_token_url: str = Field(default="https://appleid.apple.com/auth/token")
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

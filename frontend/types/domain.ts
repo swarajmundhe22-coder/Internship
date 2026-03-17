@@ -137,6 +137,21 @@ export type RegistrationOtpChallengeResponse = {
   dev_otp?: string | null;
 };
 
+export type DemoRequestPayload = {
+  full_name: string;
+  email: string;
+  company: string;
+  role: string;
+  use_case: string;
+  preferred_auth_provider: "email" | "google" | "apple";
+};
+
+export type DemoRequestResponse = {
+  request_id: string;
+  message: string;
+  booking_url: string;
+};
+
 export type Project = {
   id: string;
   user_id: string;
