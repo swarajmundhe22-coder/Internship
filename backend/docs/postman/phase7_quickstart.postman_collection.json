@@ -1,0 +1,397 @@
+{
+  "info": {
+    "name": "The On Looker - Phase 7 Quickstart",
+    "description": "10-minute onboarding flow for Phase 7 endpoints: tenant admin, NVIDIA copilot, billing webhook, and tenant auto-binding through simulation/project creation.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000" },
+    { "key": "password", "value": "StrongPass123" },
+    { "key": "admin_email", "value": "phase7-admin@example.com" },
+    { "key": "engineer_email", "value": "phase7-engineer@example.com" },
+    { "key": "admin_token", "value": "" },
+    { "key": "engineer_token", "value": "" },
+    { "key": "engineer_user_id", "value": "" },
+    { "key": "tenant_id", "value": "" },
+    { "key": "material_id", "value": "" },
+    { "key": "environment_id", "value": "" },
+    { "key": "simulation_id", "value": "" },
+    { "key": "project_id", "value": "" },
+    { "key": "paypal_webhook_secret", "value": "" },
+    { "key": "paypal_signature", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1) Register Admin",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{password}}\",\n  \"role\": \"admin\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/auth/register"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('admin_token', body.access_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2) Register Engineer",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{engineer_email}}\",\n  \"password\": \"{{password}}\",\n  \"role\": \"engineer\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/auth/register"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('engineer_token', body.access_token);",
+              "const token = body.access_token || '';",
+              "const payload = token.split('.')[1] || '';",
+              "const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');",
+              "const decoded = JSON.parse(atob(normalized));",
+              "pm.collectionVariables.set('engineer_user_id', decoded.sub);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3) Create Tenant (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"org_name\": \"Phase7 Quickstart Org\",\n  \"subscription_tier\": \"professional\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/tenants"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('tenant_id', body.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4) Add Engineer To Tenant (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_id\": \"{{engineer_user_id}}\",\n  \"role\": \"admin\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/tenants/{{tenant_id}}/users"
+      }
+    },
+    {
+      "name": "5) List Tenants (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+        ],
+        "url": "{{baseUrl}}/api/v1/tenants"
+      }
+    },
+    {
+      "name": "6) Get Tenant (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+        ],
+        "url": "{{baseUrl}}/api/v1/tenants/{{tenant_id}}"
+      }
+    },
+    {
+      "name": "7) Update Tenant Tier (Admin)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"subscription_tier\": \"enterprise_elite\",\n  \"subscription_status\": \"active\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/tenants/{{tenant_id}}"
+      }
+    },
+    {
+      "name": "8) List Tenant Users (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+        ],
+        "url": "{{baseUrl}}/api/v1/tenants/{{tenant_id}}/users"
+      }
+    },
+    {
+      "name": "9) Copilot Query (Engineer)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{engineer_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_input\": \"Summarize expected corrosion risk under marine chloride exposure and suggest mitigation options.\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/copilot/query"
+      }
+    },
+    {
+      "name": "10) Copilot Doc (Engineer)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{engineer_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_input\": \"Extract key maintenance actions from this report excerpt: coating delamination observed on support joints.\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/copilot/doc"
+      }
+    },
+    {
+      "name": "11) Copilot Search (Engineer)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{engineer_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_input\": \"Find similar cases for moderate pitting with humidity over 80 percent.\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/copilot/search"
+      }
+    },
+    {
+      "name": "12) Create Material (Engineer)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{engineer_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Phase7 Material\",\n  \"alloy_group\": \"Ferrous\",\n  \"density_kg_m3\": 7850.0,\n  \"electrochemical_potential_v\": -0.61\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/materials"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('material_id', body.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13) Create Environment (Engineer)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{engineer_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"profile_name\": \"Phase7 Marine Profile\",\n  \"temperature_c\": 24.0,\n  \"relative_humidity_pct\": 82.0,\n  \"chloride_ppm\": 12000.0,\n  \"ph\": 7.2,\n  \"dissolved_oxygen_mg_l\": 7.0\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/environment"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('environment_id', body.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14) Create Simulation (Engineer, Auto-Binds Tenant)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{engineer_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"material_id\": \"{{material_id}}\",\n  \"environment_id\": \"{{environment_id}}\",\n  \"exposed_area_m2\": 11.0,\n  \"exposure_time_hours\": 850.0,\n  \"corrosion_rate_mm_per_year\": 0.09,\n  \"estimated_lifespan_years\": 12.5,\n  \"risk_classification\": \"moderate\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/simulation"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('simulation_id', body.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15) Create Project (Engineer, Auto-Binds Tenant)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{engineer_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Phase7 Tenant Project\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/projects"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('project_id', body.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16) Billing Webhook (PayPal Matrix)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-PayPal-Signature", "value": "{{paypal_signature}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"event_type\": \"BILLING.SUBSCRIPTION.ACTIVATED\",\n  \"resource\": {\n    \"custom_id\": \"{{tenant_id}}\",\n    \"subscription_tier\": \"enterprise_elite\"\n  }\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/billing/webhook"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "function sortObject(input) {",
+              "  if (Array.isArray(input)) return input.map(sortObject);",
+              "  if (input !== null && typeof input === 'object') {",
+              "    return Object.keys(input).sort().reduce((acc, key) => {",
+              "      acc[key] = sortObject(input[key]);",
+              "      return acc;",
+              "    }, {});",
+              "  }",
+              "  return input;",
+              "}",
+              "const rawBody = pm.request.body ? pm.request.body.raw : '{}';",
+              "const secret = pm.collectionVariables.get('paypal_webhook_secret') || '';",
+              "if (!secret) {",
+              "  pm.collectionVariables.set('paypal_signature', '');",
+              "} else {",
+              "  const parsed = JSON.parse(rawBody);",
+              "  const normalized = JSON.stringify(sortObject(parsed));",
+              "  const signature = CryptoJS.HmacSHA256(normalized, secret).toString(CryptoJS.enc.Hex);",
+              "  pm.collectionVariables.set('paypal_signature', signature);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "17) List Audit Logs For Billing Events (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+        ],
+        "url": "{{baseUrl}}/api/v1/audit-logs?page=1&page_size=50&event_type=billing.paypal.billing.subscription.activated"
+      }
+    },
+    {
+      "name": "18) Remove Engineer From Tenant (Admin)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+        ],
+        "url": "{{baseUrl}}/api/v1/tenants/{{tenant_id}}/users/{{engineer_user_id}}"
+      }
+    },
+    {
+      "name": "19) Delete Tenant (Admin)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+        ],
+        "url": "{{baseUrl}}/api/v1/tenants/{{tenant_id}}"
+      }
+    }
+  ]
+}

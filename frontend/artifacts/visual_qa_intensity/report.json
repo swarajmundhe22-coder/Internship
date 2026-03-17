@@ -1,0 +1,119 @@
+[
+  {
+    "state": "home-mobile",
+    "page": "/",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "baseline": "artifacts/visual_qa/after/home-mobile.png",
+    "current": "artifacts/visual_qa_intensity/current/home-mobile.png",
+    "diff": "artifacts/visual_qa_intensity/diff/home-mobile.png",
+    "mismatchPixels": 3723,
+    "mismatchPercent": 1.131
+  },
+  {
+    "state": "home-tablet",
+    "page": "/",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "baseline": "artifacts/visual_qa/after/home-tablet.png",
+    "current": "artifacts/visual_qa_intensity/current/home-tablet.png",
+    "diff": "artifacts/visual_qa_intensity/diff/home-tablet.png",
+    "mismatchPixels": 20903,
+    "mismatchPercent": 2.658
+  },
+  {
+    "state": "home-desktop",
+    "page": "/",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "baseline": "artifacts/visual_qa/after/home-desktop.png",
+    "current": "artifacts/visual_qa_intensity/current/home-desktop.png",
+    "diff": "artifacts/visual_qa_intensity/diff/home-desktop.png",
+    "mismatchPixels": 173854,
+    "mismatchPercent": 13.415
+  },
+  {
+    "state": "dashboard-mobile",
+    "page": "/dashboard",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "baseline": "artifacts/visual_qa/after/dashboard-mobile.png",
+    "current": "artifacts/visual_qa_intensity/current/dashboard-mobile.png",
+    "diff": "artifacts/visual_qa_intensity/diff/dashboard-mobile.png",
+    "mismatchPixels": 231167,
+    "mismatchPercent": 70.229
+  },
+  {
+    "state": "dashboard-tablet",
+    "page": "/dashboard",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "baseline": "artifacts/visual_qa/after/dashboard-tablet.png",
+    "current": "artifacts/visual_qa_intensity/current/dashboard-tablet.png",
+    "diff": "artifacts/visual_qa_intensity/diff/dashboard-tablet.png",
+    "mismatchPixels": 546415,
+    "mismatchPercent": 69.48
+  },
+  {
+    "state": "dashboard-desktop",
+    "page": "/dashboard",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "baseline": "artifacts/visual_qa/after/dashboard-desktop.png",
+    "current": "artifacts/visual_qa_intensity/current/dashboard-desktop.png",
+    "diff": "artifacts/visual_qa_intensity/diff/dashboard-desktop.png",
+    "mismatchPixels": 708363,
+    "mismatchPercent": 54.658
+  },
+  {
+    "state": "simulations-mobile",
+    "page": "/simulations",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "baseline": "artifacts/visual_qa/after/simulations-mobile.png",
+    "current": "artifacts/visual_qa_intensity/current/simulations-mobile.png",
+    "diff": "artifacts/visual_qa_intensity/diff/simulations-mobile.png",
+    "mismatchPixels": 219077,
+    "mismatchPercent": 66.556
+  },
+  {
+    "state": "simulations-tablet",
+    "page": "/simulations",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "baseline": "artifacts/visual_qa/after/simulations-tablet.png",
+    "current": "artifacts/visual_qa_intensity/current/simulations-tablet.png",
+    "diff": "artifacts/visual_qa_intensity/diff/simulations-tablet.png",
+    "mismatchPixels": 469055,
+    "mismatchPercent": 59.643
+  },
+  {
+    "state": "simulations-desktop",
+    "page": "/simulations",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "baseline": "artifacts/visual_qa/after/simulations-desktop.png",
+    "current": "artifacts/visual_qa_intensity/current/simulations-desktop.png",
+    "diff": "artifacts/visual_qa_intensity/diff/simulations-desktop.png",
+    "mismatchPixels": 652938,
+    "mismatchPercent": 50.381
+  }
+]

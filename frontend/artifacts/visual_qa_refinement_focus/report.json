@@ -1,0 +1,111 @@
+[
+  {
+    "state": "home-mobile",
+    "page": "/",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "before": "artifacts/visual_qa_refinement_focus/before/home-mobile.png",
+    "after": "artifacts/visual_qa_refinement_focus/after/home-mobile.png",
+    "diff": "artifacts/visual_qa_refinement_focus/diff/home-mobile.png",
+    "mismatchPixels": 6059,
+    "mismatchPercent": 1.841
+  },
+  {
+    "state": "home-tablet",
+    "page": "/",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "before": "artifacts/visual_qa_refinement_focus/before/home-tablet.png",
+    "after": "artifacts/visual_qa_refinement_focus/after/home-tablet.png",
+    "diff": "artifacts/visual_qa_refinement_focus/diff/home-tablet.png",
+    "mismatchPixels": 83182,
+    "mismatchPercent": 10.577
+  },
+  {
+    "state": "home-desktop",
+    "page": "/",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "before": "artifacts/visual_qa_refinement_focus/before/home-desktop.png",
+    "after": "artifacts/visual_qa_refinement_focus/after/home-desktop.png",
+    "diff": "artifacts/visual_qa_refinement_focus/diff/home-desktop.png",
+    "mismatchPixels": 96825,
+    "mismatchPercent": 7.471
+  },
+  {
+    "state": "about-mobile",
+    "page": "/about",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "before": "artifacts/visual_qa_refinement_focus/before/about-mobile.png",
+    "after": "artifacts/visual_qa_refinement_focus/after/about-mobile.png",
+    "diff": "artifacts/visual_qa_refinement_focus/diff/about-mobile.png",
+    "mismatchPixels": 23772,
+    "mismatchPercent": 7.222
+  },
+  {
+    "state": "about-tablet",
+    "page": "/about",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "before": "artifacts/visual_qa_refinement_focus/before/about-tablet.png",
+    "after": "artifacts/visual_qa_refinement_focus/after/about-tablet.png",
+    "diff": "artifacts/visual_qa_refinement_focus/diff/about-tablet.png",
+    "mismatchPixels": 109954,
+    "mismatchPercent": 13.981
+  },
+  {
+    "state": "about-desktop",
+    "page": "/about",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "before": "artifacts/visual_qa_refinement_focus/before/about-desktop.png",
+    "after": "artifacts/visual_qa_refinement_focus/after/about-desktop.png",
+    "diff": "artifacts/visual_qa_refinement_focus/diff/about-desktop.png",
+    "mismatchPixels": 83897,
+    "mismatchPercent": 6.474
+  },
+  {
+    "state": "dashboard-mobile",
+    "page": "/dashboard",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "before": "artifacts/visual_qa_refinement_focus/before/dashboard-mobile.png",
+    "after": "artifacts/visual_qa_refinement_focus/after/dashboard-mobile.png",
+    "diff": "artifacts/visual_qa_refinement_focus/diff/dashboard-mobile.png",
+    "mismatchPixels": 2574,
+    "mismatchPercent": 0.782
+  },
+  {
+    "state": "dashboard-tablet",
+    "page": "/dashboard",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3000/dashboard\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  },
+  {
+    "state": "dashboard-desktop",
+    "page": "/dashboard",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3000/dashboard\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  }
+]

@@ -1,0 +1,116 @@
+name: Backend CI
+
+on:
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+  push:
+    branches:
+      - "release/**"
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: onlooker_test
+          POSTGRES_USER: onlooker
+          POSTGRES_PASSWORD: onlooker
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U onlooker -d onlooker_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://onlooker:onlooker@localhost:5432/onlooker_test
+      AUTO_INITIALIZE_DB: "false"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip; python -m pip install -r requirements.txt
+
+      - name: Run Alembic migrations
+        run: python -m alembic -c alembic.ini upgrade head
+
+      - name: Run test suite
+        run: python -m pytest -q
+
+  phase8-smoke:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/')
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: onlooker_test
+          POSTGRES_USER: onlooker
+          POSTGRES_PASSWORD: onlooker
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U onlooker -d onlooker_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://onlooker:onlooker@localhost:5432/onlooker_test
+      AUTO_INITIALIZE_DB: "false"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip; python -m pip install -r requirements.txt
+
+      - name: Run Alembic migrations
+        run: python -m alembic -c alembic.ini upgrade head
+
+      - name: Start API server
+        run: nohup python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/onlooker-api.log 2>&1 &
+
+      - name: Wait for API health
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:8000/api/v1/health >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "API failed to become healthy"
+          cat /tmp/onlooker-api.log || true
+          exit 1
+
+      - name: Run Phase 8 smoke test
+        run: python scripts/phase8_smoke_test.py --base-url http://127.0.0.1:8000/api/v1

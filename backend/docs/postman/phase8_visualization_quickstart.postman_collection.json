@@ -1,0 +1,61 @@
+{
+  "info": {
+    "name": "The On Looker - Phase 8 Visualization Quickstart",
+    "description": "Quick flow for digital twin generation, AR/VR playback, and investor export endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000" },
+    { "key": "engineer_token", "value": "" },
+    { "key": "simulation_id", "value": "" },
+    { "key": "tenant_id", "value": "" },
+    { "key": "visualization_mode", "value": "vr" }
+  ],
+  "item": [
+    {
+      "name": "Generate Twin",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{engineer_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"simulation_id\": \"{{simulation_id}}\",\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"mode\": \"twin\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/visualization/twin"
+      }
+    },
+    {
+      "name": "Playback (AR/VR)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{engineer_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"simulation_id\": \"{{simulation_id}}\",\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"mode\": \"{{visualization_mode}}\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/visualization/playback"
+      }
+    },
+    {
+      "name": "Export Showcase (MP4)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{engineer_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"simulation_id\": \"{{simulation_id}}\",\n  \"tenant_id\": \"{{tenant_id}}\",\n  \"mode\": \"{{visualization_mode}}\",\n  \"file_type\": \"mp4\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/visualization/export"
+      }
+    }
+  ]
+}
