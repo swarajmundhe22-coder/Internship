@@ -11,7 +11,19 @@ from app.database import models  # noqa: F401
 
 config = context.config
 settings = get_settings()
-sync_database_url = settings.database_url.replace("+asyncpg", "")
+
+
+def _normalize_migration_database_url(database_url: str) -> str:
+    # Alembic runs in sync mode; force PostgreSQL URLs to the psycopg driver
+    # so migrations do not require the legacy psycopg2 package.
+    if database_url.startswith("postgresql+asyncpg://"):
+        return database_url.replace("postgresql+asyncpg://", "postgresql+psycopg://", 1)
+    if database_url.startswith("postgresql://"):
+        return database_url.replace("postgresql://", "postgresql+psycopg://", 1)
+    return database_url
+
+
+sync_database_url = _normalize_migration_database_url(settings.database_url)
 config.set_main_option("sqlalchemy.url", sync_database_url)
 
 if config.config_file_name is not None:

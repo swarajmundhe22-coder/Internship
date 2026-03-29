@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Settings, Droplets, Thermometer, Wind, Zap, Database, DollarSign, Clock, ShieldAlert, Info, X, ChevronRight, HelpCircle, BookOpen } from 'lucide-react';
+import { Settings, Droplets, Thermometer, Wind, Zap, Database, DollarSign, Clock, ShieldAlert, Globe2, Info, X, ChevronRight, HelpCircle, BookOpen } from 'lucide-react';
 
 import { toast } from 'sonner';
 
@@ -25,6 +25,10 @@ const PARAMETER_GUIDES = {
   criticality: {
     title: "Asset Criticality",
     guide: "Determines the safety factor in calculations. 'Mission Critical' implies zero-tolerance for failure (e.g., nuclear or high-pressure gas).",
+  },
+  region: {
+    title: "Regional Calibration Pack",
+    guide: "Controls climate-specific calibration coefficients. Keep on Auto for model-selected geography, or force a known operating region for deterministic engineering comparisons.",
   },
   assetValue: {
     title: "Asset Value",
@@ -69,7 +73,7 @@ const PARAMETER_GUIDES = {
 };
 
 const Act2DataInput = ({ onSimulate, initialData }: Props) => {
-  const [formData, setFormData] = useState(initialData || {
+  const defaultFormData = {
     material: 'Carbon Steel',
     customMaterial: '',
     temperature: 25,
@@ -84,10 +88,16 @@ const Act2DataInput = ({ onSimulate, initialData }: Props) => {
     soilResistivity: 5000,
     structure: 'Pipeline',
     customStructure: '',
+    region: 'Auto (Model Selection)',
     assetValue: 50000000,
     downtimeCost: 250000,
     compliance: 'ISO 12944',
     criticality: 'High',
+  };
+
+  const [formData, setFormData] = useState({
+    ...defaultFormData,
+    ...(initialData || {}),
   });
 
   const [activeGuide, setActiveGuide] = useState<keyof typeof PARAMETER_GUIDES | null>(null);
@@ -124,10 +134,20 @@ const Act2DataInput = ({ onSimulate, initialData }: Props) => {
   ];
   const complianceStandards = ['ISO 12944', 'NACE SP0169', 'ASTM G1', 'NORSOK M-501', 'Custom'];
   const criticalityLevels = ['Low', 'Medium', 'High', 'Mission Critical'];
+  const regionProfiles = [
+    'Auto (Model Selection)',
+    'Temperate Industrial',
+    'North Sea Offshore',
+    'Gulf Tropical Marine',
+    'Monsoon Coastal',
+    'Arid Desert Industrial',
+    'Arctic Subarctic',
+    'Equatorial Humid Urban',
+  ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
-    const isStringField = ['material', 'structure', 'compliance', 'criticality', 'customMaterial', 'customStructure'].includes(name);
+    const isStringField = ['material', 'structure', 'compliance', 'criticality', 'region', 'customMaterial', 'customStructure'].includes(name);
     const isBooleanField = type === 'checkbox';
     
     setFormData((prev: any) => ({ 
@@ -314,7 +334,7 @@ const Act2DataInput = ({ onSimulate, initialData }: Props) => {
 
           {/* Financial & Environmental Parameters */}
           <div className="space-y-8">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <label className="text-[10px] font-display font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
@@ -352,6 +372,26 @@ const Act2DataInput = ({ onSimulate, initialData }: Props) => {
                 >
                   {criticalityLevels.map((l) => (
                     <option key={l} value={l} className="bg-bg">{l}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <label className="text-[10px] font-display font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
+                    <Globe2 className="w-3 h-3 text-accent" /> Regional Calibration
+                  </label>
+                  <button onClick={() => setActiveGuide('region')} className="text-white/20 hover:text-accent transition-colors">
+                    <HelpCircle className="w-3 h-3" />
+                  </button>
+                </div>
+                <select
+                  name="region"
+                  value={formData.region}
+                  onChange={handleChange}
+                  className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white font-display font-bold focus:outline-none focus:border-accent transition-all appearance-none cursor-pointer"
+                >
+                  {regionProfiles.map((region) => (
+                    <option key={region} value={region} className="bg-bg">{region}</option>
                   ))}
                 </select>
               </div>

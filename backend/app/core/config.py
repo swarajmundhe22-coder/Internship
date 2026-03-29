@@ -43,6 +43,15 @@ class Settings(BaseSettings):
     intelligence_retry_attempts: int = Field(default=3)
     intelligence_retry_base_delay_ms: int = Field(default=300)
 
+    model_confidence_fallback_threshold: float = Field(default=0.75, ge=0, le=1)
+    model_risk_floor_score: float = Field(default=55.0, ge=0, le=100)
+    recalibration_cadence_days: int = Field(default=30, ge=1)
+    drift_alert_relative_threshold: float = Field(default=0.20, ge=0, le=1)
+
+    simulation_slo_p95_ms: int = Field(default=1200, ge=100)
+    simulation_slo_p99_ms: int = Field(default=2000, ge=100)
+    simulation_error_budget_rate: float = Field(default=0.02, ge=0, le=1)
+
     mqtt_broker_url: str | None = Field(default=None)
     mqtt_topic: str | None = Field(default=None)
     mqtt_username: str | None = Field(default=None)

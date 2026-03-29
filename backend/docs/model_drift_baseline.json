@@ -1,0 +1,50 @@
+{
+  "generated_from_report": "artifacts/calibration_reports/calibration_report_20260329_100552Z.json",
+  "model_version": "global-calibrated-v1.1.0",
+  "reference": {
+    "average_risk_score": 60.87,
+    "average_design_corrosion_rate_mm_per_year": 0.42744,
+    "average_lifespan_years": 52.151
+  },
+  "by_region": {
+    "arctic_subarctic": {
+      "average_risk_score": 24.368,
+      "average_design_corrosion_rate_mm_per_year": 0.01518,
+      "average_calibration_confidence": 0.75
+    },
+    "arid_desert_industrial": {
+      "average_risk_score": 63.339,
+      "average_design_corrosion_rate_mm_per_year": 0.32663,
+      "average_calibration_confidence": 0.818
+    },
+    "equatorial_humid_urban": {
+      "average_risk_score": 71.277,
+      "average_design_corrosion_rate_mm_per_year": 0.3829,
+      "average_calibration_confidence": 0.803
+    },
+    "gulf_tropical_marine": {
+      "average_risk_score": 96.903,
+      "average_design_corrosion_rate_mm_per_year": 1.01969,
+      "average_calibration_confidence": 0.805
+    },
+    "monsoon_coastal": {
+      "average_risk_score": 92.509,
+      "average_design_corrosion_rate_mm_per_year": 0.89705,
+      "average_calibration_confidence": 0.786
+    },
+    "north_sea_offshore": {
+      "average_risk_score": 84.413,
+      "average_design_corrosion_rate_mm_per_year": 0.73302,
+      "average_calibration_confidence": 0.84
+    },
+    "temperate_industrial": {
+      "average_risk_score": 27.076,
+      "average_design_corrosion_rate_mm_per_year": 0.02251,
+      "average_calibration_confidence": 0.89
+    }
+  },
+  "thresholds": {
+    "global_relative_drift_max": 0.2,
+    "region_relative_drift_max": 0.25
+  }
+}

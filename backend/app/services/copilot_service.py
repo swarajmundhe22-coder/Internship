@@ -6,11 +6,12 @@ from app.core.config import get_settings
 
 
 class CopilotService:
-    MODEL_QUERY = "nvidia/llama-3.1-nemotron-ultra-253b-v1"
-    MODEL_DOC = "nvidia/llama-3.1-nemotron-nano-vl-8b-v1"
-    MODEL_SEARCH = "nvidia/nv-embedqa-e5-v5"
+    MODEL_QUERY = "openai/gpt-oss-120b"
+    MODEL_DOC = "openai/gpt-oss-120b"
+    MODEL_SEARCH = "openai/gpt-oss-120b"
 
     def __init__(self) -> None:
+        get_settings.cache_clear()
         self.settings = get_settings()
         self.client: OpenAI | None = None
         if self.settings.nvidia_api_key:
@@ -36,12 +37,21 @@ class CopilotService:
             )
             return fallback, model
 
-        completion = self.client.chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": user_input}],
-            temperature=0.7,
-            max_tokens=1024,
-        )
+        try:
+            completion = self.client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": user_input}],
+                temperature=1,
+                top_p=1,
+                max_tokens=4096,
+            )
+        except Exception as exc:
+            fallback = (
+                "NVIDIA copilot request failed. Verify NVIDIA_API_KEY validity, model access, and account permissions. "
+                f"Provider detail: {type(exc).__name__}."
+            )
+            return fallback, model
+
         choice = completion.choices[0]
         content = getattr(choice.message, "content", None)
         if not content:

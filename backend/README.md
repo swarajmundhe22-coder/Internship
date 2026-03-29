@@ -56,6 +56,80 @@ alembic -c alembic.ini history -v
 pytest
 ```
 
+## Calibration Validation Reports
+
+- Run structured multi-scenario calibration validation:
+
+```bash
+python scripts/generate_calibration_report.py
+```
+
+- Output artifacts are written to `artifacts/calibration_reports` as both `.json` and `.md`.
+- Use strict mode to fail CI when any scenario is out of calibration envelope:
+
+```bash
+python scripts/generate_calibration_report.py --strict
+```
+
+## Production Readiness Gates (Phase 9)
+
+The backend now includes executable gates for model governance, security, reliability, and operations.
+
+See the consolidated release checklist in [docs/production_readiness_checklist.md](docs/production_readiness_checklist.md).
+
+### External Field Validation
+
+- Holdout benchmark validation with global and region targets:
+
+```bash
+python scripts/run_field_validation.py --dataset docs/field_validation_benchmark.csv --strict
+```
+
+- Threshold config:
+	- `docs/field_validation_targets.json`
+- Reports:
+	- `artifacts/field_validation/*.json`
+	- `artifacts/field_validation/*.md`
+
+### Model Drift Detection
+
+```bash
+python scripts/check_model_drift.py --strict
+```
+
+- Baseline reference:
+	- `docs/model_drift_baseline.json`
+- Reports:
+	- `artifacts/model_drift/*.json`
+	- `artifacts/model_drift/*.md`
+
+### Security Gates
+
+```bash
+python scripts/security_dast_gate.py --base-url http://127.0.0.1:8000/api/v1 --strict
+```
+
+### Performance and Reliability Gates
+
+```bash
+python scripts/performance_reliability_gate.py --base-url http://127.0.0.1:8000/api/v1 --strict
+python scripts/failure_mode_chaos_gate.py --base-url http://127.0.0.1:8000/api/v1 --strict
+```
+
+### Backup and Restore Drill
+
+```bash
+python scripts/backup_restore_drill.py --strict
+```
+
+### Runbooks
+
+- `docs/model_risk_controls.md`
+- `docs/security_compliance_runbook.md`
+- `docs/performance_reliability_runbook.md`
+- `docs/ops_sre_readiness_runbook.md`
+- `docs/production_readiness_checklist.md`
+
 ## Pagination And Filtering
 
 - List endpoints return paginated responses with:
