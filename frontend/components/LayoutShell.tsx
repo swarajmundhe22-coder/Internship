@@ -44,6 +44,23 @@ export function LayoutShell({ title, subtitle, children }: LayoutShellProps) {
     { href: "/admin/integrations", label: "Integrations" }
   ];
 
+  const authNavItems = [
+    { href: "/", label: "Identity" },
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/simulations", label: "Simulations" },
+    { href: "/projects", label: "Projects" }
+  ];
+
+  const visibleNavItems = isAuthRoute ? authNavItems : navItems;
+  const authModuleRailItems = moduleRailItems.filter((item) =>
+    item.href === "/" ||
+    item.href === "/dashboard" ||
+    item.href === "/simulations" ||
+    item.href === "/projects" ||
+    item.href === "/reports"
+  );
+  const visibleModuleRailItems = isAuthRoute ? authModuleRailItems : moduleRailItems;
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       setHasToken(Boolean(window.localStorage.getItem("onlooker_token")));
@@ -83,57 +100,60 @@ export function LayoutShell({ title, subtitle, children }: LayoutShellProps) {
             <h1 className="type-title text-softwhite md:text-[2.15rem]">{title}</h1>
             <p className={`type-body text-softwhite/72 ${isAuthRoute ? "max-w-xl" : "max-w-3xl"}`}>{subtitle}</p>
           </div>
-          {!isAuthRoute ? (
-            <nav className="flex max-w-3xl flex-wrap items-center gap-2 text-xs md:text-sm">
-              {navItems.map((item) => {
-                const isActive = router.pathname === item.href || router.pathname.startsWith(`${item.href}/`);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`rounded-full px-4 py-2 font-hud tracking-wide transition ${
-                      isActive
-                        ? "animate-hud-pulse border border-lagoon/70 bg-lagoon/15 text-softwhite"
-                        : "border border-softwhite/20 bg-slatewash/35 text-softwhite/90 hover:border-lagoon/60 hover:text-softwhite"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-
-              {hasToken ? (
-                <button
-                  type="button"
-                  className="rounded-full border border-signal/70 bg-signal/15 px-4 py-2 font-hud text-softwhite transition hover:bg-signal/25"
-                  onClick={logout}
-                >
-                  Logout
-                </button>
-              ) : (
-                <Link
-                  href="/auth/login"
-                  className="rounded-full border border-neoviolet/60 bg-neoviolet/10 px-4 py-2 font-hud text-softwhite transition hover:bg-neoviolet/20"
-                >
-                  Login
-                </Link>
-              )}
-            </nav>
-          ) : null}
-        </div>
-
-        {!isAuthRoute ? (
-          <div className="module-rail mt-4" data-cinematic-reveal="true">
-            {moduleRailItems.map((item) => {
+          <nav className="flex max-w-3xl flex-wrap items-center gap-2 text-xs md:text-sm">
+            {visibleNavItems.map((item) => {
               const isActive = router.pathname === item.href || router.pathname.startsWith(`${item.href}/`);
               return (
-                <Link key={item.href} href={item.href} className={`module-pill ${isActive ? "module-pill-active" : ""}`}>
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`rounded-full px-4 py-2 font-hud tracking-wide transition ${
+                    isActive
+                      ? "animate-hud-pulse border border-lagoon/70 bg-lagoon/15 text-softwhite"
+                      : "border border-softwhite/20 bg-slatewash/35 text-softwhite/90 hover:border-lagoon/60 hover:text-softwhite"
+                  }`}
+                >
                   {item.label}
                 </Link>
               );
             })}
-          </div>
-        ) : null}
+
+            {hasToken ? (
+              <button
+                type="button"
+                className="rounded-full border border-signal/70 bg-signal/15 px-4 py-2 font-hud text-softwhite transition hover:bg-signal/25"
+                onClick={logout}
+              >
+                Logout
+              </button>
+            ) : isAuthRoute ? (
+              <Link
+                href={router.pathname === "/auth/register" ? "/auth/login" : "/auth/register"}
+                className="rounded-full border border-neoviolet/60 bg-neoviolet/10 px-4 py-2 font-hud text-softwhite transition hover:bg-neoviolet/20"
+              >
+                {router.pathname === "/auth/register" ? "Sign In" : "Create Account"}
+              </Link>
+            ) : (
+              <Link
+                href="/auth/login"
+                className="rounded-full border border-neoviolet/60 bg-neoviolet/10 px-4 py-2 font-hud text-softwhite transition hover:bg-neoviolet/20"
+              >
+                Login
+              </Link>
+            )}
+          </nav>
+        </div>
+
+        <div className="module-rail mt-4" data-cinematic-reveal="true">
+          {visibleModuleRailItems.map((item) => {
+            const isActive = router.pathname === item.href || router.pathname.startsWith(`${item.href}/`);
+            return (
+              <Link key={item.href} href={item.href} className={`module-pill ${isActive ? "module-pill-active" : ""}`}>
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
       </motion.header>
       {children}
     </main>

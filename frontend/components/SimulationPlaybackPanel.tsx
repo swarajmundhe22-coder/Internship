@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 
 import { PredictionTimelinePoint } from "../types/domain";
 import { VisualizationPanel } from "./VisualizationPanel";
+import { useNumberScramble } from "../hooks/useNumberScramble";
 
 type SimulationPlaybackPanelProps = {
   timeline: PredictionTimelinePoint[];
@@ -48,6 +50,40 @@ export function SimulationPlaybackPanel({ timeline, loading = false }: Simulatio
     return Math.min(100, activePoint.corrosion_rate_mm_per_year * 240);
   }, [activePoint]);
 
+  const statsData = useMemo(() => {
+    if (!activePoint) return [];
+    return [
+      {
+        label: "Offset",
+        value: activePoint.offset_hours,
+        unit: "h",
+        colorClass: "text-softwhite",
+        borderClass: "border-lagoon/35",
+      },
+      {
+        label: "Risk",
+        value: activePoint.risk_classification,
+        unit: "",
+        colorClass: "animate-hud-pulse uppercase text-neoviolet",
+        borderClass: "border-neoviolet/35",
+      },
+      {
+        label: "Risk Score",
+        value: activePoint.risk_score.toFixed(1),
+        unit: "",
+        colorClass: "text-signal",
+        borderClass: "border-signal/35",
+      },
+      {
+        label: "Lifespan",
+        value: activePoint.estimated_lifespan_years.toFixed(2),
+        unit: "y",
+        colorClass: "text-softwhite",
+        borderClass: "border-softwhite/20",
+      },
+    ];
+  }, [activePoint]);
+
   return (
     <section className="panel grid gap-4 p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -60,7 +96,20 @@ export function SimulationPlaybackPanel({ timeline, loading = false }: Simulatio
         </span>
       </div>
 
-      {loading && <p className="text-sm text-softwhite/75">Generating predictive frames...</p>}
+      {loading && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center justify-center space-y-3 p-6 rounded-lg border border-lagoon/50 shadow-neon bg-slatewash/20"
+        >
+          <div className="w-full h-1 bg-lagoon/20 relative overflow-hidden rounded">
+            <div className="absolute top-0 left-0 h-full w-1/3 bg-lagoon animate-[ping_1.5s_ease-in-out_infinite]" />
+          </div>
+          <p className="text-lagoon text-xs font-hud tracking-[0.2em] animate-pulse glow-text">
+            INITIALIZING PREDICTIVE ENGINE...
+          </p>
+        </motion.div>
+      )}
       {!loading && totalSteps === 0 && (
         <p className="text-sm text-softwhite/75">Generate a project prediction to begin cinematic playback.</p>
       )}
@@ -68,22 +117,9 @@ export function SimulationPlaybackPanel({ timeline, loading = false }: Simulatio
       {totalSteps > 0 && activePoint && (
         <>
           <div className="grid gap-3 md:grid-cols-4">
-            <article className="rounded-lg border border-lagoon/35 bg-slatewash/40 p-3">
-              <p className="hud-label text-[10px] text-softwhite/70">Offset</p>
-              <p className="text-lg font-semibold text-softwhite">{activePoint.offset_hours} h</p>
-            </article>
-            <article className="rounded-lg border border-neoviolet/35 bg-slatewash/40 p-3">
-              <p className="hud-label text-[10px] text-softwhite/70">Risk</p>
-              <p className="animate-hud-pulse text-lg font-semibold uppercase text-neoviolet">{activePoint.risk_classification}</p>
-            </article>
-            <article className="rounded-lg border border-signal/35 bg-slatewash/40 p-3">
-              <p className="hud-label text-[10px] text-softwhite/70">Risk Score</p>
-              <p className="text-lg font-semibold text-signal">{activePoint.risk_score.toFixed(1)}</p>
-            </article>
-            <article className="rounded-lg border border-softwhite/20 bg-slatewash/40 p-3">
-              <p className="hud-label text-[10px] text-softwhite/70">Lifespan</p>
-              <p className="text-lg font-semibold text-softwhite">{activePoint.estimated_lifespan_years.toFixed(2)} y</p>
-            </article>
+            {statsData.map((stat, i) => (
+              <StatCard key={stat.label} index={i} {...stat} />
+            ))}
           </div>
 
           <div className="relative overflow-hidden rounded-xl border border-lagoon/35 bg-gradient-to-r from-lagoon/10 via-neoviolet/10 to-signal/10 p-3">
@@ -138,5 +174,37 @@ export function SimulationPlaybackPanel({ timeline, loading = false }: Simulatio
         </>
       )}
     </section>
+  );
+}
+
+function StatCard({ 
+  label, 
+  value, 
+  unit, 
+  colorClass, 
+  borderClass, 
+  index 
+}: { 
+  label: string; 
+  value: string | number; 
+  unit: string; 
+  colorClass: string; 
+  borderClass: string; 
+  index: number; 
+}) {
+  const scrambledValue = useNumberScramble(value);
+
+  return (
+    <motion.article
+      className={`rounded-lg border ${borderClass} bg-slatewash/40 p-3`}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1, duration: 0.4 }}
+    >
+      <p className="hud-label text-[10px] text-softwhite/70">{label}</p>
+      <p className={`text-lg font-semibold ${colorClass}`}>
+        {scrambledValue}{unit ? ` ${unit}` : ""}
+      </p>
+    </motion.article>
   );
 }

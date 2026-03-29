@@ -47,6 +47,14 @@ html[data-route-page="home"] {
   --motion-duration-slow: 640ms;
 }
 
+html[data-route-page="auth"] {
+  --body-font: "Space Grotesk", "Inter", sans-serif;
+  --display-font: "Sora", "Orbitron", sans-serif;
+  --type-title-size: clamp(1.46rem, 2.26vw, 2.42rem);
+  --type-body-size: 0.98rem;
+  --motion-duration-slow: 620ms;
+}
+
 html[data-route-page="dashboard"] {
   --display-font: "Sora", "Orbitron", sans-serif;
   --type-title-size: clamp(1.42rem, 2.1vw, 2.2rem);

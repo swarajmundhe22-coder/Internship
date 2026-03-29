@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
+import { ReactLenis } from '@studio-freight/react-lenis';
 
 import { CinematicQualityControl } from "../components/CinematicQualityControl";
 import { CinematicWebGLBackdrop } from "../components/CinematicWebGLBackdrop";
@@ -12,6 +13,7 @@ import { onLookersBrandDirection } from "../utils/brandDirection";
 import { getRoutePage, getRouteTone } from "../utils/cinematicRoute";
 import "../styles/globals.css";
 import "../styles/outsource.css";
+import "../styles/local-simulated.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 export default function App({ Component, pageProps }: AppProps) {
