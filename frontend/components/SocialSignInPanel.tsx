@@ -23,7 +23,7 @@ export default function SocialSignInPanel({ email, redirectTo, onSuccess }: Soci
 
     try {
       await beginSocialAuth(provider, {
-        nextPath: redirectTo ?? "/dashboard",
+        nextPath: redirectTo ?? "/",
         emailHint: socialEmail,
       });
     } catch (socialStartError) {

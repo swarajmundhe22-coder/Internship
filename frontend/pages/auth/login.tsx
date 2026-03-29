@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import { Activity, Eye, EyeOff, Lock, Mail, Shield, Zap } from "lucide-react";
@@ -25,13 +25,7 @@ export default function LoginPage() {
   const oauthError = typeof router.query.oauth_error === "string" ? router.query.oauth_error : null;
   const visibleSocialError =
     socialError ?? (oauthError === "OAuth sign-in failed" ? "OAuth callback missing token" : oauthError);
-  const resolvedNextPath = useMemo(() => {
-    const candidate = typeof router.query.next === "string" ? router.query.next : "";
-    if (candidate.startsWith("/")) {
-      return candidate;
-    }
-    return "/dashboard";
-  }, [router.query.next]);
+  const resolvedNextPath = "/";
 
   async function completeLogin(token: AuthTokenResponse): Promise<void> {
     if (typeof window !== "undefined") {

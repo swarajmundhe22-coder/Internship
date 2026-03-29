@@ -1,13 +1,43 @@
-import { initializeApp } from 'firebase/app';
+import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy, limit, getDocFromServer, Timestamp } from 'firebase/firestore';
-import firebaseConfig from './firebase-applet-config.json';
+import rawFirebaseConfig from './firebase-applet-config.json';
+
+type FirebaseAppletConfig = {
+  apiKey?: string;
+  appId?: string;
+  authDomain?: string;
+  projectId?: string;
+  storageBucket?: string;
+  messagingSenderId?: string;
+  measurementId?: string;
+  firestoreDatabaseId?: string;
+};
+
+const firebaseConfig = rawFirebaseConfig as FirebaseAppletConfig;
 
 // Initialize Firebase SDK
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+const isPlaceholder =
+  !firebaseConfig.apiKey ||
+  !firebaseConfig.projectId ||
+  firebaseConfig.apiKey === 'YOUR_API_KEY' ||
+  firebaseConfig.projectId === 'YOUR_PROJECT_ID';
+
+if (isPlaceholder) {
+  console.warn(
+    'Firebase is using placeholder configuration. Update components/outsource/local-simulated/firebase-applet-config.json with your project credentials.'
+  );
+}
+
+const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+const firestoreDatabaseId = firebaseConfig.firestoreDatabaseId?.trim();
+export const db = firestoreDatabaseId ? getFirestore(app, firestoreDatabaseId) : getFirestore(app);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+
+export function isFirebaseAuthConfigured(): boolean {
+  return !isPlaceholder;
+}
 
 // Error Handling Spec for Firestore Operations
 export enum OperationType {

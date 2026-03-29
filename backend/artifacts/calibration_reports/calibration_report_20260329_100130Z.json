@@ -1,0 +1,536 @@
+{
+  "generated_at_utc": "2026-03-29T10:01:30.463668+00:00",
+  "model_version": "global-calibrated-v1.1.0",
+  "scenario_count": 8,
+  "passed_count": 8,
+  "failed_count": 0,
+  "pass_rate": 1.0,
+  "average_risk_score": 60.87,
+  "average_design_corrosion_rate_mm_per_year": 0.42744,
+  "average_lifespan_years": 52.151,
+  "region_summary": [
+    {
+      "region_key": "arctic_subarctic",
+      "scenarios": 1,
+      "average_risk_score": 24.368,
+      "average_design_corrosion_rate_mm_per_year": 0.01518,
+      "average_calibration_confidence": 0.75
+    },
+    {
+      "region_key": "arid_desert_industrial",
+      "scenarios": 1,
+      "average_risk_score": 63.339,
+      "average_design_corrosion_rate_mm_per_year": 0.32663,
+      "average_calibration_confidence": 0.818
+    },
+    {
+      "region_key": "equatorial_humid_urban",
+      "scenarios": 1,
+      "average_risk_score": 71.277,
+      "average_design_corrosion_rate_mm_per_year": 0.3829,
+      "average_calibration_confidence": 0.803
+    },
+    {
+      "region_key": "gulf_tropical_marine",
+      "scenarios": 1,
+      "average_risk_score": 96.903,
+      "average_design_corrosion_rate_mm_per_year": 1.01969,
+      "average_calibration_confidence": 0.805
+    },
+    {
+      "region_key": "monsoon_coastal",
+      "scenarios": 1,
+      "average_risk_score": 92.509,
+      "average_design_corrosion_rate_mm_per_year": 0.89705,
+      "average_calibration_confidence": 0.786
+    },
+    {
+      "region_key": "north_sea_offshore",
+      "scenarios": 1,
+      "average_risk_score": 84.413,
+      "average_design_corrosion_rate_mm_per_year": 0.73302,
+      "average_calibration_confidence": 0.84
+    },
+    {
+      "region_key": "temperate_industrial",
+      "scenarios": 2,
+      "average_risk_score": 27.076,
+      "average_design_corrosion_rate_mm_per_year": 0.02251,
+      "average_calibration_confidence": 0.89
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario_key": "north_sea_offshore_carbon",
+      "scenario_title": "North Sea offshore fixed platform - carbon steel",
+      "requested_region": "North Sea Offshore",
+      "expected_region_key": "north_sea_offshore",
+      "resolved_region_key": "north_sea_offshore",
+      "resolved_region_name": "North Sea Offshore",
+      "risk_score": 84.413,
+      "design_corrosion_rate_mm_per_year": 0.73302,
+      "estimated_lifespan_years": 13.642,
+      "risk_classification": "high",
+      "calibration_confidence": 0.84,
+      "passed": true,
+      "issues": [],
+      "response": {
+        "simulation_id": "5d52e592-d43b-4c0d-a0c6-56e5277a1735",
+        "generated_at": "2026-03-29T10:01:30.463668Z",
+        "environment_risk": {
+          "risk_score": 68.62752,
+          "risk_band": "high",
+          "rationale": "Global calibrated aggressiveness model (ISO 9223-style atmospheric drivers, chloride load, pH deviation, oxygen kinetics, MIC and soil resistivity factors). Regional pack applied: North Sea Offshore."
+        },
+        "corrosion_rate_mm_per_year": 0.25399656990029834,
+        "design_corrosion_rate_mm_per_year": 0.7330219285712817,
+        "composite_risk_score": 84.41253390353958,
+        "estimated_lifespan_years": 13.642156680756877,
+        "risk_classification": "high",
+        "recommendation_summary": "Increase inspection cadence, apply protective coating maintenance, and evaluate inhibitor dosing.",
+        "model_version": "global-calibrated-v1.1.0",
+        "asset_profile": "offshore_platform_fixed",
+        "region_key": "north_sea_offshore",
+        "region_name": "North Sea Offshore",
+        "initial_thickness_mm": 28.0,
+        "minimum_safe_thickness_mm": 18.0,
+        "calibration_confidence": 0.8399999999999999,
+        "uncertainty_bands": {
+          "corrosion_rate_mm_per_year": {
+            "lower": 0.19555144710915476,
+            "upper": 0.3124416926914419,
+            "confidence_level": 0.9
+          },
+          "design_corrosion_rate_mm_per_year": {
+            "lower": 0.5643521050348217,
+            "upper": 0.9016917521077417,
+            "confidence_level": 0.9
+          },
+          "estimated_lifespan_years": {
+            "lower": 11.090264468566545,
+            "upper": 17.719434216308947,
+            "confidence_level": 0.9
+          },
+          "composite_risk_score": {
+            "lower": 76.35896334353959,
+            "upper": 92.46610446353958,
+            "confidence_level": 0.9
+          }
+        }
+      }
+    },
+    {
+      "scenario_key": "gulf_tropical_marine_hull",
+      "scenario_title": "Gulf tropical marine vessel hull - carbon steel",
+      "requested_region": "Gulf Tropical Marine",
+      "expected_region_key": "gulf_tropical_marine",
+      "resolved_region_key": "gulf_tropical_marine",
+      "resolved_region_name": "Gulf Tropical Marine",
+      "risk_score": 96.903,
+      "design_corrosion_rate_mm_per_year": 1.01969,
+      "estimated_lifespan_years": 6.865,
+      "risk_classification": "critical",
+      "calibration_confidence": 0.805,
+      "passed": true,
+      "issues": [],
+      "response": {
+        "simulation_id": "7992cd47-0217-430a-ae71-25940f288ed2",
+        "generated_at": "2026-03-29T10:01:30.463668Z",
+        "environment_risk": {
+          "risk_score": 83.56360000000001,
+          "risk_band": "critical",
+          "rationale": "Global calibrated aggressiveness model (ISO 9223-style atmospheric drivers, chloride load, pH deviation, oxygen kinetics, MIC and soil resistivity factors). Regional pack applied: Gulf Tropical Marine."
+        },
+        "corrosion_rate_mm_per_year": 0.3728349144231369,
+        "design_corrosion_rate_mm_per_year": 1.0196853122433438,
+        "composite_risk_score": 96.90322531584005,
+        "estimated_lifespan_years": 6.864863027790164,
+        "risk_classification": "critical",
+        "recommendation_summary": "Immediate shutdown inspection, cathodic protection validation, and material replacement planning.",
+        "model_version": "global-calibrated-v1.1.0",
+        "asset_profile": "marine_vessel_hull",
+        "region_key": "gulf_tropical_marine",
+        "region_name": "Gulf Tropical Marine",
+        "initial_thickness_mm": 18.0,
+        "minimum_safe_thickness_mm": 11.0,
+        "calibration_confidence": 0.8049418800000001,
+        "uncertainty_bands": {
+          "corrosion_rate_mm_per_year": {
+            "lower": 0.2722576009464212,
+            "upper": 0.47341222789985254,
+            "confidence_level": 0.9
+          },
+          "design_corrosion_rate_mm_per_year": {
+            "lower": 0.7446112638383505,
+            "upper": 1.2947593606483372,
+            "confidence_level": 0.9
+          },
+          "estimated_lifespan_years": {
+            "lower": 5.406410034753349,
+            "upper": 9.400878471695597,
+            "confidence_level": 0.9
+          },
+          "composite_risk_score": {
+            "lower": 87.46149699184005,
+            "upper": 100.0,
+            "confidence_level": 0.9
+          }
+        }
+      }
+    },
+    {
+      "scenario_key": "temperate_stainless_tank",
+      "scenario_title": "Temperate industrial storage tank - stainless 316",
+      "requested_region": "Temperate Industrial",
+      "expected_region_key": "temperate_industrial",
+      "resolved_region_key": "temperate_industrial",
+      "resolved_region_name": "Temperate Industrial",
+      "risk_score": 27.743,
+      "design_corrosion_rate_mm_per_year": 0.02768,
+      "estimated_lifespan_years": 120.0,
+      "risk_classification": "low",
+      "calibration_confidence": 0.89,
+      "passed": true,
+      "issues": [],
+      "response": {
+        "simulation_id": "61f74077-3142-4301-8a4f-e3e76f219015",
+        "generated_at": "2026-03-29T10:01:30.463668Z",
+        "environment_risk": {
+          "risk_score": 56.26253167086233,
+          "risk_band": "moderate",
+          "rationale": "Global calibrated aggressiveness model (ISO 9223-style atmospheric drivers, chloride load, pH deviation, oxygen kinetics, MIC and soil resistivity factors). Regional pack applied: Temperate Industrial."
+        },
+        "corrosion_rate_mm_per_year": 0.014143244560092283,
+        "design_corrosion_rate_mm_per_year": 0.02768036110908368,
+        "composite_risk_score": 27.742546567353006,
+        "estimated_lifespan_years": 120.0,
+        "risk_classification": "low",
+        "recommendation_summary": "Continue baseline monitoring and annual condition assessment.",
+        "model_version": "global-calibrated-v1.1.0",
+        "asset_profile": "storage_tank_ast",
+        "region_key": "temperate_industrial",
+        "region_name": "Temperate Industrial",
+        "initial_thickness_mm": 16.0,
+        "minimum_safe_thickness_mm": 10.0,
+        "calibration_confidence": 0.8899999999999999,
+        "uncertainty_bands": {
+          "corrosion_rate_mm_per_year": {
+            "lower": 0.011325768452933298,
+            "upper": 0.01696072066725127,
+            "confidence_level": 0.9
+          },
+          "design_corrosion_rate_mm_per_year": {
+            "lower": 0.022166155671214396,
+            "upper": 0.03319456654695297,
+            "confidence_level": 0.9
+          },
+          "estimated_lifespan_years": {
+            "lower": 120.0,
+            "upper": 120.0,
+            "confidence_level": 0.9
+          },
+          "composite_risk_score": {
+            "lower": 20.77019568056886,
+            "upper": 34.71489745413715,
+            "confidence_level": 0.9
+          }
+        }
+      }
+    },
+    {
+      "scenario_key": "arid_weathering_bridge",
+      "scenario_title": "Arid desert industrial bridge beam - weathering steel",
+      "requested_region": "Arid Desert Industrial",
+      "expected_region_key": "arid_desert_industrial",
+      "resolved_region_key": "arid_desert_industrial",
+      "resolved_region_name": "Arid Desert Industrial",
+      "risk_score": 63.339,
+      "design_corrosion_rate_mm_per_year": 0.32663,
+      "estimated_lifespan_years": 21.431,
+      "risk_classification": "moderate",
+      "calibration_confidence": 0.818,
+      "passed": true,
+      "issues": [],
+      "response": {
+        "simulation_id": "137fe49f-2044-47e5-b33a-f7bf93d30ac1",
+        "generated_at": "2026-03-29T10:01:30.463668Z",
+        "environment_risk": {
+          "risk_score": 55.269711548788834,
+          "risk_band": "moderate",
+          "rationale": "Global calibrated aggressiveness model (ISO 9223-style atmospheric drivers, chloride load, pH deviation, oxygen kinetics, MIC and soil resistivity factors). Regional pack applied: Arid Desert Industrial."
+        },
+        "corrosion_rate_mm_per_year": 0.17060467212225414,
+        "design_corrosion_rate_mm_per_year": 0.3266288329856747,
+        "composite_risk_score": 63.33858920606536,
+        "estimated_lifespan_years": 21.431053517271717,
+        "risk_classification": "moderate",
+        "recommendation_summary": "Schedule near-term maintenance and monitor environmental chemistry trends.",
+        "model_version": "global-calibrated-v1.1.0",
+        "asset_profile": "bridge_beam",
+        "region_key": "arid_desert_industrial",
+        "region_name": "Arid Desert Industrial",
+        "initial_thickness_mm": 20.0,
+        "minimum_safe_thickness_mm": 13.0,
+        "calibration_confidence": 0.8180000000000001,
+        "uncertainty_bands": {
+          "corrosion_rate_mm_per_year": {
+            "lower": 0.13234559013970537,
+            "upper": 0.2088637541048029,
+            "confidence_level": 0.9
+          },
+          "design_corrosion_rate_mm_per_year": {
+            "lower": 0.2533804327888252,
+            "upper": 0.39987723318252416,
+            "confidence_level": 0.9
+          },
+          "estimated_lifespan_years": {
+            "lower": 17.505372697236922,
+            "upper": 27.626442669446412,
+            "confidence_level": 0.9
+          },
+          "composite_risk_score": {
+            "lower": 55.48963728269927,
+            "upper": 71.18754112943145,
+            "confidence_level": 0.9
+          }
+        }
+      }
+    },
+    {
+      "scenario_key": "auto_monsoon_pipeline",
+      "scenario_title": "Auto-select monsoon coastal submerged pipeline",
+      "requested_region": null,
+      "expected_region_key": "monsoon_coastal",
+      "resolved_region_key": "monsoon_coastal",
+      "resolved_region_name": "Monsoon Coastal",
+      "risk_score": 92.509,
+      "design_corrosion_rate_mm_per_year": 0.89705,
+      "estimated_lifespan_years": 6.131,
+      "risk_classification": "critical",
+      "calibration_confidence": 0.786,
+      "passed": true,
+      "issues": [],
+      "response": {
+        "simulation_id": "a24a7306-fbb9-47ab-9e14-5dde907b17b3",
+        "generated_at": "2026-03-29T10:01:30.463668Z",
+        "environment_risk": {
+          "risk_score": 82.77024,
+          "risk_band": "critical",
+          "rationale": "Global calibrated aggressiveness model (ISO 9223-style atmospheric drivers, chloride load, pH deviation, oxygen kinetics, MIC and soil resistivity factors). Regional pack applied: Monsoon Coastal."
+        },
+        "corrosion_rate_mm_per_year": 0.32361663122695483,
+        "design_corrosion_rate_mm_per_year": 0.897047561352632,
+        "composite_risk_score": 92.5085435711724,
+        "estimated_lifespan_years": 6.131224515795695,
+        "risk_classification": "critical",
+        "recommendation_summary": "Immediate shutdown inspection, cathodic protection validation, and material replacement planning.",
+        "model_version": "global-calibrated-v1.1.0",
+        "asset_profile": "pipeline_submerged",
+        "region_key": "monsoon_coastal",
+        "region_name": "Monsoon Coastal",
+        "initial_thickness_mm": 14.0,
+        "minimum_safe_thickness_mm": 8.5,
+        "calibration_confidence": 0.7862905920000001,
+        "uncertainty_bands": {
+          "corrosion_rate_mm_per_year": {
+            "lower": 0.23195796082139256,
+            "upper": 0.41527530163251714,
+            "confidence_level": 0.9
+          },
+          "design_corrosion_rate_mm_per_year": {
+            "lower": 0.6429747516444336,
+            "upper": 1.1511203710608304,
+            "confidence_level": 0.9
+          },
+          "estimated_lifespan_years": {
+            "lower": 4.77795384242171,
+            "upper": 8.553990628611047,
+            "confidence_level": 0.9
+          },
+          "composite_risk_score": {
+            "lower": 82.5954144095724,
+            "upper": 100.0,
+            "confidence_level": 0.9
+          }
+        }
+      }
+    },
+    {
+      "scenario_key": "arctic_duplex_pipeline",
+      "scenario_title": "Arctic subarctic atmospheric pipeline - duplex",
+      "requested_region": "Arctic Subarctic",
+      "expected_region_key": "arctic_subarctic",
+      "resolved_region_key": "arctic_subarctic",
+      "resolved_region_name": "Arctic Subarctic",
+      "risk_score": 24.368,
+      "design_corrosion_rate_mm_per_year": 0.01518,
+      "estimated_lifespan_years": 120.0,
+      "risk_classification": "low",
+      "calibration_confidence": 0.75,
+      "passed": true,
+      "issues": [],
+      "response": {
+        "simulation_id": "c281fc09-2c01-45ae-a56a-396f3904b965",
+        "generated_at": "2026-03-29T10:01:30.463668Z",
+        "environment_risk": {
+          "risk_score": 49.2236668205858,
+          "risk_band": "moderate",
+          "rationale": "Global calibrated aggressiveness model (ISO 9223-style atmospheric drivers, chloride load, pH deviation, oxygen kinetics, MIC and soil resistivity factors). Regional pack applied: Arctic Subarctic."
+        },
+        "corrosion_rate_mm_per_year": 0.007757243729212246,
+        "design_corrosion_rate_mm_per_year": 0.015177568956966023,
+        "composite_risk_score": 24.368225554540395,
+        "estimated_lifespan_years": 120.0,
+        "risk_classification": "low",
+        "recommendation_summary": "Continue baseline monitoring and annual condition assessment.",
+        "model_version": "global-calibrated-v1.1.0",
+        "asset_profile": "pipeline_atmospheric",
+        "region_key": "arctic_subarctic",
+        "region_name": "Arctic Subarctic",
+        "initial_thickness_mm": 12.0,
+        "minimum_safe_thickness_mm": 7.5,
+        "calibration_confidence": 0.75,
+        "uncertainty_bands": {
+          "corrosion_rate_mm_per_year": {
+            "lower": 0.005551247030936989,
+            "upper": 0.009963240427487504,
+            "confidence_level": 0.9
+          },
+          "design_corrosion_rate_mm_per_year": {
+            "lower": 0.01086138808452202,
+            "upper": 0.019493749829410028,
+            "confidence_level": 0.9
+          },
+          "estimated_lifespan_years": {
+            "lower": 120.0,
+            "upper": 120.0,
+            "confidence_level": 0.9
+          },
+          "composite_risk_score": {
+            "lower": 14.414962883563993,
+            "upper": 34.321488225516795,
+            "confidence_level": 0.9
+          }
+        }
+      }
+    },
+    {
+      "scenario_key": "auto_equatorial_urban_concrete",
+      "scenario_title": "Auto-select equatorial humid urban reinforced concrete",
+      "requested_region": null,
+      "expected_region_key": "equatorial_humid_urban",
+      "resolved_region_key": "equatorial_humid_urban",
+      "resolved_region_name": "Equatorial Humid Urban",
+      "risk_score": 71.277,
+      "design_corrosion_rate_mm_per_year": 0.3829,
+      "estimated_lifespan_years": 9.141,
+      "risk_classification": "high",
+      "calibration_confidence": 0.803,
+      "passed": true,
+      "issues": [],
+      "response": {
+        "simulation_id": "223ab14c-abe2-48db-8639-132512dedd6e",
+        "generated_at": "2026-03-29T10:01:30.463668Z",
+        "environment_risk": {
+          "risk_score": 74.26300054356362,
+          "risk_band": "high",
+          "rationale": "Global calibrated aggressiveness model (ISO 9223-style atmospheric drivers, chloride load, pH deviation, oxygen kinetics, MIC and soil resistivity factors). Regional pack applied: Equatorial Humid Urban."
+        },
+        "corrosion_rate_mm_per_year": 0.17632218405945418,
+        "design_corrosion_rate_mm_per_year": 0.38289810442573774,
+        "composite_risk_score": 71.27688723614133,
+        "estimated_lifespan_years": 9.140813076756345,
+        "risk_classification": "high",
+        "recommendation_summary": "Increase inspection cadence, apply protective coating maintenance, and evaluate inhibitor dosing.",
+        "model_version": "global-calibrated-v1.1.0",
+        "asset_profile": "reinforced_concrete",
+        "region_key": "equatorial_humid_urban",
+        "region_name": "Equatorial Humid Urban",
+        "initial_thickness_mm": 8.0,
+        "minimum_safe_thickness_mm": 4.5,
+        "calibration_confidence": 0.8027528990759419,
+        "uncertainty_bands": {
+          "corrosion_rate_mm_per_year": {
+            "lower": 0.1282206524892757,
+            "upper": 0.22442371562963265,
+            "confidence_level": 0.9
+          },
+          "design_corrosion_rate_mm_per_year": {
+            "lower": 0.2784416779332792,
+            "upper": 0.48735453091819625,
+            "confidence_level": 0.9
+          },
+          "estimated_lifespan_years": {
+            "lower": 7.181630164401784,
+            "upper": 12.569957292236538,
+            "confidence_level": 0.9
+          },
+          "composite_risk_score": {
+            "lower": 61.728720543806304,
+            "upper": 80.82505392847636,
+            "confidence_level": 0.9
+          }
+        }
+      }
+    },
+    {
+      "scenario_key": "auto_temperate_wind_duplex",
+      "scenario_title": "Auto-select temperate industrial wind turbine tower - duplex",
+      "requested_region": null,
+      "expected_region_key": "temperate_industrial",
+      "resolved_region_key": "temperate_industrial",
+      "resolved_region_name": "Temperate Industrial",
+      "risk_score": 26.409,
+      "design_corrosion_rate_mm_per_year": 0.01733,
+      "estimated_lifespan_years": 120.0,
+      "risk_classification": "low",
+      "calibration_confidence": 0.89,
+      "passed": true,
+      "issues": [],
+      "response": {
+        "simulation_id": "ca9514d3-38f9-4c98-908b-795b60e41f7e",
+        "generated_at": "2026-03-29T10:01:30.463668Z",
+        "environment_risk": {
+          "risk_score": 54.019807909531465,
+          "risk_band": "moderate",
+          "rationale": "Global calibrated aggressiveness model (ISO 9223-style atmospheric drivers, chloride load, pH deviation, oxygen kinetics, MIC and soil resistivity factors). Regional pack applied: Temperate Industrial."
+        },
+        "corrosion_rate_mm_per_year": 0.009159442156011367,
+        "design_corrosion_rate_mm_per_year": 0.0173324780066704,
+        "composite_risk_score": 26.40937435246358,
+        "estimated_lifespan_years": 120.0,
+        "risk_classification": "low",
+        "recommendation_summary": "Continue baseline monitoring and annual condition assessment.",
+        "model_version": "global-calibrated-v1.1.0",
+        "asset_profile": "wind_turbine_tower",
+        "region_key": "temperate_industrial",
+        "region_name": "Temperate Industrial",
+        "initial_thickness_mm": 22.0,
+        "minimum_safe_thickness_mm": 14.0,
+        "calibration_confidence": 0.8899999999999999,
+        "uncertainty_bands": {
+          "corrosion_rate_mm_per_year": {
+            "lower": 0.007351223130893455,
+            "upper": 0.01096766118112928,
+            "confidence_level": 0.9
+          },
+          "design_corrosion_rate_mm_per_year": {
+            "lower": 0.013910772192028612,
+            "upper": 0.020754183821312187,
+            "confidence_level": 0.9
+          },
+          "estimated_lifespan_years": {
+            "lower": 120.0,
+            "upper": 120.0,
+            "confidence_level": 0.9
+          },
+          "composite_risk_score": {
+            "lower": 19.4998197309967,
+            "upper": 33.31892897393046,
+            "confidence_level": 0.9
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,18 +1,11 @@
 import { useRouter } from "next/router";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
 import { LOCAL_SOCIAL_PENDING_KEY, type LocalSocialPending } from "../../../utils/socialAuth";
 
 export default function OAuthCallbackPage() {
   const router = useRouter();
-
-  const nextPath = useMemo(() => {
-    const value = router.query.next;
-    if (typeof value === "string" && value.trim()) {
-      return value;
-    }
-    return "/projects";
-  }, [router.query.next]);
+  const nextPath = "/";
 
   useEffect(() => {
     if (!router.isReady) {
@@ -40,8 +33,7 @@ export default function OAuthCallbackPage() {
     const refreshToken = readParam("refresh_token");
     const error = readParam("error");
     const errorDescription = readParam("error_description");
-    const nextFromUrl = readParam("next");
-    const resolvedNextPath = nextFromUrl || nextPath;
+    const resolvedNextPath = nextPath;
 
     const clearPendingLocalFallback = () => {
       if (typeof window === "undefined") {
@@ -91,7 +83,7 @@ export default function OAuthCallbackPage() {
       if (pending && pending.attempts < 1 && typeof window !== "undefined") {
         const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1").replace(/\/+$/, "");
         const callbackUrl = new URL(`${window.location.origin}/auth/oauth/callback`);
-        callbackUrl.searchParams.set("next", pending.nextPath || resolvedNextPath);
+        callbackUrl.searchParams.set("next", nextPath);
 
         const retryUrl = new URL(`${apiBase}/auth/sso/local-fallback/start`);
         retryUrl.searchParams.set("provider", pending.provider);
