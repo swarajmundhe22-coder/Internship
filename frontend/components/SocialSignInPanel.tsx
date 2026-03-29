@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-type SocialProvider = "google" | "apple";
+import { beginSocialAuth, type SocialProvider } from "../utils/socialAuth";
 
 type SocialSignInPanelProps = {
   email?: string;
@@ -22,33 +21,30 @@ export default function SocialSignInPanel({ email, redirectTo, onSuccess }: Soci
     setError(null);
     onSuccess?.(provider);
 
-    if (typeof window === "undefined") {
+    try {
+      await beginSocialAuth(provider, {
+        nextPath: redirectTo ?? "/dashboard",
+        emailHint: socialEmail,
+      });
+    } catch (socialStartError) {
+      console.error("Unable to start social sign-in", socialStartError);
+      const socialMessage =
+        socialStartError instanceof Error && socialStartError.message
+          ? socialStartError.message
+          : "Social sign-in is unavailable right now. Please use OTP sign-in or try again later.";
+      setError(socialMessage);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1";
-    const callbackUrl = new URL(`${window.location.origin}/auth/oauth/callback`);
-    if (redirectTo) {
-      callbackUrl.searchParams.set("next", redirectTo);
-    }
-
-    const authorizeUrl = new URL(`${apiBase}/auth/oauth/${provider}/start`);
-    authorizeUrl.searchParams.set("return_to", callbackUrl.toString());
-    if (socialEmail.trim()) {
-      authorizeUrl.searchParams.set("login_hint", socialEmail.trim());
-    }
-
-    window.location.assign(authorizeUrl.toString());
   }
 
   return (
-    <div className="mt-4 rounded-md border border-white/15 bg-white/5 p-3">
-      <p className="section-number">Social Sign In</p>
-      <p className="mt-1 text-xs text-white/70">Use hosted Google or Apple sign-in, then return with an authenticated session.</p>
+    <div className="mt-4 rounded-lg border border-neoviolet/25 bg-slatewash/35 p-4">
+      <p className="hud-label text-[10px]">Social Sign In</p>
+      <p className="mt-1 text-xs text-softwhite/72">Use hosted Google or Apple sign-in, then return with an authenticated session.</p>
 
-      <label className="mt-3 grid gap-1 text-sm text-white/85">
-        Work email hint (optional)
+      <label className="mt-3 grid gap-1 text-sm text-softwhite/85">
+        Email hint (optional)
         <input
           className="glass-input rounded-md p-2"
           type="email"
@@ -61,7 +57,7 @@ export default function SocialSignInPanel({ email, redirectTo, onSuccess }: Soci
       <div className="mt-3 flex flex-wrap gap-2">
         <button
           type="button"
-          className="btn-outline text-xs"
+          className="tactical-btn hud-tone-support text-xs"
           disabled={loading}
           onClick={() => void signInWith("google")}
         >
@@ -69,7 +65,7 @@ export default function SocialSignInPanel({ email, redirectTo, onSuccess }: Soci
         </button>
         <button
           type="button"
-          className="btn-outline text-xs"
+          className="tactical-btn hud-tone-primary text-xs"
           disabled={loading}
           onClick={() => void signInWith("apple")}
         >

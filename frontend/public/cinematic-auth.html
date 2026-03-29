@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The On Looker - Cinematic Authentication</title>
+  <style>
+    /* ======================================================================
+       Design Tokens
+       ====================================================================== */
+    :root {
+      --color-bg-0: #020617;
+      --color-bg-1: #081224;
+      --color-bg-2: #050b18;
+      --color-text-0: #e6edf7;
+      --color-text-1: #b4c2d9;
+      --color-text-2: #8ea0bb;
+      --color-border-soft: rgba(255, 255, 255, 0.08);
+      --color-border-strong: rgba(255, 255, 255, 0.14);
+
+      --color-primary: #4fd1ff;
+      --color-secondary: #a855f7;
+      --color-accent: #facc15;
+      --color-success: #22c55e;
+      --color-danger: #ef4444;
+
+      --shadow-panel: 0 28px 70px rgba(0, 0, 0, 0.45);
+      --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.25);
+      --shadow-glow-primary: 0 0 0 1px rgba(79, 209, 255, 0.25), 0 10px 30px rgba(79, 209, 255, 0.22);
+
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+    }
+
+    /* ======================================================================
+       Base and Utilities
+       ====================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      color: var(--color-text-0);
+      font-family: "Segoe UI", "Inter", "Roboto", "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.5;
+      background:
+        radial-gradient(1200px 720px at 14% -14%, rgba(79, 209, 255, 0.20), transparent 56%),
+        radial-gradient(900px 680px at 100% 16%, rgba(168, 85, 247, 0.18), transparent 60%),
+        linear-gradient(158deg, var(--color-bg-0) 0%, var(--color-bg-1) 45%, var(--color-bg-2) 100%);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+      opacity: 0.28;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.028) 0 1px, transparent 1px 40px),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 40px);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.18;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.1) 0.5px, transparent 0.5px);
+      background-size: 3px 3px;
+    }
+
+    .app-shell {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      isolation: isolate;
+    }
+
+    .app-container {
+      width: min(1200px, calc(100% - 3rem));
+      margin-inline: auto;
+    }
+
+    .u-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--color-primary);
+      font-weight: 700;
+    }
+
+    .u-muted {
+      color: var(--color-text-1);
+    }
+
+    a, button {
+      font: inherit;
+    }
+
+    :where(a, button, input, select):focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    /* ======================================================================
+       // Top Navigation
+       ====================================================================== */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(16px);
+      background: linear-gradient(180deg, rgba(5, 10, 20, 0.82), rgba(5, 10, 20, 0.56));
+      border-bottom: 1px solid var(--color-border-soft);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .top-nav__inner {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-block: 0.9rem;
+    }
+
+    .top-nav__brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      min-width: 220px;
+    }
+
+    .top-nav__brand-title {
+      margin: 0;
+      font-size: 1.02rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--color-text-0);
+    }
+
+    .top-nav__brand-subtitle {
+      margin: 0;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--color-primary);
+      font-weight: 700;
+    }
+
+    .top-nav__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.55rem;
+    }
+
+    .top-nav__link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--color-border-soft);
+      color: var(--color-text-1);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.74rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.015);
+      transition: transform 150ms ease, border-color 150ms ease, color 150ms ease, background-color 150ms ease;
+      white-space: nowrap;
+    }
+
+    .top-nav__link:hover {
+      transform: translateY(-1px);
+      border-color: rgba(79, 209, 255, 0.45);
+      color: var(--color-text-0);
+      background: rgba(79, 209, 255, 0.08);
+    }
+
+    .top-nav__link--ghost {
+      border-color: rgba(168, 85, 247, 0.55);
+      color: #d7c3ff;
+      background: rgba(168, 85, 247, 0.12);
+    }
+
+    .top-nav__link--ghost:hover {
+      border-color: rgba(168, 85, 247, 0.85);
+      background: rgba(168, 85, 247, 0.2);
+      color: #f0e9ff;
+    }
+
+    /* ======================================================================
+       // Main Layout
+       ====================================================================== */
+    .main-shell {
+      width: 100%;
+      padding-block: 2rem 1.25rem;
+    }
+
+    .auth-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) minmax(420px, 1.25fr);
+      gap: 1.6rem;
+      align-items: start;
+    }
+
+    /* ======================================================================
+       // Auth Scene Narrative
+       ====================================================================== */
+    .auth-scene {
+      padding: 1.4rem 1.5rem 1.3rem;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--color-border-soft);
+      background:
+        linear-gradient(120deg, rgba(79, 209, 255, 0.08), transparent 40%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      box-shadow: var(--shadow-panel);
+      position: relative;
+      min-height: 100%;
+    }
+
+    .auth-scene::after {
+      content: "";
+      position: absolute;
+      top: 1.2rem;
+      right: -0.8rem;
+      bottom: 1.2rem;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(79, 209, 255, 0.42), transparent);
+    }
+
+    .auth-scene__title {
+      margin: 0.8rem 0 0.6rem;
+      font-size: clamp(1.45rem, 2.45vw, 2.25rem);
+      line-height: 1.15;
+      letter-spacing: 0.01em;
+    }
+
+    .auth-scene__body {
+      margin: 0;
+      color: var(--color-text-1);
+      max-width: 46ch;
+    }
+
+    .status-rail {
+      margin-top: 1.3rem;
+      padding-top: 1.05rem;
+      border-top: 1px solid var(--color-border-soft);
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .status-rail__pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      width: fit-content;
+      max-width: 100%;
+      padding: 0.45rem 0.82rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--color-border-soft);
+      background: rgba(255, 255, 255, 0.02);
+      color: #d9e4f8;
+      font-size: 0.76rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status-rail__dot {
+      width: 0.53rem;
+      height: 0.53rem;
+      border-radius: 50%;
+      box-shadow: 0 0 12px currentColor;
+      flex: none;
+    }
+
+    .status-rail__dot--active {
+      color: var(--color-success);
+      background: var(--color-success);
+    }
+
+    .status-rail__dot--pending {
+      color: var(--color-accent);
+      background: var(--color-accent);
+    }
+
+    /* ======================================================================
+       Right Workbench Layout
+       ====================================================================== */
+    .auth-workbench {
+      display: grid;
+      gap: 1rem;
+    }
+
+    /* ======================================================================
+       // Registration Card
+       ====================================================================== */
+    .register-card {
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--color-border-strong);
+      background:
+        radial-gradient(700px 360px at 110% 0%, rgba(168, 85, 247, 0.16), transparent 58%),
+        linear-gradient(180deg, rgba(8, 14, 28, 0.9), rgba(7, 12, 24, 0.88));
+      box-shadow: var(--shadow-panel);
+      overflow: hidden;
+    }
+
+    .register-card__head {
+      padding: 1.2rem 1.3rem;
+      border-bottom: 1px solid var(--color-border-soft);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0.008));
+    }
+
+    .register-card__title {
+      margin: 0.3rem 0 0.28rem;
+      font-size: clamp(1.2rem, 1.6vw, 1.45rem);
+      letter-spacing: 0.015em;
+    }
+
+    .register-card__subtitle {
+      margin: 0;
+      color: var(--color-text-1);
+      font-size: 0.96rem;
+    }
+
+    .register-card__form {
+      display: grid;
+      gap: 1rem;
+      padding: 1rem 1.3rem 1.25rem;
+    }
+
+    .form-block {
+      display: grid;
+      gap: 0.85rem;
+      padding: 0.95rem;
+      border: 1px solid var(--color-border-soft);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.012);
+    }
+
+    .form-block__title {
+      margin: 0;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--color-primary);
+      font-weight: 700;
+    }
+
+    .field {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .field__label {
+      font-size: 0.79rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #cfdbef;
+      font-weight: 700;
+    }
+
+    .field__input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .field__input {
+      width: 100%;
+      min-height: 44px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border-soft);
+      background: rgba(2, 8, 20, 0.82);
+      color: var(--color-text-0);
+      padding: 0.75rem 0.82rem;
+      transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+    }
+
+    .field__input::placeholder {
+      color: #8ea3bf;
+    }
+
+    .field__input:hover {
+      border-color: rgba(79, 209, 255, 0.4);
+    }
+
+    .field__input:focus {
+      outline: none;
+      border-color: rgba(79, 209, 255, 0.8);
+      box-shadow: 0 0 0 3px rgba(79, 209, 255, 0.16);
+      background: rgba(2, 8, 20, 0.95);
+    }
+
+    .field__toggle {
+      position: absolute;
+      right: 0.48rem;
+      border: 1px solid var(--color-border-soft);
+      border-radius: 10px;
+      min-height: 30px;
+      padding: 0.25rem 0.52rem;
+      color: var(--color-text-1);
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 140ms ease, border-color 140ms ease, transform 140ms ease;
+    }
+
+    .field__toggle:hover {
+      color: var(--color-primary);
+      border-color: rgba(79, 209, 255, 0.58);
+      transform: translateY(-1px);
+    }
+
+    .field__hint {
+      margin: 0;
+      color: var(--color-text-2);
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+
+    .plasma-meter {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .plasma-meter__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .plasma-meter__label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--color-primary);
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .plasma-meter__integrity {
+      margin: 0;
+      font-size: 0.82rem;
+      color: #d2def0;
+      font-weight: 600;
+    }
+
+    .plasma-meter__track {
+      width: 100%;
+      height: 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--color-border-soft);
+      background: rgba(255, 255, 255, 0.035);
+      overflow: hidden;
+    }
+
+    .plasma-meter__fill {
+      height: 100%;
+      width: 0%;
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: inherit;
+      transition: width 230ms ease, background-color 230ms ease;
+    }
+
+    .register-card__submit {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid rgba(79, 209, 255, 0.7);
+      border-radius: 13px;
+      cursor: pointer;
+      color: #dbf5ff;
+      background: linear-gradient(180deg, rgba(79, 209, 255, 0.22), rgba(79, 209, 255, 0.12));
+      box-shadow: var(--shadow-glow-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+    }
+
+    .register-card__submit:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 0 0 1px rgba(79, 209, 255, 0.35), 0 14px 32px rgba(79, 209, 255, 0.28);
+    }
+
+    .register-card__meta {
+      margin: 0;
+      color: var(--color-text-2);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    .register-card__signin {
+      margin: 0;
+      color: var(--color-text-1);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .register-card__signin-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 700;
+      border-bottom: 1px solid transparent;
+      transition: border-color 140ms ease, color 140ms ease;
+    }
+
+    .register-card__signin-link:hover {
+      color: #bdeeff;
+      border-color: currentColor;
+    }
+
+    /* ======================================================================
+       // Access Rail
+       ====================================================================== */
+    .access-rail {
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--color-border-soft);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0.01));
+      box-shadow: var(--shadow-soft);
+      padding: 1.05rem 1.1rem;
+      display: grid;
+      gap: 0.95rem;
+    }
+
+    .access-rail__title {
+      margin: 0.2rem 0 0;
+      font-size: 1.02rem;
+      letter-spacing: 0.03em;
+    }
+
+    .access-rail__desc {
+      margin: 0;
+      color: var(--color-text-1);
+      max-width: 64ch;
+    }
+
+    .access-rail__subhead {
+      margin: 0;
+      color: var(--color-text-0);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    .access-rail__social {
+      display: flex;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+    }
+
+    .access-rail__social-btn {
+      flex: 1 1 180px;
+      min-height: 42px;
+      border-radius: 12px;
+      border: 1px solid var(--color-border-soft);
+      background: rgba(5, 11, 22, 0.86);
+      color: var(--color-text-0);
+      text-align: left;
+      padding: 0.62rem 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 140ms ease, border-color 140ms ease, background-color 140ms ease;
+    }
+
+    .access-rail__social-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .access-rail__social-btn--google {
+      border-left: 3px solid var(--color-primary);
+    }
+
+    .access-rail__social-btn--apple {
+      border-left: 3px solid var(--color-secondary);
+    }
+
+    .access-rail__scenes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+
+    .access-rail__scene-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 35px;
+      padding: 0.43rem 0.82rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--color-border-soft);
+      background: rgba(255, 255, 255, 0.015);
+      color: var(--color-text-1);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-size: 0.72rem;
+      font-weight: 700;
+      transition: border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+
+    .access-rail__scene-link:hover {
+      border-color: rgba(79, 209, 255, 0.45);
+      color: var(--color-primary);
+      transform: translateY(-1px);
+    }
+
+    /* ======================================================================
+       // Render Quality Control
+       ====================================================================== */
+    .quality-control {
+      margin-top: 1rem;
+      margin-left: auto;
+      width: min(390px, 100%);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border-soft);
+      background: rgba(255, 255, 255, 0.015);
+      box-shadow: var(--shadow-soft);
+      padding: 0.9rem 1rem;
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    .quality-control__title {
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.74rem;
+      color: var(--color-primary);
+      font-weight: 700;
+    }
+
+    .quality-control__desc {
+      margin: 0;
+      color: var(--color-text-1);
+      font-size: 0.82rem;
+    }
+
+    .quality-control__pills {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 0.48rem;
+    }
+
+    .quality-control__pill {
+      min-width: 74px;
+      min-height: 34px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--color-border-soft);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--color-text-1);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.69rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 140ms ease, border-color 140ms ease, color 140ms ease, background-color 140ms ease;
+    }
+
+    .quality-control__pill:hover {
+      transform: translateY(-1px);
+      color: var(--color-text-0);
+      border-color: rgba(79, 209, 255, 0.42);
+    }
+
+    .quality-control__pill.is-active {
+      color: #dbf6ff;
+      border-color: rgba(79, 209, 255, 0.78);
+      background: rgba(79, 209, 255, 0.14);
+      box-shadow: 0 0 0 1px rgba(79, 209, 255, 0.32) inset;
+    }
+
+    /* ======================================================================
+       Responsive
+       ====================================================================== */
+    @media (max-width: 980px) {
+      .auth-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-scene {
+        padding: 1.1rem 1.08rem;
+      }
+
+      .auth-scene::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app-container {
+        width: min(1200px, calc(100% - 1.25rem));
+      }
+
+      .top-nav__inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-nav__list {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .main-shell {
+        padding-block: 1.1rem 1.25rem;
+      }
+
+      .register-card__head,
+      .register-card__form,
+      .access-rail {
+        padding-inline: 0.9rem;
+      }
+
+      .access-rail__social {
+        flex-direction: column;
+      }
+
+      .quality-control {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .top-nav__brand-title {
+        font-size: 0.92rem;
+      }
+
+      .register-card__submit {
+        letter-spacing: 0.09em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- // Top Navigation -->
+    <header class="top-nav">
+      <div class="top-nav__inner app-container">
+        <div class="top-nav__brand" aria-label="The On Looker brand">
+          <h1 class="top-nav__brand-title">THE ON LOOKER</h1>
+          <p class="top-nav__brand-subtitle">Identity Grid</p>
+        </div>
+
+        <nav aria-label="Primary navigation">
+          <ul class="top-nav__list">
+            <li><a class="top-nav__link" href="#" aria-label="Identity">Identity</a></li>
+            <li><a class="top-nav__link" href="#" aria-label="Dashboard">Dashboard</a></li>
+            <li><a class="top-nav__link" href="#" aria-label="Simulations">Simulations</a></li>
+            <li><a class="top-nav__link" href="#" aria-label="Projects">Projects</a></li>
+            <li><a class="top-nav__link top-nav__link--ghost" href="#" aria-label="Sign In">Sign In</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- // Main Layout -->
+    <main class="main-shell app-container">
+      <div class="auth-layout">
+        <!-- // Auth Scene Narrative -->
+        <aside class="auth-scene" aria-labelledby="scene-title">
+          <p class="u-label">AUTH SCENE / REGISTER</p>
+          <h2 id="scene-title" class="auth-scene__title">Provision Your Command Identity</h2>
+          <p class="auth-scene__body">
+            Create a secure operator profile for The On Looker. This onboarding flow is OTP-verified for trusted activation,
+            designed with mission-control visual language while preserving a clear, focused user path.
+          </p>
+
+          <div class="status-rail" aria-label="Status rail">
+            <div class="status-rail__pill">
+              <span class="status-rail__dot status-rail__dot--active" aria-hidden="true"></span>
+              <span>AIL Stabilized</span>
+            </div>
+            <div class="status-rail__pill">
+              <span class="status-rail__dot status-rail__dot--active" aria-hidden="true"></span>
+              <span>OTP Channel Armed</span>
+            </div>
+            <div class="status-rail__pill">
+              <span class="status-rail__dot status-rail__dot--pending" aria-hidden="true"></span>
+              <span>Mission Profile Pending</span>
+            </div>
+          </div>
+        </aside>
+
+        <section class="auth-workbench" aria-label="Authentication workbench">
+          <!-- // Registration Card -->
+          <article class="register-card" aria-labelledby="register-card-title">
+            <header class="register-card__head">
+              <p class="u-label">Registration Stage</p>
+              <h3 id="register-card-title" class="register-card__title">Profile Provision with OTP Activation</h3>
+              <p class="register-card__subtitle">Structured identity setup for secure mission access.</p>
+            </header>
+
+            <form class="register-card__form" action="#" method="post" novalidate>
+              <section class="form-block" aria-label="Profile inputs">
+                <p class="form-block__title">Profile Inputs</p>
+
+                <div class="field">
+                  <label class="field__label" for="workEmail">Work Email</label>
+                  <input
+                    class="field__input"
+                    id="workEmail"
+                    name="workEmail"
+                    type="email"
+                    autocomplete="email"
+                    placeholder="name@company.com"
+                    required
+                  />
+                </div>
+
+                <div class="field">
+                  <label class="field__label" for="password">Password (8+ characters)</label>
+                  <div class="field__input-wrap">
+                    <input
+                      class="field__input"
+                      id="password"
+                      name="password"
+                      type="password"
+                      autocomplete="new-password"
+                      placeholder="Enter secure password"
+                      minlength="8"
+                      required
+                    />
+                    <button
+                      class="field__toggle"
+                      id="passwordToggle"
+                      type="button"
+                      aria-label="Toggle password visibility"
+                      aria-pressed="false"
+                    >
+                      Show
+                    </button>
+                  </div>
+                  <p class="field__hint">Use at least 8 characters with a mix of letters, numbers, and symbols.</p>
+                </div>
+              </section>
+
+              <section class="form-block" aria-label="Credential plasma strength">
+                <div class="plasma-meter">
+                  <div class="plasma-meter__head">
+                    <p class="plasma-meter__label">Credential Plasma</p>
+                    <p class="plasma-meter__integrity" id="integrityText" aria-live="polite">Integrity: 0%</p>
+                  </div>
+
+                  <div
+                    class="plasma-meter__track"
+                    id="integrityMeter"
+                    role="progressbar"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow="0"
+                    aria-label="Password integrity"
+                  >
+                    <div class="plasma-meter__fill" id="integrityFill"></div>
+                  </div>
+                </div>
+              </section>
+
+              <button class="register-card__submit" type="submit">Send Registration OTP</button>
+              <p class="register-card__meta">You will receive a 6-digit code via email to complete activation.</p>
+
+              <p class="register-card__signin">
+                Already registered?
+                <a class="register-card__signin-link" href="#" aria-label="Sign in">Sign in</a>
+              </p>
+            </form>
+          </article>
+
+          <!-- // Access Rail -->
+          <article class="access-rail" aria-labelledby="access-rail-title">
+            <p class="u-label">Access Rail</p>
+            <h3 id="access-rail-title" class="access-rail__title">Controlled Alternate Entry</h3>
+            <p class="access-rail__desc">
+              Use social entry or explore adjacent narrative scenes without disrupting the registration path.
+            </p>
+
+            <section aria-label="Social sign in options">
+              <p class="access-rail__subhead">Social Sign In</p>
+              <div class="access-rail__social">
+                <button class="access-rail__social-btn access-rail__social-btn--google" type="button">Continue with Google</button>
+                <button class="access-rail__social-btn access-rail__social-btn--apple" type="button">Continue with Apple ID</button>
+              </div>
+            </section>
+
+            <section aria-label="Narrative scenes">
+              <p class="access-rail__subhead">Narrative Scenes</p>
+              <div class="access-rail__scenes">
+                <a class="access-rail__scene-link" href="#">About Scene</a>
+                <a class="access-rail__scene-link" href="#">Expertise Scene</a>
+              </div>
+            </section>
+          </article>
+        </section>
+      </div>
+
+      <!-- // Render Quality Control -->
+      <aside class="quality-control" aria-label="Render quality control">
+        <p class="quality-control__title">Render Quality</p>
+        <p class="quality-control__desc">Scale post-processing for smooth performance.</p>
+        <div class="quality-control__pills" role="group" aria-label="Render quality options">
+          <button class="quality-control__pill is-active" type="button" aria-pressed="true">High</button>
+          <button class="quality-control__pill" type="button" aria-pressed="false">Medium</button>
+          <button class="quality-control__pill" type="button" aria-pressed="false">Low</button>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    // Interactions (JS)
+    (function () {
+      var passwordInput = document.getElementById("password");
+      var passwordToggle = document.getElementById("passwordToggle");
+      var integrityText = document.getElementById("integrityText");
+      var integrityFill = document.getElementById("integrityFill");
+      var integrityMeter = document.getElementById("integrityMeter");
+      var qualityPills = document.querySelectorAll(".quality-control__pill");
+
+      function evaluatePasswordStrength(password) {
+        if (!password) {
+          return {
+            percentage: 0,
+            color: "rgba(255,255,255,0.16)",
+            label: "Integrity: 0%"
+          };
+        }
+
+        var categories = 0;
+        if (/[a-z]/.test(password)) categories += 1;
+        if (/[A-Z]/.test(password)) categories += 1;
+        if (/[0-9]/.test(password)) categories += 1;
+        if (/[^A-Za-z0-9]/.test(password)) categories += 1;
+
+        var length = password.length;
+
+        if (length >= 12 && categories >= 4) {
+          return {
+            percentage: 100,
+            color: "#22c55e",
+            label: "Integrity: 100% - Mission-Ready"
+          };
+        }
+
+        if (length >= 10 && categories >= 3) {
+          return {
+            percentage: 75,
+            color: "#4FD1FF",
+            label: "Integrity: 75% - Stable"
+          };
+        }
+
+        if (length >= 8 && categories >= 2) {
+          return {
+            percentage: 50,
+            color: "#FACC15",
+            label: "Integrity: 50% - Forming"
+          };
+        }
+
+        return {
+          percentage: 25,
+          color: "#ef4444",
+          label: "Integrity: 25% - Unstable"
+        };
+      }
+
+      function updateStrengthUI() {
+        if (!passwordInput || !integrityText || !integrityFill || !integrityMeter) {
+          return;
+        }
+
+        var result = evaluatePasswordStrength(passwordInput.value.trim());
+        integrityText.textContent = result.label;
+        integrityFill.style.width = result.percentage + "%";
+        integrityFill.style.backgroundColor = result.color;
+        integrityMeter.setAttribute("aria-valuenow", String(result.percentage));
+      }
+
+      if (passwordInput) {
+        passwordInput.addEventListener("input", updateStrengthUI);
+        updateStrengthUI();
+      }
+
+      if (passwordInput && passwordToggle) {
+        passwordToggle.addEventListener("click", function () {
+          var reveal = passwordInput.type === "password";
+          passwordInput.type = reveal ? "text" : "password";
+          passwordToggle.textContent = reveal ? "Hide" : "Show";
+          passwordToggle.setAttribute("aria-pressed", reveal ? "true" : "false");
+        });
+      }
+
+      qualityPills.forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          qualityPills.forEach(function (btn) {
+            btn.classList.remove("is-active");
+            btn.setAttribute("aria-pressed", "false");
+          });
+
+          pill.classList.add("is-active");
+          pill.setAttribute("aria-pressed", "true");
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

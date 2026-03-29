@@ -11,8 +11,12 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [name, setName] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setHasToken(Boolean(window.localStorage.getItem("onlooker_token")));
+    }
     void loadProjects();
   }, []);
 
@@ -68,7 +72,13 @@ export default function ProjectsPage() {
         <ChapterHeader eyebrow="Workspace" title="Your Projects" />
         {projects.length === 0 ? (
           <p className="mt-3 text-sm text-softwhite/70">
-            No projects available. <Link className="text-lagoon underline" href="/auth/login">Sign in</Link> or create one above.
+            {hasToken ? (
+              "No projects yet. Create one above to get started."
+            ) : (
+              <>
+                No projects available. <Link className="text-lagoon underline" href="/auth/login">Sign in</Link> or create one above.
+              </>
+            )}
           </p>
         ) : (
           <ul className="mt-3 grid gap-3">

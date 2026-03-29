@@ -6,10 +6,16 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["Inter", "IBM Plex Sans", "system-ui", "sans-serif"],
+        display: ["Space Grotesk", "Inter", "sans-serif"],
         hud: ["Orbitron", "Rajdhani", "Inter", "sans-serif"],
         mono: ["IBM Plex Mono", "ui-monospace", "SFMono-Regular", "monospace"]
       },
       colors: {
+        bg: "#050505",
+        fg: "#f0ece4",
+        accent: "#c9ff57",
+        panel: "rgba(255, 255, 255, 0.04)",
+        border: "rgba(255, 255, 255, 0.08)",
         graphite: "#1A1D22",
         slatewash: "#111723",
         signal: "#FFB84D",
