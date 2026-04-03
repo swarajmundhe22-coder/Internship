@@ -1,7 +1,6 @@
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy, limit, getDocFromServer, Timestamp } from 'firebase/firestore';
-import rawFirebaseConfig from './firebase-applet-config.json';
 
 type FirebaseAppletConfig = {
   apiKey?: string;
@@ -14,7 +13,16 @@ type FirebaseAppletConfig = {
   firestoreDatabaseId?: string;
 };
 
-const firebaseConfig = rawFirebaseConfig as FirebaseAppletConfig;
+const firebaseConfig: FirebaseAppletConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+  firestoreDatabaseId: process.env.NEXT_PUBLIC_FIREBASE_FIRESTORE_DATABASE_ID,
+};
 
 // Initialize Firebase SDK
 const isPlaceholder =
@@ -25,7 +33,7 @@ const isPlaceholder =
 
 if (isPlaceholder) {
   console.warn(
-    'Firebase is using placeholder configuration. Update components/outsource/local-simulated/firebase-applet-config.json with your project credentials.'
+    'Firebase is using placeholder configuration. Set NEXT_PUBLIC_FIREBASE_* variables in your environment.'
   );
 }
 

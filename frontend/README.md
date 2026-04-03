@@ -43,7 +43,7 @@ npm run dev
 ## Notes
 
 - Configure backend endpoint via `NEXT_PUBLIC_API_BASE_URL`.
-- Configure Firebase project credentials in `components/outsource/local-simulated/firebase-applet-config.json`.
+- Configure Firebase project credentials via `NEXT_PUBLIC_FIREBASE_*` variables in `.env.local`.
 - Three.js panel currently renders a corrosion-intensity mapped structure placeholder.
 
 ## Social Login Setup
