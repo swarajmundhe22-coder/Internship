@@ -276,7 +276,7 @@ const Act1GlobalDashboard = ({ metrics }: Act1GlobalDashboardProps) => {
         const data = await res.json();
         let heights = [];
         if (data && data.features) {
-          heights = data.features.slice(0, 20).map((f) => Math.max(2, (f.properties?.mag || 1) * 5));
+          heights = data.features.slice(0, 20).map((f: any) => Math.max(2, (f.properties?.mag || 1) * 5));
         }
         if (heights.length < 20) {
           while (heights.length < 20) heights.push(2);
