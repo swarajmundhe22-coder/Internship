@@ -1,14 +1,22 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { LOCAL_SOCIAL_PENDING_KEY, type LocalSocialPending } from "../../../utils/socialAuth";
 
 export default function OAuthCallbackPage() {
   const router = useRouter();
-  const nextPath = "/";
+  const handledRef = useRef(false);
+
+  const nextPath = useMemo(() => {
+    const value = router.query.next;
+    if (typeof value === "string" && value.trim()) {
+      return value;
+    }
+    return "/";
+  }, [router.query.next]);
 
   useEffect(() => {
-    if (!router.isReady) {
+    if (!router.isReady || handledRef.current) {
       return;
     }
 
@@ -32,8 +40,10 @@ export default function OAuthCallbackPage() {
     const accessToken = readParam("access_token");
     const refreshToken = readParam("refresh_token");
     const error = readParam("error");
+    const oauthErrorCode = readParam("oauth_error_code");
     const errorDescription = readParam("error_description");
-    const resolvedNextPath = nextPath;
+    const nextFromUrl = readParam("next");
+    const resolvedNextPath = nextFromUrl || nextPath;
 
     const clearPendingLocalFallback = () => {
       if (typeof window === "undefined") {
@@ -73,6 +83,15 @@ export default function OAuthCallbackPage() {
     }
 
     if (accessToken) {
+      handledRef.current = true;
+      clearPendingLocalFallback();
+      void router.replace(resolvedNextPath);
+      return;
+    }
+
+    // Guard against duplicate effect runs while route transition is in progress.
+    if (typeof window !== "undefined" && window.localStorage.getItem("onlooker_token") && !error && !errorDescription) {
+      handledRef.current = true;
       clearPendingLocalFallback();
       void router.replace(resolvedNextPath);
       return;
@@ -83,7 +102,7 @@ export default function OAuthCallbackPage() {
       if (pending && pending.attempts < 1 && typeof window !== "undefined") {
         const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1").replace(/\/+$/, "");
         const callbackUrl = new URL(`${window.location.origin}/auth/oauth/callback`);
-        callbackUrl.searchParams.set("next", nextPath);
+        callbackUrl.searchParams.set("next", pending.nextPath || resolvedNextPath);
 
         const retryUrl = new URL(`${apiBase}/auth/sso/local-fallback/start`);
         retryUrl.searchParams.set("provider", pending.provider);
@@ -95,6 +114,7 @@ export default function OAuthCallbackPage() {
           LOCAL_SOCIAL_PENDING_KEY,
           JSON.stringify({ ...pending, attempts: pending.attempts + 1 })
         );
+        handledRef.current = true;
         window.location.assign(retryUrl.toString());
         return;
       }
@@ -103,8 +123,15 @@ export default function OAuthCallbackPage() {
     clearPendingLocalFallback();
 
     const failureMessage = errorDescription || error || "OAuth callback missing token";
-    void router.replace(`/auth/login?oauth_error=${encodeURIComponent(failureMessage)}`);
-  }, [nextPath, router, router.isReady, router.query]);
+    const loginParams = new URLSearchParams();
+    loginParams.set("oauth_error", failureMessage);
+    if (oauthErrorCode) {
+      loginParams.set("oauth_error_code", oauthErrorCode);
+    }
+
+    handledRef.current = true;
+    void router.replace(`/auth/login?${loginParams.toString()}`);
+  }, [nextPath, router, router.isReady]);
 
   return (
     <div className="outsource-home min-h-screen flex items-center justify-center" style={{ background: "#050508", color: "#f0f0f5" }}>

@@ -1,0 +1,24 @@
+{
+  "generated_at_utc": "2026-04-04T05:45:04.543580+00:00",
+  "window_hours": 24,
+  "window_start_utc": "2026-04-03T05:45:04.543580+00:00",
+  "window_end_utc": "2026-04-04T05:45:04.543580+00:00",
+  "events_considered": [
+    "auth.login",
+    "auth.login.otp.verify",
+    "auth.sso.exchange",
+    "auth.oauth.callback"
+  ],
+  "attempt_count": 5,
+  "success_count": 5,
+  "failure_count": 0,
+  "success_rate_pct": 100.0,
+  "by_event": {
+    "auth.sso.exchange": {
+      "success": 5,
+      "failure": 0
+    }
+  },
+  "target_success_rate_pct": 99.9,
+  "passed": true
+}

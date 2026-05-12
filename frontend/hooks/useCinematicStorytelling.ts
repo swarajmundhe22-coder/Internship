@@ -7,12 +7,8 @@ function parseNumber(value: string | undefined, fallback: number): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-export function useCinematicStorytelling(pathname: string, enabled = true): void {
+export function useCinematicStorytelling(pathname: string): void {
   useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
       return;
     }
@@ -21,14 +17,14 @@ export function useCinematicStorytelling(pathname: string, enabled = true): void
       return;
     }
 
-    const routeEnabled =
+    const enabled =
       pathname === "/" ||
       pathname === "/dashboard" ||
       pathname === "/simulations" ||
       pathname === "/reports" ||
       pathname === "/expertise" ||
       pathname === "/credibility";
-    if (!routeEnabled) {
+    if (!enabled) {
       return;
     }
 
@@ -204,5 +200,5 @@ export function useCinematicStorytelling(pathname: string, enabled = true): void
       triggers.forEach((trigger) => trigger.kill());
       animations.forEach((animation) => animation.kill());
     };
-  }, [enabled, pathname]);
+  }, [pathname]);
 }

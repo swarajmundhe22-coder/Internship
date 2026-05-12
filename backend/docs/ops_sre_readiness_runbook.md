@@ -11,11 +11,33 @@ Primary service: `POST /api/v1/simulation/simulate`
 - Latency SLO p99: <= 2000 ms.
 - Error budget SLO: <= 2.0% 5xx error rate over rolling 30 days.
 
+Authentication service objective:
+
+- Login success SLO: >= 99.9% over rolling 30 days for auth login events (`auth.login`, `auth.login.otp.verify`, `auth.sso.exchange`, `auth.oauth.callback`).
+
 Configuration source:
 
 - `SIMULATION_SLO_P95_MS`
 - `SIMULATION_SLO_P99_MS`
 - `SIMULATION_ERROR_BUDGET_RATE`
+
+Authentication SLO monitoring command:
+
+```bash
+python scripts/auth_login_slo_monitor.py --window-hours 24 --target-success-rate-pct 99.9 --strict
+```
+
+Runtime latency telemetry monitoring command:
+
+```bash
+python scripts/monitor_p99_latency.py --base-url http://127.0.0.1:8000/api/v1 --p99-budget-ms 2000 --error-budget-rate 0.02 --strict
+```
+
+Live telemetry API:
+
+- `GET /api/v1/ops/performance`
+  - Optional filters: `path`, `include_paths`, `top`
+  - Access: `admin`, `engineer`
 
 ## Alerting Policy
 
@@ -40,6 +62,7 @@ Minimum production dashboard panels:
 
 - Request throughput by endpoint (`/health`, `/simulation/simulate`, `/reports/*`).
 - p50, p95, p99 latency for `simulation/simulate`.
+- Runtime `/ops/performance` check statuses and alert flags.
 - 4xx and 5xx rate with top error families.
 - Database connection pool utilization and query duration percentiles.
 - Queue lag and ingest backlog (if Kafka/MQTT enabled).

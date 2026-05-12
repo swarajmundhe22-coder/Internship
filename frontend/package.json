@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "lint": "next lint --no-cache",
+    "lint:ci": "next lint --no-cache --quiet",
+    "test": "jest --ci --runInBand --seed=1337 --showSeed",
+    "test:watch": "jest --watch --seed=1337",
+    "test:ci": "jest --ci --runInBand --seed=1337 --showSeed",
+    "ci:verify": "npm run lint:ci && npm run test:ci && npm run build"
   },
   "dependencies": {
     "@babylonjs/core": "^8.55.2",
@@ -33,7 +36,8 @@
     "react-map-gl": "^7.1.9",
     "recharts": "^3.8.1",
     "sonner": "^2.0.7",
-    "three": "0.172.0"
+    "three": "0.172.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
@@ -45,6 +49,9 @@
     "@types/react-dom": "18.3.7",
     "@types/three": "^0.183.1",
     "autoprefixer": "10.4.21",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.35",
+    "eslint-plugin-jest": "^28.11.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",

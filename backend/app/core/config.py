@@ -1,4 +1,5 @@
 from functools import lru_cache
+import os
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -15,11 +16,32 @@ class Settings(BaseSettings):
     database_url: str = Field(
         default="postgresql+asyncpg://onlooker:onlooker@localhost:5432/onlooker"
     )
+    db_pool_size: int = Field(default=max(4, (os.cpu_count() or 2) * 2), ge=1)
+    db_pool_max_overflow: int = Field(default=max(2, os.cpu_count() or 2), ge=0)
+    db_pool_timeout_seconds: int = Field(default=5, ge=1)
+    db_pool_max_lifetime_seconds: int = Field(default=30, ge=1)
+    db_pool_leak_detection_threshold_seconds: int = Field(default=5, ge=1)
+
+    redis_url: str | None = Field(default=None)
+    redis_readthrough_hard_ttl_seconds: int = Field(default=30, ge=1)
+    redis_readthrough_refresh_ttl_ms: int = Field(default=10, ge=1)
+    redis_target_hit_rate: float = Field(default=0.95, ge=0, le=1)
+
+    audit_async_enabled: bool = Field(default=True)
+    audit_batch_queue_size: int = Field(default=10000, ge=100)
+    kafka_async_batching_enabled: bool = Field(default=False)
+    kafka_batch_size_bytes: int = Field(default=65536, ge=1024)
+    kafka_linger_ms: int = Field(default=5, ge=0)
+
     jwt_secret_key: str = Field(default="change-me-in-production")
     jwt_algorithm: str = Field(default="HS256")
     jwt_expire_minutes: int = Field(default=60)
     jwt_refresh_expire_minutes: int = Field(default=60 * 24 * 14)
     jwt_issuer: str = Field(default="the-on-looker")
+    auth_session_active_cache_ttl_seconds: float = Field(default=5.0, ge=0)
+    auth_session_active_cache_max_entries: int = Field(default=10000, ge=100)
+    auth_login_verify_cache_ttl_seconds: float = Field(default=15.0, ge=0)
+    auth_login_verify_cache_max_entries: int = Field(default=20000, ge=100)
     registration_otp_expire_minutes: int = Field(default=10)
     registration_otp_max_attempts: int = Field(default=5)
     login_otp_expire_minutes: int = Field(default=5)
@@ -51,6 +73,30 @@ class Settings(BaseSettings):
     simulation_slo_p95_ms: int = Field(default=1200, ge=100)
     simulation_slo_p99_ms: int = Field(default=2000, ge=100)
     simulation_error_budget_rate: float = Field(default=0.02, ge=0, le=1)
+    simulation_slo_low_load_p99_ms: int = Field(default=100, ge=1)
+    simulation_slo_medium_load_p99_ms: int = Field(default=150, ge=1)
+    simulation_slo_high_load_p99_ms: int = Field(default=200, ge=1)
+    simulation_slo_spike_ceiling_ms: int = Field(default=250, ge=1)
+    simulation_slo_normal_load_p99_ms: int = Field(default=75, ge=1)
+    simulation_slo_sustained_80_user_p99_ms: int = Field(default=100, ge=1)
+    simulation_slo_sustained_80_user_error_rate: float = Field(default=0.0, ge=0, le=1)
+    performance_window_seconds: int = Field(default=1800, ge=60)
+    performance_max_samples: int = Field(default=50000, ge=1000)
+    performance_min_samples_for_alerts: int = Field(default=50, ge=1)
+
+    resilience_enabled: bool = Field(default=True)
+    resilience_max_inflight_requests: int = Field(default=4096, ge=10)
+    resilience_retry_after_seconds: int = Field(default=2, ge=1)
+    resilience_protected_paths: str = Field(default="/api/v1/simulation/simulate,/api/v1/auth/login")
+
+    circuit_breaker_window_seconds: int = Field(default=30, ge=5)
+    circuit_breaker_min_requests: int = Field(default=120, ge=5)
+    circuit_breaker_failure_rate_threshold: float = Field(default=0.50, ge=0.01, le=1.0)
+    circuit_breaker_open_seconds: int = Field(default=15, ge=5)
+    circuit_breaker_half_open_max_requests: int = Field(default=20, ge=1)
+    circuit_breaker_latency_failure_threshold_ms: int = Field(default=1000, ge=1)
+
+    prometheus_metrics_enabled: bool = Field(default=True)
 
     mqtt_broker_url: str | None = Field(default=None)
     mqtt_topic: str | None = Field(default=None)
@@ -96,7 +142,10 @@ class Settings(BaseSettings):
     oauth_apple_authorize_url: str = Field(default="https://appleid.apple.com/auth/authorize")
     oauth_apple_token_url: str = Field(default="https://appleid.apple.com/auth/token")
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_file=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env"),
+        env_file_encoding="utf-8"
+    )
 
 
 @lru_cache

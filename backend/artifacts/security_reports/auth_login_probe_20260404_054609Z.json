@@ -1,0 +1,25 @@
+{
+  "generated_at_utc": "2026-04-04T05:46:09.033233+00:00",
+  "base_url": "http://127.0.0.1:8000/api/v1",
+  "probe_user_email": "oauth-probe-d2e194c0adc742d4a187d4e4aca67403@example.com",
+  "attempts": 10,
+  "success_count": 10,
+  "error_count": 0,
+  "availability_pct": 100.0,
+  "error_rate_pct": 0.0,
+  "latency_ms": {
+    "avg": 37.14365002233535,
+    "p50": 36.740850016940385,
+    "p95": 39.82860001269728,
+    "max": 39.82860001269728
+  },
+  "refresh_flow": {
+    "valid_refresh_passed": true,
+    "invalid_refresh_status": 401
+  },
+  "thresholds": {
+    "login_availability_pct_min": 99.9,
+    "login_error_rate_pct_max": 0.1,
+    "login_latency_p95_ms_max": 500.0
+  }
+}

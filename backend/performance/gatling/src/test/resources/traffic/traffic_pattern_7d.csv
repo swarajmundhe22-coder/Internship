@@ -1,0 +1,5 @@
+scenario,weight
+simulate,0.60
+auth_login,0.15
+ops_performance,0.10
+health,0.15

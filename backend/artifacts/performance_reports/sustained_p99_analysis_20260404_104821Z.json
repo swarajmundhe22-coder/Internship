@@ -1,0 +1,395 @@
+{
+  "generated_at_utc": "2026-04-04T10:48:21.700710+00:00",
+  "base_url": "http://127.0.0.1:8000/api/v1",
+  "baseline_qps": 5,
+  "duration_seconds": 30,
+  "chaos_fault_rate": 0.01,
+  "spike_ceiling_ms": 250,
+  "tiers": [
+    {
+      "name": "low",
+      "multiplier": 1,
+      "target_qps": 5,
+      "duration_seconds": 30,
+      "endpoint_metrics": {
+        "simulate_post": {
+          "requests": 81,
+          "errors_5xx": 0,
+          "error_rate_5xx": 0.0,
+          "latency_ms": {
+            "p50": 70.15769998542964,
+            "p95": 139.42449999740347,
+            "p99": 223.055700014811,
+            "max": 223.055700014811,
+            "jitter_stddev": 35.85499764137054
+          },
+          "spike_count_over_ceiling": 0,
+          "sla_p99_ms": 100,
+          "sla_p99_pass": false,
+          "spike_pass": true
+        },
+        "ops_performance_get": {
+          "requests": 17,
+          "errors_5xx": 0,
+          "error_rate_5xx": 0.0,
+          "latency_ms": {
+            "p50": 29.865600052289665,
+            "p95": 61.98589998530224,
+            "p99": 61.98589998530224,
+            "max": 61.98589998530224,
+            "jitter_stddev": 11.385487722003854
+          },
+          "spike_count_over_ceiling": 0,
+          "sla_p99_ms": 100,
+          "sla_p99_pass": true,
+          "spike_pass": true
+        },
+        "auth_login_post": {
+          "requests": 29,
+          "errors_5xx": 0,
+          "error_rate_5xx": 0.0,
+          "latency_ms": {
+            "p50": 172.19159996602684,
+            "p95": 309.6566000021994,
+            "p99": 359.6372999600135,
+            "max": 359.6372999600135,
+            "jitter_stddev": 63.49690204533581
+          },
+          "spike_count_over_ceiling": 3,
+          "sla_p99_ms": 100,
+          "sla_p99_pass": false,
+          "spike_pass": false
+        },
+        "health_get": {
+          "requests": 23,
+          "errors_5xx": 0,
+          "error_rate_5xx": 0.0,
+          "latency_ms": {
+            "p50": 12.207799998577684,
+            "p95": 18.657199980225414,
+            "p99": 19.011299998965114,
+            "max": 19.011299998965114,
+            "jitter_stddev": 3.8214246961635028
+          },
+          "spike_count_over_ceiling": 0,
+          "sla_p99_ms": 100,
+          "sla_p99_pass": true,
+          "spike_pass": true
+        }
+      },
+      "tier_pass": false
+    },
+    {
+      "name": "medium",
+      "multiplier": 3,
+      "target_qps": 15,
+      "duration_seconds": 30,
+      "endpoint_metrics": {
+        "ops_performance_get": {
+          "requests": 57,
+          "errors_5xx": 0,
+          "error_rate_5xx": 0.0,
+          "latency_ms": {
+            "p50": 4815.75549999252,
+            "p95": 20402.43780001765,
+            "p99": 23761.52759999968,
+            "max": 23761.52759999968,
+            "jitter_stddev": 6098.42646583871
+          },
+          "spike_count_over_ceiling": 53,
+          "sla_p99_ms": 150,
+          "sla_p99_pass": false,
+          "spike_pass": false
+        },
+        "auth_login_post": {
+          "requests": 58,
+          "errors_5xx": 0,
+          "error_rate_5xx": 0.0,
+          "latency_ms": {
+            "p50": 5641.517100040801,
+            "p95": 18957.78410002822,
+            "p99": 19385.832600004505,
+            "max": 19385.832600004505,
+            "jitter_stddev": 4473.005809475036
+          },
+          "spike_count_over_ceiling": 58,
+          "sla_p99_ms": 150,
+          "sla_p99_pass": false,
+          "spike_pass": false
+        },
+        "health_get": {
+          "requests": 59,
+          "errors_5xx": 0,
+          "error_rate_5xx": 0.0,
+          "latency_ms": {
+            "p50": 36.34390002116561,
+            "p95": 1523.0446999776177,
+            "p99": 1577.0579999662004,
+            "max": 1577.0579999662004,
+            "jitter_stddev": 492.55722399998183
+          },
+          "spike_count_over_ceiling": 10,
+          "sla_p99_ms": 150,
+          "sla_p99_pass": false,
+          "spike_pass": false
+        },
+        "simulate_post": {
+          "requests": 276,
+          "errors_5xx": 0,
+          "error_rate_5xx": 0.0,
+          "latency_ms": {
+            "p50": 5857.148400042206,
+            "p95": 18515.055499970913,
+            "p99": 25249.16680000024,
+            "max": 26532.469900033902,
+            "jitter_stddev": 5464.758793630378
+          },
+          "spike_count_over_ceiling": 272,
+          "sla_p99_ms": 150,
+          "sla_p99_pass": false,
+          "spike_pass": false
+        }
+      },
+      "tier_pass": false
+    },
+    {
+      "name": "high",
+      "multiplier": 5,
+      "target_qps": 25,
+      "duration_seconds": 30,
+      "endpoint_metrics": {
+        "auth_login_post": {
+          "requests": 120,
+          "errors_5xx": 0,
+          "error_rate_5xx": 0.0,
+          "latency_ms": {
+            "p50": 86.2358000013046,
+            "p95": 1285.5139000457712,
+            "p99": 3248.036000004504,
+            "max": 3752.4022000143304,
+            "jitter_stddev": 602.2736463292132
+          },
+          "spike_count_over_ceiling": 21,
+          "sla_p99_ms": 200,
+          "sla_p99_pass": false,
+          "spike_pass": false
+        },
+        "simulate_post": {
+          "requests": 429,
+          "errors_5xx": 0,
+          "error_rate_5xx": 0.0,
+          "latency_ms": {
+            "p50": 33.91940001165494,
+            "p95": 476.46510001504794,
+            "p99": 1260.8977999771014,
+            "max": 3346.382800024003,
+            "jitter_stddev": 308.7367768591795
+          },
+          "spike_count_over_ceiling": 50,
+          "sla_p99_ms": 200,
+          "sla_p99_pass": false,
+          "spike_pass": false
+        },
+        "ops_performance_get": {
+          "requests": 75,
+          "errors_5xx": 0,
+          "error_rate_5xx": 0.0,
+          "latency_ms": {
+            "p50": 17.46080000884831,
+            "p95": 214.4055999815464,
+            "p99": 282.7572000096552,
+            "max": 282.7572000096552,
+            "jitter_stddev": 56.023533905474125
+          },
+          "spike_count_over_ceiling": 1,
+          "sla_p99_ms": 200,
+          "sla_p99_pass": false,
+          "spike_pass": false
+        },
+        "health_get": {
+          "requests": 126,
+          "errors_5xx": 0,
+          "error_rate_5xx": 0.0,
+          "latency_ms": {
+            "p50": 5.527300003450364,
+            "p95": 31.337000022176653,
+            "p99": 67.71570001728833,
+            "max": 100.60489998431876,
+            "jitter_stddev": 12.319125283584887
+          },
+          "spike_count_over_ceiling": 0,
+          "sla_p99_ms": 200,
+          "sla_p99_pass": true,
+          "spike_pass": true
+        }
+      },
+      "tier_pass": false
+    }
+  ],
+  "event_loop": {
+    "lag_ms_p95": 3367.277380253654,
+    "lag_ms_p99": 3903.9651752100326,
+    "lag_ms_max": 4067.4389758496545
+  },
+  "system_stats": {
+    "cpu_p95": 0.0,
+    "rss_mb_p95": 0.0,
+    "disk_busy_p95": 0.0
+  },
+  "gc_delta": {
+    "before": [
+      {
+        "collections": 66,
+        "collected": 424,
+        "uncollectable": 0
+      },
+      {
+        "collections": 6,
+        "collected": 5,
+        "uncollectable": 0
+      },
+      {
+        "collections": 0,
+        "collected": 0,
+        "uncollectable": 0
+      }
+    ],
+    "after": [
+      {
+        "collections": 160,
+        "collected": 47001,
+        "uncollectable": 0
+      },
+      {
+        "collections": 14,
+        "collected": 5037,
+        "uncollectable": 0
+      },
+      {
+        "collections": 1,
+        "collected": 7768,
+        "uncollectable": 0
+      }
+    ]
+  },
+  "ops_snapshot": {
+    "generated_at_utc": "2026-04-04T10:48:21.689942Z",
+    "window_seconds": 1800,
+    "window_start_utc": "2026-04-04T10:18:21.688387Z",
+    "window_end_utc": "2026-04-04T10:48:21.688387Z",
+    "path_filter": null,
+    "request_count": 2704,
+    "success_count": 2703,
+    "server_error_count": 1,
+    "error_rate_5xx": 0.0003698224852071006,
+    "latency_ms": {
+      "p50": 86.19010000256822,
+      "p95": 12436.037499981467,
+      "p99": 20493.490700027905,
+      "avg": 2562.0492533655565,
+      "max": 30683.32890002057
+    },
+    "budgets": {
+      "p95_latency_ms": 1200,
+      "p99_latency_ms": 2000,
+      "error_rate": 0.02
+    },
+    "checks": {
+      "p95_latency_budget": false,
+      "p99_latency_budget": false,
+      "error_budget": true
+    },
+    "alerts": {
+      "critical_api_5xx_spike": false,
+      "warning_latency_p95": true,
+      "critical_latency_p99": true,
+      "warning_error_budget_burn": false,
+      "error_budget_burn_rate": 0.01849112426035503
+    },
+    "top_slowest_paths": [
+      {
+        "endpoint": "POST /api/v1/auth/login",
+        "request_count": 389,
+        "error_rate_5xx": 0.002570694087403599,
+        "p95_latency_ms": 14002.704899990931,
+        "p99_latency_ms": 27972.724999999627,
+        "avg_latency_ms": 3240.032980462134
+      },
+      {
+        "endpoint": "POST /api/v1/simulation/simulate",
+        "request_count": 1584,
+        "error_rate_5xx": 0.0,
+        "p95_latency_ms": 13012.421399995219,
+        "p99_latency_ms": 20891.088899981696,
+        "avg_latency_ms": 2981.5340183714316
+      },
+      {
+        "endpoint": "GET /api/v1/ops/performance",
+        "request_count": 310,
+        "error_rate_5xx": 0.0,
+        "p95_latency_ms": 12771.861299988814,
+        "p99_latency_ms": 20215.57479997864,
+        "avg_latency_ms": 3037.8150880661597
+      },
+      {
+        "endpoint": "POST /api/v1/auth/register",
+        "request_count": 2,
+        "error_rate_5xx": 0.0,
+        "p95_latency_ms": 267.6387000246905,
+        "p99_latency_ms": 267.6387000246905,
+        "avg_latency_ms": 224.92810001131147
+      },
+      {
+        "endpoint": "GET /api/v1/health",
+        "request_count": 419,
+        "error_rate_5xx": 0.0,
+        "p95_latency_ms": 19.657100026961416,
+        "p99_latency_ms": 43.25210000388324,
+        "avg_latency_ms": 5.933014558031399
+      }
+    ],
+    "db_pool": {
+      "generated_at_utc": "2026-04-04T10:48:21.692875Z",
+      "active_checkouts": 1,
+      "checkout_count": 4625,
+      "checkin_count": 4624,
+      "connection_churn_per_second": 25.71887737794964,
+      "leak_alert_count": 9,
+      "max_hold_seconds": 6.280999999959022,
+      "p95_hold_seconds": 0.7969999999622814,
+      "p99_hold_seconds": 2.452999999979511,
+      "leak_threshold_seconds": 5
+    },
+    "caches": [
+      {
+        "generated_at_utc": "2026-04-04T10:48:21.692875Z",
+        "namespace": "report_builder",
+        "hits": 0,
+        "misses": 0,
+        "hit_rate": 0.0,
+        "target_hit_rate": 0.95,
+        "refreshes": 0,
+        "backend_errors": 0,
+        "backend": "in_memory",
+        "local_entries": 0
+      }
+    ],
+    "audit_batch": {
+      "generated_at_utc": "2026-04-04T10:48:21.692875Z",
+      "enabled": false,
+      "queue_depth": 0,
+      "enqueued": 0,
+      "dropped": 0,
+      "persisted": 0,
+      "batch_flush_count": 0,
+      "kafka_error_count": 0,
+      "db_error_count": 0,
+      "kafka_batch_size_bytes": 65536,
+      "kafka_linger_ms": 5
+    }
+  },
+  "suspected_bottlenecks": [
+    "thread_starvation_or_event_loop_lag",
+    "cache_misses"
+  ]
+}

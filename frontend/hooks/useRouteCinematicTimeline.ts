@@ -13,17 +13,8 @@ const toneAccent: Record<CinematicRouteTone, string> = {
   finale: "#ffd071"
 };
 
-export function useRouteCinematicTimeline(
-  tone: CinematicRouteTone,
-  routePage: CinematicRoutePage,
-  routeKey: string,
-  enabled = true
-): void {
+export function useRouteCinematicTimeline(tone: CinematicRouteTone, routePage: CinematicRoutePage, routeKey: string): void {
   useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
       return;
     }
@@ -62,5 +53,5 @@ export function useRouteCinematicTimeline(
     return () => {
       context.revert();
     };
-  }, [enabled, tone, routePage, routeKey]);
+  }, [tone, routePage, routeKey]);
 }

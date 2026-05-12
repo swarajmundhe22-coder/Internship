@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onlookers-backend
+  labels:
+    app: onlookers-backend
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: onlookers-backend
+  template:
+    metadata:
+      labels:
+        app: onlookers-backend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/api/v1/ops/metrics/prometheus"
+        prometheus.io/port: "8000"
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/the-on-lookers/backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: ENVIRONMENT
+              value: "production"
+            - name: PROMETHEUS_METRICS_ENABLED
+              value: "true"
+            - name: AUDIT_ASYNC_ENABLED
+              value: "true"
+            - name: KAFKA_ASYNC_BATCHING_ENABLED
+              value: "true"
+            - name: KAFKA_BATCH_SIZE_BYTES
+              value: "65536"
+            - name: KAFKA_LINGER_MS
+              value: "5"
+            - name: AUTH_SESSION_ACTIVE_CACHE_TTL_SECONDS
+              value: "5"
+            - name: AUTH_SESSION_ACTIVE_CACHE_MAX_ENTRIES
+              value: "20000"
+            - name: SIMULATION_SLO_NORMAL_LOAD_P99_MS
+              value: "75"
+            - name: RESILIENCE_ENABLED
+              value: "true"
+            - name: RESILIENCE_MAX_INFLIGHT_REQUESTS
+              value: "4096"
+            - name: RESILIENCE_RETRY_AFTER_SECONDS
+              value: "2"
+            - name: RESILIENCE_PROTECTED_PATHS
+              value: "/api/v1/simulation/simulate,/api/v1/auth/login"
+            - name: CIRCUIT_BREAKER_WINDOW_SECONDS
+              value: "30"
+            - name: CIRCUIT_BREAKER_MIN_REQUESTS
+              value: "120"
+            - name: CIRCUIT_BREAKER_FAILURE_RATE_THRESHOLD
+              value: "0.50"
+            - name: CIRCUIT_BREAKER_OPEN_SECONDS
+              value: "15"
+            - name: CIRCUIT_BREAKER_HALF_OPEN_MAX_REQUESTS
+              value: "20"
+            - name: CIRCUIT_BREAKER_LATENCY_FAILURE_THRESHOLD_MS
+              value: "1000"
+            - name: DB_POOL_SIZE
+              valueFrom:
+                resourceFieldRef:
+                  containerName: api
+                  resource: limits.cpu
+                  divisor: "500m"
+            - name: DB_POOL_MAX_LIFETIME_SECONDS
+              value: "30"
+            - name: DB_POOL_LEAK_DETECTION_THRESHOLD_SECONDS
+              value: "5"
+            - name: REDIS_READTHROUGH_REFRESH_TTL_MS
+              value: "10"
+            - name: REDIS_TARGET_HIT_RATE
+              value: "0.95"
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+          command: ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: onlookers-backend
+  labels:
+    app: onlookers-backend
+spec:
+  selector:
+    app: onlookers-backend
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http

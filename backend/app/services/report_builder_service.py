@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
 from sqlalchemy import select
@@ -8,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.algorithms.recommendations import prevention_recommendation
 from app.core.config import get_settings
+from app.core.readthrough_cache import ReadThroughCache
 from app.database.models import EnvironmentEntity, MaterialEntity, SimulationEntity
 from app.models.generated_report import ReportGenerateResponse
 
@@ -15,7 +15,7 @@ from app.models.generated_report import ReportGenerateResponse
 class ReportBuilderService:
     """Assemble report-ready engineering intelligence payloads from persisted simulation context."""
 
-    _cache: dict[str, tuple[datetime, ReportGenerateResponse]] = {}
+    _cache = ReadThroughCache[ReportGenerateResponse](namespace="report_builder")
 
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
@@ -23,12 +23,16 @@ class ReportBuilderService:
 
     async def build(self, simulation_id: UUID) -> ReportGenerateResponse:
         cache_key = str(simulation_id)
-        cached = self._cache.get(cache_key)
-        if cached is not None:
-            cached_at, payload = cached
-            if datetime.now(timezone.utc) - cached_at <= timedelta(seconds=self.settings.report_cache_ttl_seconds):
-                return payload.model_copy(deep=True)
+        return await self._cache.get_or_load(
+            cache_key=cache_key,
+            loader=lambda: self._build_without_cache(simulation_id),
+            encode=lambda payload: payload.model_dump_json(),
+            decode=ReportGenerateResponse.model_validate_json,
+            hard_ttl_seconds=self.settings.redis_readthrough_hard_ttl_seconds,
+            refresh_ttl_ms=self.settings.redis_readthrough_refresh_ttl_ms,
+        )
 
+    async def _build_without_cache(self, simulation_id: UUID) -> ReportGenerateResponse:
         statement = (
             select(SimulationEntity, MaterialEntity, EnvironmentEntity)
             .join(MaterialEntity, MaterialEntity.id == SimulationEntity.material_id)
@@ -72,9 +76,12 @@ class ReportBuilderService:
                 ]
             },
         )
-        self._cache[cache_key] = (datetime.now(timezone.utc), response)
         return response.model_copy(deep=True)
 
     @classmethod
     def clear_cache(cls) -> None:
-        cls._cache.clear()
+        cls._cache.clear_local()
+
+    @classmethod
+    def cache_snapshot(cls) -> dict[str, object]:
+        return cls._cache.snapshot()

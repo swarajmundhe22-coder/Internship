@@ -1,0 +1,22 @@
+{
+  "generated_at_utc": "2026-04-03T12:16:22.181051+00:00",
+  "source": "Direct web fetch",
+  "candidate_count": 3,
+  "candidates": [
+    {
+      "url": "https://www.iso.org/standard/53499.html",
+      "title": "ISO 9223:2012 - Corrosion of metals and alloys — Corrosivity of atmospheres — Classification, determination and estimation",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.nace.org/",
+      "title": "AMPP - The Association for Materials Protection and Performance - AMPP",
+      "status": "ok"
+    },
+    {
+      "url": "https://patents.google.com/",
+      "title": null,
+      "status": "error: HTTPError: HTTP Error 503: Service Unavailable"
+    }
+  ]
+}

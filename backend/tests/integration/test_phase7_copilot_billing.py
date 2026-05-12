@@ -8,6 +8,7 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.models import TenantEntity
+from app.services.copilot_service import CopilotService
 
 
 async def _register_engineer_headers(api_client: AsyncClient) -> dict[str, str]:
@@ -29,9 +30,9 @@ async def test_copilot_endpoints_return_model_tag(api_client: AsyncClient) -> No
     headers = await _register_engineer_headers(api_client)
 
     for endpoint, expected_model in (
-        ("/api/v1/copilot/query", "nvidia/llama-3.1-nemotron-ultra-253b-v1"),
-        ("/api/v1/copilot/doc", "nvidia/llama-3.1-nemotron-nano-vl-8b-v1"),
-        ("/api/v1/copilot/search", "nvidia/nv-embedqa-e5-v5"),
+        ("/api/v1/copilot/query", CopilotService.MODEL_QUERY),
+        ("/api/v1/copilot/doc", CopilotService.MODEL_DOC),
+        ("/api/v1/copilot/search", CopilotService.MODEL_SEARCH),
     ):
         response = await api_client.post(endpoint, json={"user_input": "Assess risk trend"}, headers=headers)
         assert response.status_code == 200

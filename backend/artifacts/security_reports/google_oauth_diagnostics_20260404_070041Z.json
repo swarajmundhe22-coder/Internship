@@ -1,0 +1,66 @@
+{
+  "generated_at_utc": "2026-04-04T07:00:41.256596+00:00",
+  "base_url": "http://127.0.0.1:8000/api/v1",
+  "checks": [
+    {
+      "name": "google_client_id_present",
+      "passed": true,
+      "value": true,
+      "expected": true
+    },
+    {
+      "name": "google_client_secret_present",
+      "passed": true,
+      "value": true,
+      "expected": true
+    },
+    {
+      "name": "google_redirect_uri_present",
+      "passed": true,
+      "value": "http://localhost:8000/api/v1/auth/oauth/google/callback",
+      "expected": "non-empty URI"
+    },
+    {
+      "name": "google_redirect_uri_path",
+      "passed": true,
+      "value": "/api/v1/auth/oauth/google/callback",
+      "expected": "/api/v1/auth/oauth/google/callback"
+    },
+    {
+      "name": "google_redirect_uri_scheme",
+      "passed": true,
+      "value": "http",
+      "expected": "http or https"
+    },
+    {
+      "name": "authorize_endpoint_healthy",
+      "passed": false,
+      "value": 503,
+      "expected": 200
+    }
+  ],
+  "authorize_response": {
+    "status_code": 503,
+    "authorization_url": null,
+    "error": {
+      "detail": {
+        "code": "oauth_provider_not_configured",
+        "message": "OAuth provider is not configured",
+        "provider": "google",
+        "missing_fields": [
+          "client_id",
+          "client_secret",
+          "redirect_uri"
+        ]
+      }
+    }
+  },
+  "manual_console_checks": [
+    "Google Cloud OAuth consent screen is published for target user type.",
+    "Google OAuth app is in the correct project and client ID matches deployment secret.",
+    "Authorized redirect URI exactly matches OAUTH_GOOGLE_REDIRECT_URI.",
+    "Firebase Authentication authorized domains include all app hosts used for popup flow.",
+    "Requested scopes are approved on consent screen: openid, email, profile."
+  ],
+  "passed": false
+}

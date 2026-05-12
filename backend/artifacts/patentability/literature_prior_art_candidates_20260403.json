@@ -1,0 +1,557 @@
+{
+  "generated_at_utc": "2026-04-03T12:16:14.473862+00:00",
+  "source": "OpenAlex works search",
+  "query_count": 4,
+  "candidate_count": 32,
+  "query_errors": [],
+  "queries": [
+    "corrosion prediction machine learning infrastructure",
+    "digital twin corrosion monitoring",
+    "remaining useful life corrosion model",
+    "physics informed corrosion modeling"
+  ],
+  "candidates": [
+    {
+      "id": "https://openalex.org/W2884430236",
+      "doi": "https://doi.org/10.1038/s41586-018-0337-2",
+      "title": "Machine learning for molecular and materials science",
+      "publication_year": 2018,
+      "cited_by_count": 4302,
+      "source": "Nature",
+      "authors": [
+        "Keith T. Butler",
+        "Daniel W. Davies",
+        "Hugh Cartwright",
+        "Olexandr Isayev",
+        "Aron Walsh"
+      ],
+      "matched_queries": [
+        "corrosion prediction machine learning infrastructure"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W2965147845",
+      "doi": "https://doi.org/10.1109/tie.2019.2931491",
+      "title": "Remaining Useful Life Estimation of Structure Systems Under the Influence of Multiple Causes: Subsea Pipelines as a Case Study",
+      "publication_year": 2019,
+      "cited_by_count": 219,
+      "source": "IEEE Transactions on Industrial Electronics",
+      "authors": [
+        "Baoping Cai",
+        "Xiaoyan Shao",
+        "Liu Y",
+        "Xiangdi Kong",
+        "Haifeng Wang"
+      ],
+      "matched_queries": [
+        "remaining useful life corrosion model"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W2009077946",
+      "doi": "https://doi.org/10.1016/s0308-0161(98)00006-4",
+      "title": "Probabilistic estimation of remaining life of a pipeline in the presence of active corrosion defects",
+      "publication_year": 1998,
+      "cited_by_count": 195,
+      "source": "International Journal of Pressure Vessels and Piping",
+      "authors": [
+        "M. Ahammed"
+      ],
+      "matched_queries": [
+        "remaining useful life corrosion model"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W3021027692",
+      "doi": "https://doi.org/10.1115/1.4047173",
+      "title": "Physics-Informed Neural Networks for Missing Physics Estimation in Cumulative Damage Models: A Case Study in Corrosion Fatigue",
+      "publication_year": 2020,
+      "cited_by_count": 114,
+      "source": "Journal of Computing and Information Science in Engineering",
+      "authors": [
+        "Arinan Dourado",
+        "Felipe Viana"
+      ],
+      "matched_queries": [
+        "physics informed corrosion modeling"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W3033624017",
+      "doi": "https://doi.org/10.3390/pr8060661",
+      "title": "A Feed-Forward Back Propagation Neural Network Approach to Predict the Life Condition of Crude Oil Pipeline",
+      "publication_year": 2020,
+      "cited_by_count": 100,
+      "source": "Processes",
+      "authors": [
+        "Nagoor Basha Shaik",
+        "Srinivasa Rao Pedapati",
+        "Syed Ali Ammar Taqvi",
+        "Abdul Rahim Othman",
+        "Faizul Azly Abd Dzubir"
+      ],
+      "matched_queries": [
+        "remaining useful life corrosion model"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4309875269",
+      "doi": "https://doi.org/10.1016/j.engfailanal.2022.106951",
+      "title": "The research progress and prospect of data mining methods on corrosion prediction of oil and gas pipelines",
+      "publication_year": 2022,
+      "cited_by_count": 96,
+      "source": "Engineering Failure Analysis",
+      "authors": [
+        "Lei Xu",
+        "Yunfu Wang",
+        "Lin Mo",
+        "Yongfan Tang",
+        "Feng Wang"
+      ],
+      "matched_queries": [
+        "remaining useful life corrosion model"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W2071084995",
+      "doi": "https://doi.org/10.1016/j.ress.2013.05.013",
+      "title": "Risk based service life prediction of underground cast iron pipes subjected to corrosion",
+      "publication_year": 2013,
+      "cited_by_count": 95,
+      "source": "Reliability Engineering & System Safety",
+      "authors": [
+        "C.Q. Li",
+        "Mojtaba Mahmoodian"
+      ],
+      "matched_queries": [
+        "remaining useful life corrosion model"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W2772287881",
+      "doi": "https://doi.org/10.1016/j.oceaneng.2017.12.014",
+      "title": "Developing a dynamic model for pitting and corrosion-fatigue damage of subsea pipelines",
+      "publication_year": 2017,
+      "cited_by_count": 89,
+      "source": "Ocean Engineering",
+      "authors": [
+        "Ehsan Arzaghi",
+        "Rouzbeh Abbassi",
+        "Vikram Garaniya",
+        "Jonathan Binns",
+        "Christopher Chin"
+      ],
+      "matched_queries": [
+        "remaining useful life corrosion model"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W3111308046",
+      "doi": "https://doi.org/10.1016/j.compstruc.2020.106458",
+      "title": "Estimating model inadequacy in ordinary differential equations with physics-informed neural networks",
+      "publication_year": 2020,
+      "cited_by_count": 88,
+      "source": "Computers & Structures",
+      "authors": [
+        "Felipe Viana",
+        "Renato G. Nascimento",
+        "Arinan Dourado",
+        "Yigit Yucesan"
+      ],
+      "matched_queries": [
+        "physics informed corrosion modeling"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W3027980525",
+      "doi": "https://doi.org/10.1016/j.psep.2020.05.024",
+      "title": "Pitting corrosion modelling of X80 steel utilized in offshore petroleum pipelines",
+      "publication_year": 2020,
+      "cited_by_count": 82,
+      "source": "Process Safety and Environmental Protection",
+      "authors": [
+        "Ehsan Arzaghi",
+        "Bing H. Chia",
+        "Mohammad Mahdi Abaei",
+        "Rouzbeh Abbassi",
+        "Vikram Garaniya"
+      ],
+      "matched_queries": [
+        "remaining useful life corrosion model"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4392727829",
+      "doi": "https://doi.org/10.1016/j.mtchem.2024.101986",
+      "title": "Computational experiments of metal corrosion studies: A review",
+      "publication_year": 2024,
+      "cited_by_count": 61,
+      "source": "Materials Today Chemistry",
+      "authors": [
+        "Shuhao Li",
+        "Chunqing Li",
+        "Feng Wang"
+      ],
+      "matched_queries": [
+        "corrosion prediction machine learning infrastructure"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4391372524",
+      "doi": "https://doi.org/10.1016/j.oceaneng.2024.116796",
+      "title": "A critical review of machine learning algorithms in maritime, offshore, and oil &amp; gas corrosion research: A comprehensive analysis of ANN and RF models",
+      "publication_year": 2024,
+      "cited_by_count": 55,
+      "source": "Ocean Engineering",
+      "authors": [
+        "Md Mahadi Hasan Imran",
+        "Shahrizan Jamaludin",
+        "Ahmad Faisal Mohamad Ayob"
+      ],
+      "matched_queries": [
+        "corrosion prediction machine learning infrastructure"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W3216464446",
+      "doi": "https://doi.org/10.1177/0309524x211060550",
+      "title": "A Digital Twin concept for the prescriptive maintenance of protective coating systems on wind turbine structures",
+      "publication_year": 2021,
+      "cited_by_count": 40,
+      "source": "Wind Engineering",
+      "authors": [
+        "Andreas W. Momber",
+        "Torben Möller",
+        "Daniel Langenkämper",
+        "Tim W. Nattkemper",
+        "Daniel Brün"
+      ],
+      "matched_queries": [
+        "digital twin corrosion monitoring"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4395013774",
+      "doi": "https://doi.org/10.1016/j.asoc.2024.111661",
+      "title": "Metaheuristic optimization based- ensemble learners for the carbonation assessment of recycled aggregate concrete",
+      "publication_year": 2024,
+      "cited_by_count": 39,
+      "source": "Applied Soft Computing",
+      "authors": [
+        "Emadaldin Mohammadi Golafshani",
+        "Ali Behnood",
+        "Taehwan Kim",
+        "Tuan Ngo",
+        "Alireza Kashani"
+      ],
+      "matched_queries": [
+        "corrosion prediction machine learning infrastructure"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W2975859275",
+      "doi": "https://doi.org/10.36001/phmconf.2019.v11i1.814",
+      "title": "Physics-Informed Neural Networks for Corrosion-Fatigue Prognosis",
+      "publication_year": 2019,
+      "cited_by_count": 36,
+      "source": "Annual Conference of the PHM Society",
+      "authors": [
+        "Arinan Dourado",
+        "Felipe Viana"
+      ],
+      "matched_queries": [
+        "physics informed corrosion modeling"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4401656455",
+      "doi": "https://doi.org/10.1016/j.autcon.2024.105697",
+      "title": "Digital twins-boosted intelligent maintenance of ageing bridge hangers exposed to coupled corrosion–fatigue deterioration",
+      "publication_year": 2024,
+      "cited_by_count": 33,
+      "source": "Automation in Construction",
+      "authors": [
+        "Junlin Heng",
+        "You Dong",
+        "Li Lai",
+        "Zhixiang Zhou",
+        "Dan M. Frangopol"
+      ],
+      "matched_queries": [
+        "digital twin corrosion monitoring"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W3006849452",
+      "doi": "https://doi.org/10.1016/j.procir.2020.01.043",
+      "title": "Conceptual framework of a digital twin to evaluate the degradation status of complex engineering systems",
+      "publication_year": 2019,
+      "cited_by_count": 32,
+      "source": "Procedia CIRP",
+      "authors": [
+        "Davide D’Amico",
+        "John Ekoyuncu",
+        "Sri Addepalli",
+        "Christopher W. Smith",
+        "Ed Keedwell"
+      ],
+      "matched_queries": [
+        "digital twin corrosion monitoring"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4308342511",
+      "doi": "https://doi.org/10.1080/17445302.2022.2140531",
+      "title": "A review of challenges and framework development for corrosion fatigue life assessment of monopile-supported horizontal-axis offshore wind turbines",
+      "publication_year": 2022,
+      "cited_by_count": 29,
+      "source": "Ships and Offshore Structures",
+      "authors": [
+        "Victor Okenyi",
+        "Mahdi Bodaghi",
+        "Neil J. Mansfield",
+        "Shukri Afazov",
+        "Petros Siegkas"
+      ],
+      "matched_queries": [
+        "digital twin corrosion monitoring"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4412784596",
+      "doi": "https://doi.org/10.1038/s41598-025-12035-1",
+      "title": "A convolutional neural network-based deep learning approach for predicting surface chloride concentration of concrete in marine tidal zones",
+      "publication_year": 2025,
+      "cited_by_count": 24,
+      "source": "Scientific Reports",
+      "authors": [
+        "Mohamed Abdellatief",
+        "Mahmoud E. Abd-Elmaboud",
+        "Mohamed Mortagi",
+        "Ahmed M. Saqr"
+      ],
+      "matched_queries": [
+        "corrosion prediction machine learning infrastructure"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4381163783",
+      "doi": "https://doi.org/10.1016/j.ymssp.2023.110515",
+      "title": "Corrosion morphology prediction of civil infrastructure using a physics-constrained machine learning method",
+      "publication_year": 2023,
+      "cited_by_count": 22,
+      "source": "Mechanical Systems and Signal Processing",
+      "authors": [
+        "David Najera-Flores",
+        "Guofeng Qian",
+        "Zhen Hu",
+        "Michael D. Todd"
+      ],
+      "matched_queries": [
+        "corrosion prediction machine learning infrastructure"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4390597827",
+      "doi": "https://doi.org/10.1061/jsendh.steng-12718",
+      "title": "Machine Learning–Aided Rapid Estimation of Multilevel Capacity of Flexure-Identified Circular Concrete Bridge Columns with Corroded Reinforcement",
+      "publication_year": 2024,
+      "cited_by_count": 22,
+      "source": "Journal of Structural Engineering",
+      "authors": [
+        "Bo Xu",
+        "Xiaowei Wang",
+        "Chuang‐Sheng Walter Yang",
+        "Yue Li"
+      ],
+      "matched_queries": [
+        "corrosion prediction machine learning infrastructure"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W3189278854",
+      "doi": "https://doi.org/10.4043/31296-ms",
+      "title": "Digital Twin For Offshore Pipeline Corrosion Monitoring: A Deep Learning Approach",
+      "publication_year": 2021,
+      "cited_by_count": 17,
+      "source": "Offshore Technology Conference",
+      "authors": [
+        "Subrata Bhowmik"
+      ],
+      "matched_queries": [
+        "digital twin corrosion monitoring"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W3199828499",
+      "doi": "https://doi.org/10.1109/tpwrd.2021.3112081",
+      "title": "Remaining Useful Life Prediction of Aerial Bundled Cables in Coastal Areas Using Thermal and Corrosion Degradation Models",
+      "publication_year": 2021,
+      "cited_by_count": 15,
+      "source": "IEEE Transactions on Power Delivery",
+      "authors": [
+        "Waleed Bin Yousuf",
+        "Tariq Mairaj Rasool Khan",
+        "Syed Talha Tariq",
+        "Moez ul-Hassan",
+        "Aqueel Shah"
+      ],
+      "matched_queries": [
+        "remaining useful life corrosion model"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4406829441",
+      "doi": "https://doi.org/10.37256/est.6120255638",
+      "title": "A Comprehensive Review on Corrosion Detection Methods for Aircraft: Moving from Offline Methodologies to Real-Time Monitoring Combined with Digital Twin Technology",
+      "publication_year": 2024,
+      "cited_by_count": 7,
+      "source": "Engineering Science & Technology",
+      "authors": [
+        "Indu Elizabeth",
+        "Harish C. Barshilia"
+      ],
+      "matched_queries": [
+        "digital twin corrosion monitoring"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W3175804347",
+      "doi": "https://doi.org/10.1109/i2mtc50364.2021.9460039",
+      "title": "A Machine-Learning Approach for the Prediction of Internal Corrosion in Pipeline Infrastructures",
+      "publication_year": 2021,
+      "cited_by_count": 5,
+      "source": null,
+      "authors": [
+        "Giuseppe Canonaco",
+        "Manuel Roveri",
+        "Cesare Alippi",
+        "F. Podenzani",
+        "A. Bennardo"
+      ],
+      "matched_queries": [
+        "corrosion prediction machine learning infrastructure"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4407781834",
+      "doi": "https://doi.org/10.2139/ssrn.5146647",
+      "title": "Sharp-Pinns: Staggered Hard-Constrained Physics-Informed Neural Networks for Phase Field Modelling of Corrosion",
+      "publication_year": 2025,
+      "cited_by_count": 5,
+      "source": "SSRN Electronic Journal",
+      "authors": [
+        "Nanxi Chen",
+        "Chuanjie Cui",
+        "Rujin Ma",
+        "Airong Chen",
+        "Sifan Wang"
+      ],
+      "matched_queries": [
+        "physics informed corrosion modeling"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4414164434",
+      "doi": "https://doi.org/10.1016/j.cma.2025.118346",
+      "title": "Sharp-PINNs: Staggered hard-constrained physics-informed neural networks for phase field modelling of corrosion",
+      "publication_year": 2025,
+      "cited_by_count": 4,
+      "source": "Computer Methods in Applied Mechanics and Engineering",
+      "authors": [
+        "Nanxi Chen",
+        "Chuanjie Cui",
+        "Rujin Ma",
+        "Airong Chen",
+        "Sifan Wang"
+      ],
+      "matched_queries": [
+        "physics informed corrosion modeling"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4399452519",
+      "doi": "https://doi.org/10.1063/5.0208800",
+      "title": "Digital twin for subsea pipeline corrosion monitoring location based on ILI-MFL pipeline operator forum and potentiodynamic test",
+      "publication_year": 2024,
+      "cited_by_count": 2,
+      "source": "AIP conference proceedings",
+      "authors": [
+        "Ekha Panji Syuryana",
+        "Muhammad Agus Kariem",
+        "I. G. N. Wiratmaja Puja",
+        "Mochamad Irvan Maulana",
+        "Uriyana"
+      ],
+      "matched_queries": [
+        "digital twin corrosion monitoring"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4385423157",
+      "doi": "https://doi.org/10.3390/ma16155326",
+      "title": "Physics-Informed, Data-Driven Model for Atmospheric Corrosion of Carbon Steel Using Bayesian Network",
+      "publication_year": 2023,
+      "cited_by_count": 2,
+      "source": "Materials",
+      "authors": [
+        "Taesu Choi",
+        "Dooyoul Lee"
+      ],
+      "matched_queries": [
+        "physics informed corrosion modeling"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4310793087",
+      "doi": "https://doi.org/10.5281/zenodo.7405918",
+      "title": "Towards a Digital Twin for Corrosion Monitoring and Health Estimation of Offshore Wind Turbine Structures",
+      "publication_year": 2022,
+      "cited_by_count": 1,
+      "source": "Zenodo (CERN European Organization for Nuclear Research)",
+      "authors": [
+        "Agusmian Partogi Ompusunggu",
+        "Coudron",
+        "Jian-Jie Wan"
+      ],
+      "matched_queries": [
+        "digital twin corrosion monitoring"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4402480271",
+      "doi": "https://doi.org/10.1201/9781003483755-25",
+      "title": "PC-PINNs: Physics-informed neural networks for solving the phase-field model of pitting corrosion",
+      "publication_year": 2024,
+      "cited_by_count": 1,
+      "source": null,
+      "authors": [
+        "Nanxi Chen",
+        "Rujin Ma",
+        "Airong Chen",
+        "Chuanjie Cui"
+      ],
+      "matched_queries": [
+        "physics informed corrosion modeling"
+      ]
+    },
+    {
+      "id": "https://openalex.org/W4407758951",
+      "doi": "https://doi.org/10.48550/arxiv.2502.11942",
+      "title": "Sharp-PINNs: staggered hard-constrained physics-informed neural networks for phase field modelling of corrosion",
+      "publication_year": 2025,
+      "cited_by_count": 1,
+      "source": "ArXiv.org",
+      "authors": [
+        "Nanxi Chen",
+        "Chuanjie Cui",
+        "Rujin Ma",
+        "Airong Chen",
+        "Sifan Wang"
+      ],
+      "matched_queries": [
+        "physics informed corrosion modeling"
+      ]
+    }
+  ]
+}

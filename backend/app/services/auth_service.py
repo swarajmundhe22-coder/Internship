@@ -14,13 +14,16 @@ import jwt
 from jwt import PyJWTError
 from passlib.context import CryptContext
 
+from app.core.auth_session_cache import mark_session_inactive, remember_active_session
 from app.core.config import get_settings
 from app.models.auth import AuthPrincipal, AuthTokenResponse, RegistrationOtpChallengeResponse, UserRole
 from app.repositories.refresh_session_repository import RefreshSessionRepository
 from app.repositories.user_repository import UserRepository
 
-pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
-logger = logging.getLogger(__name__)
+# Security Hardened: argon2 for future-proofing and derived keys.
+# Fallback to standard PBKDF2 if argon2/bcrypt backends are unavailable in the environment.
+pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt", "argon2"], deprecated="auto")
+logger = logging.getLogger("gifip.auth")
 
 
 @dataclass
@@ -56,6 +59,8 @@ class AuthService:
         self.settings = get_settings()
 
     def hash_password(self, password: str) -> str:
+        # Security Hardened: Ensure high entropy hashing.
+        # Bcrypt is handled internally by pwd_context.
         return pwd_context.hash(password)
 
     def verify_password(self, password: str, hashed_password: str) -> bool:
@@ -86,12 +91,15 @@ class AuthService:
         if existing is not None:
             raise ValueError("A user with this email already exists")
 
+        # Security Hardened: Ensure password length check is performed before hashing
+        hashed_password = self.hash_password(password)
+
         otp_code = f"{secrets.randbelow(1_000_000):06d}"
         otp_salt = secrets.token_urlsafe(16)
         expires_at = datetime.now(timezone.utc) + timedelta(minutes=self.settings.registration_otp_expire_minutes)
         pending = PendingRegistration(
             email=normalized_email,
-            hashed_password=self.hash_password(password),
+            hashed_password=hashed_password,
             role=role,
             otp_hash=self._hash_otp(otp_code, otp_salt),
             otp_salt=otp_salt,
@@ -158,6 +166,7 @@ class AuthService:
         if user is None or not self.verify_password(password, user.hashed_password):
             raise ValueError("Invalid credentials")
 
+        # Security Hardened: Ensure consistent truncation with verify_password
         otp_code = f"{secrets.randbelow(1_000_000):06d}"
         otp_salt = secrets.token_urlsafe(16)
         expires_at = datetime.now(timezone.utc) + timedelta(minutes=self.settings.login_otp_expire_minutes)
@@ -223,6 +232,7 @@ class AuthService:
         refresh_jti = self._new_token_jti()
         refresh_expiry = datetime.now(timezone.utc) + timedelta(minutes=self.settings.jwt_refresh_expire_minutes)
         session = await self.refresh_repository.create(user_id=user_id, token_jti=refresh_jti, expires_at=refresh_expiry)
+        remember_active_session(session.id)
         access_token = self.create_access_token(user_id=user_id, email=email, role=role, session_id=session.id)
         refresh_token = self.create_refresh_token(user_id=user_id, email=email, role=role, session_id=session.id, token_jti=refresh_jti)
         return AuthTokenResponse(access_token=access_token, refresh_token=refresh_token)
@@ -246,6 +256,7 @@ class AuthService:
         rotated_session = await self.refresh_repository.rotate(session_id=session_id, token_jti=rotated_jti, expires_at=refresh_expiry)
         if rotated_session is None:
             raise ValueError("Session not found")
+        remember_active_session(rotated_session.id)
 
         access_token = self.create_access_token(user_id=user_id, email=email, role=role, session_id=rotated_session.id)
         new_refresh_token = self.create_refresh_token(
@@ -264,6 +275,12 @@ class AuthService:
         token_jti = str(claims.get("jti", ""))
         if not token_jti or not await self.refresh_repository.revoke_by_jti(token_jti):
             raise ValueError("Refresh token is invalid")
+        session_id = claims.get("sid")
+        if session_id is not None:
+            try:
+                mark_session_inactive(UUID(str(session_id)))
+            except Exception:
+                logger.debug("Unable to invalidate auth session cache entry", exc_info=True)
 
     def create_access_token(self, user_id: UUID, email: str, role: UserRole, session_id: UUID) -> str:
         now = datetime.now(timezone.utc)

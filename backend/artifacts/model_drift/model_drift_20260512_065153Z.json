@@ -1,0 +1,223 @@
+{
+  "generated_at_utc": "2026-05-12T06:51:53.823934+00:00",
+  "current_report_path": "C:\\Users\\s22td\\OneDrive\\Documents\\The On Lookers\\backend\\artifacts\\calibration_reports\\calibration_report_20260403_131019Z.json",
+  "model_version": "global-calibrated-v1.1.0",
+  "global_drift": [
+    {
+      "metric": "average_risk_score",
+      "baseline": 60.87,
+      "current": 60.87,
+      "relative_drift": 0.0,
+      "threshold": 0.2,
+      "passed": true
+    },
+    {
+      "metric": "average_design_corrosion_rate_mm_per_year",
+      "baseline": 0.42744,
+      "current": 0.42744,
+      "relative_drift": 0.0,
+      "threshold": 0.2,
+      "passed": true
+    },
+    {
+      "metric": "average_lifespan_years",
+      "baseline": 52.151,
+      "current": 52.151,
+      "relative_drift": 0.0,
+      "threshold": 0.2,
+      "passed": true
+    }
+  ],
+  "region_drift": [
+    {
+      "region_key": "arctic_subarctic",
+      "metric": "average_risk_score",
+      "baseline": 24.368,
+      "current": 24.368,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "arctic_subarctic",
+      "metric": "average_design_corrosion_rate_mm_per_year",
+      "baseline": 0.01518,
+      "current": 0.01518,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "arctic_subarctic",
+      "metric": "average_calibration_confidence",
+      "baseline": 0.75,
+      "current": 0.75,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "arid_desert_industrial",
+      "metric": "average_risk_score",
+      "baseline": 63.339,
+      "current": 63.339,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "arid_desert_industrial",
+      "metric": "average_design_corrosion_rate_mm_per_year",
+      "baseline": 0.32663,
+      "current": 0.32663,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "arid_desert_industrial",
+      "metric": "average_calibration_confidence",
+      "baseline": 0.818,
+      "current": 0.818,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "equatorial_humid_urban",
+      "metric": "average_risk_score",
+      "baseline": 71.277,
+      "current": 71.277,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "equatorial_humid_urban",
+      "metric": "average_design_corrosion_rate_mm_per_year",
+      "baseline": 0.3829,
+      "current": 0.3829,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "equatorial_humid_urban",
+      "metric": "average_calibration_confidence",
+      "baseline": 0.803,
+      "current": 0.803,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "gulf_tropical_marine",
+      "metric": "average_risk_score",
+      "baseline": 96.903,
+      "current": 96.903,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "gulf_tropical_marine",
+      "metric": "average_design_corrosion_rate_mm_per_year",
+      "baseline": 1.01969,
+      "current": 1.01969,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "gulf_tropical_marine",
+      "metric": "average_calibration_confidence",
+      "baseline": 0.805,
+      "current": 0.805,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "monsoon_coastal",
+      "metric": "average_risk_score",
+      "baseline": 92.509,
+      "current": 92.509,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "monsoon_coastal",
+      "metric": "average_design_corrosion_rate_mm_per_year",
+      "baseline": 0.89705,
+      "current": 0.89705,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "monsoon_coastal",
+      "metric": "average_calibration_confidence",
+      "baseline": 0.786,
+      "current": 0.786,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "north_sea_offshore",
+      "metric": "average_risk_score",
+      "baseline": 84.413,
+      "current": 84.413,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "north_sea_offshore",
+      "metric": "average_design_corrosion_rate_mm_per_year",
+      "baseline": 0.73302,
+      "current": 0.73302,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "north_sea_offshore",
+      "metric": "average_calibration_confidence",
+      "baseline": 0.84,
+      "current": 0.84,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "temperate_industrial",
+      "metric": "average_risk_score",
+      "baseline": 27.076,
+      "current": 27.076,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "temperate_industrial",
+      "metric": "average_design_corrosion_rate_mm_per_year",
+      "baseline": 0.02251,
+      "current": 0.02251,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    },
+    {
+      "region_key": "temperate_industrial",
+      "metric": "average_calibration_confidence",
+      "baseline": 0.89,
+      "current": 0.89,
+      "relative_drift": 0.0,
+      "threshold": 0.25,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

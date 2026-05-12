@@ -43,14 +43,7 @@ npm run dev
 ## Notes
 
 - Configure backend endpoint via `NEXT_PUBLIC_API_BASE_URL`.
-- Configure Firebase project credentials via `NEXT_PUBLIC_FIREBASE_*` variables in `.env.local`.
 - Three.js panel currently renders a corrosion-intensity mapped structure placeholder.
-
-## Social Login Setup
-
-- Google social login uses Firebase popup sign-in first, then exchanges identity through backend `POST /api/v1/auth/sso/exchange`.
-- In Firebase Console, enable Google provider and add authorized domains for each environment (including localhost and deployed hostnames).
-- Keep `NEXT_PUBLIC_ENABLE_LOCAL_SOCIAL_FALLBACK=false` for real OAuth behavior. Set it to `true` only when you intentionally want synthetic local fallback tokens.
 
 ## Cinematic Design System
 

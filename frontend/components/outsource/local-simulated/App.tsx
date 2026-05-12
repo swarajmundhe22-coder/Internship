@@ -57,27 +57,27 @@ type SystemStatusProps = {
 const SystemStatus = ({ metrics }: SystemStatusProps) => {
 
   return (
-    <div className="fixed top-0 left-0 w-full z-[60] p-2 md:p-4 flex justify-between items-center pointer-events-none">
-      <div className="flex items-center gap-3 md:gap-8">
-        <div className="flex items-center gap-1 md:gap-2">
-          <Shield className="w-2 h-2 md:w-3 md:h-3 text-accent" />
-          <span className="text-[6px] md:text-[8px] font-mono font-bold uppercase tracking-widest text-white/40">{metrics.securityLabel}</span>
+    <div className="fixed top-0 left-0 w-full z-[60] p-4 flex justify-between items-center pointer-events-none font-mono text-[10px] tracking-widest text-white/60">
+      <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 border border-white/10 rounded-full px-3 py-1.5 bg-black/40 backdrop-blur-md">
+          <Shield className="w-3 h-3 text-accent" />
+          <span className="font-bold uppercase text-accent">{metrics.securityLabel}</span>
         </div>
-        <div className="hidden sm:flex items-center gap-2">
+        <div className="hidden sm:flex items-center gap-2 border border-white/10 rounded-full px-3 py-1.5 bg-black/40 backdrop-blur-md">
           <Cpu className="w-3 h-3 text-accent" />
-          <span className="text-[8px] font-mono font-bold uppercase tracking-widest text-white/40">{metrics.computeTflopsLabel}</span>
+          <span className="font-bold uppercase">{metrics.computeTflopsLabel}</span>
         </div>
-        <div className="flex items-center gap-1 md:gap-2">
-          <Wifi className="w-2 h-2 md:w-3 md:h-3 text-accent" />
-          <span className="text-[6px] md:text-[8px] font-mono font-bold uppercase tracking-widest text-white/40">{metrics.latencyLabel}</span>
+        <div className="flex items-center gap-2 border border-white/10 rounded-full px-3 py-1.5 bg-black/40 backdrop-blur-md">
+          <Wifi className="w-3 h-3 text-accent" />
+          <span className="font-bold uppercase">{metrics.latencyLabel}</span>
         </div>
       </div>
-      <div className="flex items-center gap-3 md:gap-8">
-        <div className="hidden sm:flex items-center gap-2">
+      <div className="flex items-center gap-6">
+        <div className="hidden sm:flex items-center gap-2 border border-white/10 rounded-full px-3 py-1.5 bg-black/40 backdrop-blur-md">
           <Lock className="w-3 h-3 text-accent" />
-          <span className="text-[8px] font-mono font-bold uppercase tracking-widest text-white/40">{metrics.encryptionLabel}</span>
+          <span className="font-bold uppercase">{metrics.encryptionLabel}</span>
         </div>
-        <div className="text-[7px] md:text-[10px] font-mono font-bold text-white/40">
+        <div className="border border-white/10 rounded-full px-3 py-1.5 bg-black/40 backdrop-blur-md font-bold">
           {metrics.localClockLabel}
         </div>
       </div>
@@ -221,8 +221,8 @@ export default function App() {
         <div className="noise-overlay" />
         
         {/* Navigation Overlay */}
-        <nav className="fixed top-0 left-0 w-full z-50 p-2 md:p-6 flex justify-between items-center pointer-events-none mt-6 md:mt-0">
-          <div className="flex items-center gap-2 md:gap-4 pointer-events-auto">
+        <nav className="fixed top-[4.5rem] left-0 w-full z-50 px-6 py-2 flex justify-between items-center pointer-events-none">
+          <div className="flex items-center gap-4 pointer-events-auto">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-2 md:p-3 border border-white/10 bg-black/50 backdrop-blur-xl rounded-full text-white hover:border-accent transition-all"
@@ -275,7 +275,7 @@ export default function App() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4 pointer-events-auto">
+          <div className="flex items-center gap-4 pointer-events-auto">
             {simulationData && (
               <motion.button
                 whileHover={{ scale: 1.05 }}

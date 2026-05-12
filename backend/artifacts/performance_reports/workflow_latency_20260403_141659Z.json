@@ -1,0 +1,111 @@
+{
+  "generated_at_utc": "2026-04-03T14:16:59.839730+00:00",
+  "base_url": "http://127.0.0.1:8000/api/v1",
+  "runs": 3,
+  "records": [
+    {
+      "register_admin_ms": 62.159999972209334,
+      "register_engineer_ms": 74.4517000275664,
+      "create_tenant_ms": 31.524599995464087,
+      "add_tenant_member_ms": 32.04740001820028,
+      "create_material_ms": 14.58769995952025,
+      "create_environment_ms": 14.317499997559935,
+      "create_simulation_ms": 44.93670002557337,
+      "generate_twin_ms": 42.186199978459626,
+      "prepare_playback_ms": 56.307799997739494,
+      "export_artifact_ms": 45.06340000079945,
+      "query_audit_log_ms": 12.408699956722558,
+      "workflow_total_ms": 429.9916999298148
+    },
+    {
+      "register_admin_ms": 49.65559998527169,
+      "register_engineer_ms": 48.754299990832806,
+      "create_tenant_ms": 28.31520000472665,
+      "add_tenant_member_ms": 25.546299992129207,
+      "create_material_ms": 12.703699991106987,
+      "create_environment_ms": 12.822099961340427,
+      "create_simulation_ms": 30.355599999893457,
+      "generate_twin_ms": 29.727999994065613,
+      "prepare_playback_ms": 38.93939999397844,
+      "export_artifact_ms": 33.72020000824705,
+      "query_audit_log_ms": 7.228999980725348,
+      "workflow_total_ms": 317.7693999023177
+    },
+    {
+      "register_admin_ms": 41.00939998170361,
+      "register_engineer_ms": 71.41530001536012,
+      "create_tenant_ms": 39.493000018410385,
+      "add_tenant_member_ms": 36.52839997084811,
+      "create_material_ms": 17.755799985025078,
+      "create_environment_ms": 17.18800002709031,
+      "create_simulation_ms": 45.94719997840002,
+      "generate_twin_ms": 50.520599994342774,
+      "prepare_playback_ms": 70.36579999839887,
+      "export_artifact_ms": 55.848099989816546,
+      "query_audit_log_ms": 13.028199959080666,
+      "workflow_total_ms": 459.0997999184765
+    }
+  ],
+  "summary": {
+    "add_tenant_member_ms": {
+      "avg_ms": 31.3740333270592,
+      "p50_ms": 32.04740001820028,
+      "max_ms": 36.52839997084811
+    },
+    "create_environment_ms": {
+      "avg_ms": 14.775866661996892,
+      "p50_ms": 14.317499997559935,
+      "max_ms": 17.18800002709031
+    },
+    "create_material_ms": {
+      "avg_ms": 15.015733311884105,
+      "p50_ms": 14.58769995952025,
+      "max_ms": 17.755799985025078
+    },
+    "create_simulation_ms": {
+      "avg_ms": 40.413166667955615,
+      "p50_ms": 44.93670002557337,
+      "max_ms": 45.94719997840002
+    },
+    "create_tenant_ms": {
+      "avg_ms": 33.11093333953371,
+      "p50_ms": 31.524599995464087,
+      "max_ms": 39.493000018410385
+    },
+    "export_artifact_ms": {
+      "avg_ms": 44.87723333295435,
+      "p50_ms": 45.06340000079945,
+      "max_ms": 55.848099989816546
+    },
+    "generate_twin_ms": {
+      "avg_ms": 40.811599988956004,
+      "p50_ms": 42.186199978459626,
+      "max_ms": 50.520599994342774
+    },
+    "prepare_playback_ms": {
+      "avg_ms": 55.204333330038935,
+      "p50_ms": 56.307799997739494,
+      "max_ms": 70.36579999839887
+    },
+    "query_audit_log_ms": {
+      "avg_ms": 10.888633298842857,
+      "p50_ms": 12.408699956722558,
+      "max_ms": 13.028199959080666
+    },
+    "register_admin_ms": {
+      "avg_ms": 50.94166664639488,
+      "p50_ms": 49.65559998527169,
+      "max_ms": 62.159999972209334
+    },
+    "register_engineer_ms": {
+      "avg_ms": 64.87376667791978,
+      "p50_ms": 71.41530001536012,
+      "max_ms": 74.4517000275664
+    },
+    "workflow_total_ms": {
+      "avg_ms": 402.2869665835363,
+      "p50_ms": 429.9916999298148,
+      "max_ms": 459.0997999184765
+    }
+  }
+}

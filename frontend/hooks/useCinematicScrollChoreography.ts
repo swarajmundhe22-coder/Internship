@@ -5,12 +5,8 @@ import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { onLookersBrandDirection } from "../utils/brandDirection";
 import { getRoutePage } from "../utils/cinematicRoute";
 
-export function useCinematicScrollChoreography(routeKey: string, enabled = true): void {
+export function useCinematicScrollChoreography(routeKey: string): void {
   useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
       return;
     }
@@ -136,5 +132,5 @@ export function useCinematicScrollChoreography(routeKey: string, enabled = true)
       triggers.forEach((trigger) => trigger.kill());
       animations.forEach((animation) => animation.kill());
     };
-  }, [enabled, routeKey]);
+  }, [routeKey]);
 }

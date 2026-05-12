@@ -1,0 +1,222 @@
+{
+  "generated_at_utc": "2026-04-04T11:53:11.442535+00:00",
+  "base_url": "http://127.0.0.1:8006/api/v1",
+  "workload": {
+    "concurrency": 40,
+    "total_requests": 1200,
+    "duration_seconds": 8.106021400017198,
+    "observed_rps": 148.03809918358394
+  },
+  "aggregate": {
+    "request_count": 1200,
+    "error_count_5xx": 0,
+    "error_rate_5xx": 0.0,
+    "latency_ms": {
+      "p50": 79.32509999955073,
+      "p95": 1197.6114999852143,
+      "p99": 2255.00160001684,
+      "max": 4178.0585999949835
+    }
+  },
+  "endpoint_metrics": {
+    "ops_performance_get": {
+      "requests": 124,
+      "errors_5xx": 0,
+      "error_rate_5xx": 0.0,
+      "latency_ms": {
+        "p50": 49.71210000803694,
+        "p95": 136.13550004083663,
+        "p99": 256.40429998748004,
+        "max": 288.28830004204065
+      }
+    },
+    "simulate_post": {
+      "requests": 701,
+      "errors_5xx": 0,
+      "error_rate_5xx": 0.0,
+      "latency_ms": {
+        "p50": 78.99100001668558,
+        "p95": 267.8287000162527,
+        "p99": 355.1069999812171,
+        "max": 466.7564000119455
+      }
+    },
+    "health_get": {
+      "requests": 184,
+      "errors_5xx": 0,
+      "error_rate_5xx": 0.0,
+      "latency_ms": {
+        "p50": 42.71159996278584,
+        "p95": 142.66879996284842,
+        "p99": 298.0145000037737,
+        "max": 349.4434999884106
+      }
+    },
+    "auth_login_post": {
+      "requests": 191,
+      "errors_5xx": 0,
+      "error_rate_5xx": 0.0,
+      "latency_ms": {
+        "p50": 952.2636000183411,
+        "p95": 2557.1677000261843,
+        "p99": 4114.968299982138,
+        "max": 4178.0585999949835
+      }
+    }
+  },
+  "budgets": {
+    "p99_budget_ms": 100,
+    "error_budget_rate": 0.01
+  },
+  "checks": {
+    "concurrency_requirement": false,
+    "p99_budget": false,
+    "error_budget": true
+  },
+  "passed": false,
+  "ops_snapshot": {
+    "generated_at_utc": "2026-04-04T11:53:11.431287Z",
+    "window_seconds": 1800,
+    "window_start_utc": "2026-04-04T11:23:11.429261Z",
+    "window_end_utc": "2026-04-04T11:53:11.429261Z",
+    "path_filter": null,
+    "request_count": 4900,
+    "success_count": 4900,
+    "server_error_count": 0,
+    "error_rate_5xx": 0.0,
+    "latency_ms": {
+      "p50": 193.14480002503842,
+      "p95": 851.255499990657,
+      "p99": 1562.151099962648,
+      "avg": 275.258137693852,
+      "max": 4887.124899949413
+    },
+    "budgets": {
+      "p95_latency_ms": 1200,
+      "p99_latency_ms": 2000,
+      "error_rate": 0.02
+    },
+    "checks": {
+      "p95_latency_budget": true,
+      "p99_latency_budget": true,
+      "error_budget": true
+    },
+    "alerts": {
+      "critical_api_5xx_spike": false,
+      "warning_latency_p95": false,
+      "critical_latency_p99": false,
+      "warning_error_budget_burn": false,
+      "error_budget_burn_rate": 0.0
+    },
+    "top_slowest_paths": [
+      {
+        "endpoint": "POST /api/v1/auth/login",
+        "request_count": 353,
+        "error_rate_5xx": 0.0,
+        "p95_latency_ms": 2266.89189998433,
+        "p99_latency_ms": 3696.6900000115857,
+        "avg_latency_ms": 1081.706809914353
+      },
+      {
+        "endpoint": "POST /api/v1/simulation/simulate",
+        "request_count": 3936,
+        "error_rate_5xx": 0.0,
+        "p95_latency_ms": 615.595800045412,
+        "p99_latency_ms": 877.9544999706559,
+        "avg_latency_ms": 234.76509916161274
+      },
+      {
+        "endpoint": "GET /api/v1/ops/performance",
+        "request_count": 243,
+        "error_rate_5xx": 0.0,
+        "p95_latency_ms": 173.11510001309216,
+        "p99_latency_ms": 217.65000000596046,
+        "avg_latency_ms": 80.42613333431284
+      },
+      {
+        "endpoint": "POST /api/v1/auth/register",
+        "request_count": 10,
+        "error_rate_5xx": 0.0,
+        "p95_latency_ms": 207.705500011798,
+        "p99_latency_ms": 207.705500011798,
+        "avg_latency_ms": 112.89602000033483
+      },
+      {
+        "endpoint": "GET /api/v1/health",
+        "request_count": 358,
+        "error_rate_5xx": 0.0,
+        "p95_latency_ms": 144.00390000082552,
+        "p99_latency_ms": 177.05630004638806,
+        "avg_latency_ms": 62.05148016692493
+      }
+    ],
+    "db_pool": {
+      "generated_at_utc": "2026-04-04T11:53:11.433702Z",
+      "active_checkouts": 1,
+      "checkout_count": 1060,
+      "checkin_count": 1059,
+      "connection_churn_per_second": 9.211063704062003,
+      "leak_alert_count": 0,
+      "max_hold_seconds": 4.452999999979511,
+      "p95_hold_seconds": 1.0459999999729916,
+      "p99_hold_seconds": 2.1560000000172295,
+      "leak_threshold_seconds": 5
+    },
+    "caches": [
+      {
+        "generated_at_utc": "2026-04-04T11:53:11.433702Z",
+        "namespace": "report_builder",
+        "hits": 0,
+        "misses": 0,
+        "hit_rate": 0.0,
+        "target_hit_rate": 0.95,
+        "refreshes": 0,
+        "backend_errors": 0,
+        "backend": "in_memory",
+        "local_entries": 0
+      }
+    ],
+    "audit_batch": {
+      "generated_at_utc": "2026-04-04T11:53:11.433702Z",
+      "enabled": true,
+      "queue_depth": 0,
+      "enqueued": 4299,
+      "dropped": 0,
+      "persisted": 4298,
+      "batch_flush_count": 289,
+      "kafka_error_count": 0,
+      "db_error_count": 0,
+      "kafka_batch_size_bytes": 65536,
+      "kafka_linger_ms": 5
+    },
+    "resilience": {
+      "generated_at_utc": "2026-04-04T11:53:11.433702Z",
+      "enabled": true,
+      "active_requests": 1,
+      "max_inflight_requests": 4096,
+      "shed_total": 0,
+      "shed_overload": 0,
+      "shed_circuit_open": 0,
+      "circuit_breakers": [
+        {
+          "path": "/api/v1/simulation/simulate",
+          "state": "closed",
+          "recent_request_count": 1416,
+          "recent_failure_rate": 0.0,
+          "opened_until_monotonic": 0.0,
+          "half_open_remaining": 0,
+          "latency_failure_threshold_ms": 1000
+        },
+        {
+          "path": "/api/v1/auth/login",
+          "state": "closed",
+          "recent_request_count": 348,
+          "recent_failure_rate": 0.4339080459770115,
+          "opened_until_monotonic": 0.0,
+          "half_open_remaining": 0,
+          "latency_failure_threshold_ms": 1000
+        }
+      ]
+    }
+  }
+}

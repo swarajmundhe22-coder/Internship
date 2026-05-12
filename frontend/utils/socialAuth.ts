@@ -31,11 +31,16 @@ type FirebaseLikeError = {
   message?: string;
 };
 
-type GoogleFirebaseModule = {
-  auth: import("firebase/auth").Auth;
-  googleProvider: import("firebase/auth").GoogleAuthProvider;
-  signInWithPopup: typeof import("firebase/auth").signInWithPopup;
-  isFirebaseAuthConfigured?: () => boolean;
+type BackendOAuthErrorDetail = {
+  code?: string;
+  message?: string;
+  provider?: string;
+  missing_fields?: unknown;
+};
+
+type BackendOAuthErrorEnvelope = {
+  detail?: unknown;
+  message?: string;
 };
 
 type SsoExchangePayload = {
@@ -52,60 +57,116 @@ const PROVIDER_LABELS: Record<SocialProvider, string> = {
 const LOCAL_FALLBACK_EMAIL_STORAGE_KEY = "onlooker_local_social_fallback_email";
 export const LOCAL_SOCIAL_PENDING_KEY = "onlooker_local_social_pending_v1";
 
+function isTruthyEnvFlag(value: string | undefined): boolean {
+  if (!value) {
+    return false;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  return normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "on";
+}
+
+function shouldForceLocalSocialFallback(): boolean {
+  return isTruthyEnvFlag(process.env.NEXT_PUBLIC_FORCE_LOCAL_SOCIAL_FALLBACK);
+}
+
+function shouldEnableGooglePopupFallback(): boolean {
+  return isTruthyEnvFlag(process.env.NEXT_PUBLIC_ENABLE_GOOGLE_POPUP_SSO_FALLBACK);
+}
+
 function isValidEmailAddress(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-function getFirebaseErrorCode(error: unknown): string {
-  if (!error || typeof error !== "object") {
-    return "";
-  }
-
-  const candidate = error as FirebaseLikeError;
-  return candidate.code?.toLowerCase() ?? "";
-}
-
 function isFirebaseUnauthorizedDomain(error: unknown): boolean {
-  if (getFirebaseErrorCode(error) === "auth/unauthorized-domain") {
-    return true;
-  }
-
   if (!error || typeof error !== "object") {
     return false;
   }
 
   const candidate = error as FirebaseLikeError;
+  if (candidate.code === "auth/unauthorized-domain") {
+    return true;
+  }
+
   const message = candidate.message?.toLowerCase() ?? "";
   return message.includes("auth/unauthorized-domain") || message.includes("unauthorized-domain");
 }
 
-function isFirebasePopupDismissed(error: unknown): boolean {
-  const code = getFirebaseErrorCode(error);
-  return code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request";
+function parseJsonObject(value: string): Record<string, unknown> | null {
+  try {
+    const parsed = JSON.parse(value);
+    if (parsed && typeof parsed === "object") {
+      return parsed as Record<string, unknown>;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
 }
 
-function isFirebaseConfigurationError(error: unknown): boolean {
-  const code = getFirebaseErrorCode(error);
-  if (
-    code === "auth/configuration-not-found" ||
-    code === "auth/operation-not-allowed" ||
-    code === "auth/operation-not-supported-in-this-environment" ||
-    code === "auth/invalid-api-key"
-  ) {
-    return true;
-  }
-
+function getBackendOAuthErrorDetail(error: unknown): BackendOAuthErrorDetail | null {
   if (!error || typeof error !== "object") {
-    return false;
+    return null;
   }
 
-  const message = (error as FirebaseLikeError).message?.toLowerCase() ?? "";
-  return (
-    message.includes("configuration-not-found") ||
-    message.includes("operation-not-allowed") ||
-    message.includes("operation-not-supported-in-this-environment") ||
-    message.includes("invalid api key")
-  );
+  const envelope = error as BackendOAuthErrorEnvelope;
+  const sources: unknown[] = [envelope.detail, envelope.message];
+
+  for (const source of sources) {
+    if (!source) {
+      continue;
+    }
+
+    if (typeof source === "string") {
+      const parsed = parseJsonObject(source);
+      if (!parsed) {
+        continue;
+      }
+
+      if (parsed.detail && typeof parsed.detail === "object") {
+        return parsed.detail as BackendOAuthErrorDetail;
+      }
+
+      return parsed as BackendOAuthErrorDetail;
+    }
+
+    if (typeof source === "object") {
+      return source as BackendOAuthErrorDetail;
+    }
+  }
+
+  return null;
+}
+
+function extractBackendOAuthNotConfiguredMessage(error: unknown): string | null {
+  const detail = getBackendOAuthErrorDetail(error);
+  if (!detail || detail.code !== "oauth_provider_not_configured") {
+    return null;
+  }
+
+  const provider = typeof detail.provider === "string" && detail.provider.trim()
+    ? detail.provider.trim()
+    : "requested";
+  const providerTitle = `${provider.charAt(0).toUpperCase()}${provider.slice(1)}`;
+  const missingFields = Array.isArray(detail.missing_fields)
+    ? detail.missing_fields.filter((field): field is string => typeof field === "string" && field.trim().length > 0)
+    : [];
+
+  if (missingFields.length > 0) {
+    return `Backend ${providerTitle} OAuth is not configured (missing: ${missingFields.join(", ")}).`;
+  }
+
+  return `Backend ${providerTitle} OAuth is not configured.`;
+}
+
+function extractBackendDetailMessage(error: unknown): string | null {
+  const detail = getBackendOAuthErrorDetail(error);
+  if (detail && typeof detail.message === "string" && detail.message.trim()) {
+    return detail.message;
+  }
+
+  return null;
 }
 
 function isLocalDevelopmentHost(): boolean {
@@ -115,11 +176,6 @@ function isLocalDevelopmentHost(): boolean {
 
   const host = window.location.hostname;
   return host === "localhost" || host === "127.0.0.1" || host === "::1";
-}
-
-function isLocalSocialFallbackEnabled(): boolean {
-  const value = process.env.NEXT_PUBLIC_ENABLE_LOCAL_SOCIAL_FALLBACK ?? "false";
-  return value.trim().toLowerCase() === "true";
 }
 
 function normalizeEmailHint(emailHint?: string): string | null {
@@ -227,78 +283,14 @@ function isNotFoundError(error: unknown): boolean {
   return candidate.status === 404 || candidate.status === 405;
 }
 
-function extractErrorText(raw: string): string {
-  const value = raw.trim();
-  if (!value) {
-    return "";
-  }
-
-  try {
-    const parsed = JSON.parse(value) as { detail?: unknown; message?: unknown };
-    if (typeof parsed.detail === "string" && parsed.detail.trim()) {
-      return parsed.detail.trim();
-    }
-    if (typeof parsed.message === "string" && parsed.message.trim()) {
-      return parsed.message.trim();
-    }
-  } catch {
-    // Ignore JSON parse failures and return raw text.
-  }
-
-  return value;
-}
-
-function extractHttpErrorMessage(error: unknown): string {
-  if (!error || typeof error !== "object") {
-    return "";
-  }
-
-  const candidate = error as HttpLikeError;
-  if (typeof candidate.detail === "string" && candidate.detail.trim()) {
-    return extractErrorText(candidate.detail);
-  }
-
-  if (typeof candidate.message === "string" && candidate.message.trim()) {
-    return extractErrorText(candidate.message);
-  }
-
-  return "";
-}
-
-function isHostedOAuthProviderNotConfigured(error: unknown): boolean {
-  if (!error || typeof error !== "object") {
-    return false;
-  }
-
-  const candidate = error as HttpLikeError;
-  const detail = extractHttpErrorMessage(error).toLowerCase();
-  return candidate.status === 503 && detail.includes("oauth provider is not configured");
-}
-
 function deriveErrorMessage(error: unknown): string {
+  const oauthNotConfiguredMessage = extractBackendOAuthNotConfiguredMessage(error);
+  if (oauthNotConfiguredMessage) {
+    return oauthNotConfiguredMessage;
+  }
+
   if (isFirebaseUnauthorizedDomain(error)) {
-    return "Social popup is blocked for this domain. Add this host in Firebase Console Authentication > Settings > Authorized domains.";
-  }
-
-  if (isFirebasePopupDismissed(error)) {
-    return "Google sign-in was cancelled.";
-  }
-
-  if (getFirebaseErrorCode(error) === "auth/popup-blocked") {
-    return "Your browser blocked the Google sign-in popup. Allow popups for this site and try again.";
-  }
-
-  if (isFirebaseConfigurationError(error)) {
-    return "Google sign-in is not configured. Update Firebase credentials and enable the Google provider in Firebase Console.";
-  }
-
-  if (isHostedOAuthProviderNotConfigured(error)) {
-    return "Hosted OAuth is not configured on this backend. Configure backend OAUTH provider credentials, or set NEXT_PUBLIC_ENABLE_LOCAL_SOCIAL_FALLBACK=true for local development.";
-  }
-
-  const httpMessage = extractHttpErrorMessage(error);
-  if (httpMessage) {
-    return httpMessage;
+    return "Social popup is blocked for this domain. Add this host in Firebase Console Authentication > Settings > Authorized domains, or use local email fallback.";
   }
 
   if (error instanceof Error && error.message.trim()) {
@@ -307,6 +299,11 @@ function deriveErrorMessage(error: unknown): string {
 
   if (error && typeof error === "object") {
     const candidate = error as HttpLikeError;
+    const backendDetailMessage = extractBackendDetailMessage(error);
+    if (backendDetailMessage) {
+      return backendDetailMessage;
+    }
+
     if (typeof candidate.detail === "string" && candidate.detail.trim()) {
       return candidate.detail;
     }
@@ -319,7 +316,7 @@ function deriveErrorMessage(error: unknown): string {
 }
 
 function buildCallbackAndParams(options: SocialAuthOptions): { nextPath: string; params: URLSearchParams } {
-  const nextPath = "/";
+  const nextPath = options.nextPath ?? "/";
   const callbackUrl = new URL(`${window.location.origin}/auth/oauth/callback`);
   callbackUrl.searchParams.set("next", nextPath);
 
@@ -335,14 +332,7 @@ function buildCallbackAndParams(options: SocialAuthOptions): { nextPath: string;
 }
 
 async function tryGoogleSsoExchange(nextPath: string, emailHint?: string): Promise<void> {
-  const { auth, googleProvider, signInWithPopup, isFirebaseAuthConfigured } =
-    (await import("../components/outsource/local-simulated/firebase")) as GoogleFirebaseModule;
-
-  if (typeof isFirebaseAuthConfigured === "function" && !isFirebaseAuthConfigured()) {
-    const configError = new Error("Firebase Google Auth is not configured") as Error & { code?: string };
-    configError.code = "auth/configuration-not-found";
-    throw configError;
-  }
+  const { auth, googleProvider, signInWithPopup } = await import("../components/outsource/local-simulated/firebase");
 
   const trimmedHint = emailHint?.trim();
   if (trimmedHint) {
@@ -388,27 +378,16 @@ export async function beginSocialAuth(provider: SocialProvider, options: SocialA
   }
 
   const { nextPath, params } = buildCallbackAndParams(options);
-  let startupError: unknown = null;
-  const canUseLocalFallback = isLocalDevelopmentHost() && isLocalSocialFallbackEnabled();
+  const localFallbackEnabled = isLocalDevelopmentHost() && shouldForceLocalSocialFallback();
 
-  if (provider === "google") {
-    try {
-      await tryGoogleSsoExchange(nextPath, options.emailHint);
-      return;
-    } catch (error) {
-      startupError = error;
-
-      // User-cancelled and domain-auth issues should be surfaced directly.
-      if (isFirebasePopupDismissed(error) || isFirebaseUnauthorizedDomain(error)) {
-        throw new Error(deriveErrorMessage(error));
-      }
-
-      // For Firebase setup/runtime issues, continue to backend-hosted OAuth fallback.
-      if (!isFirebaseConfigurationError(error)) {
-        throw new Error(deriveErrorMessage(error));
-      }
-    }
+  // Optional deterministic localhost behavior for smoke tests.
+  // Set NEXT_PUBLIC_FORCE_LOCAL_SOCIAL_FALLBACK=true to bypass external providers.
+  if (localFallbackEnabled) {
+    await tryLocalProviderFallback(provider, nextPath, options.emailHint);
+    return;
   }
+
+  let startupError: unknown = null;
 
   try {
     const payload = await apiFetch<OAuthAuthorizePayload>(`/auth/oauth/${provider}/authorize?${params.toString()}`);
@@ -420,12 +399,27 @@ export async function beginSocialAuth(provider: SocialProvider, options: SocialA
   } catch (error) {
     startupError = error;
 
-    const shouldUseLocalFallback =
-      canUseLocalFallback ||
-      (isLocalDevelopmentHost() && isHostedOAuthProviderNotConfigured(error));
+    const oauthNotConfiguredMessage = extractBackendOAuthNotConfiguredMessage(error);
+    if (oauthNotConfiguredMessage) {
+      throw new Error(oauthNotConfiguredMessage);
+    }
 
     if (!isNotFoundError(error)) {
-      if (shouldUseLocalFallback) {
+      if (provider === "google" && shouldEnableGooglePopupFallback()) {
+        try {
+          await tryGoogleSsoExchange(nextPath, options.emailHint);
+          return;
+        } catch (fallbackError) {
+          if (localFallbackEnabled) {
+            await tryLocalProviderFallback("google", nextPath, options.emailHint);
+            return;
+          }
+
+          throw new Error(deriveErrorMessage(fallbackError));
+        }
+      }
+
+      if (localFallbackEnabled) {
         await tryLocalProviderFallback(provider, nextPath, options.emailHint);
         return;
       }
@@ -440,7 +434,7 @@ export async function beginSocialAuth(provider: SocialProvider, options: SocialA
     fallbackUrl.search = params.toString();
     window.location.assign(fallbackUrl.toString());
   } catch {
-    if (canUseLocalFallback) {
+    if (localFallbackEnabled) {
       await tryLocalProviderFallback(provider, nextPath, options.emailHint);
       return;
     }

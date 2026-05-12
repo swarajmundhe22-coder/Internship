@@ -1,0 +1,23 @@
+{
+  "generated_at_utc": "2026-04-04T10:56:36.543612+00:00",
+  "base_url": "http://127.0.0.1:8000/api/v1",
+  "workload": {
+    "requests": 40,
+    "concurrency": 8
+  },
+  "summary": {
+    "request_count": 40,
+    "success_count": 40,
+    "server_error_count": 0,
+    "error_rate_5xx": 0.0,
+    "p95_latency_ms": 112.21709998790175,
+    "p99_latency_ms": 114.50460000196472,
+    "max_latency_ms": 114.50460000196472
+  },
+  "profile_sort": "cumulative",
+  "profile_top": 25,
+  "profile_files": {
+    "binary": "C:\\Users\\s22td\\OneDrive\\Documents\\The On Lookers\\backend\\artifacts\\performance_reports\\simulation_profile_20260404_105636Z.prof",
+    "text": "C:\\Users\\s22td\\OneDrive\\Documents\\The On Lookers\\backend\\artifacts\\performance_reports\\simulation_profile_20260404_105636Z.txt"
+  }
+}

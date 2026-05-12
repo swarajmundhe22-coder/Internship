@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import { Activity, Eye, EyeOff, Lock, Mail, Shield, Zap } from "lucide-react";
@@ -8,6 +8,20 @@ import { CinematicAuthBackdrop } from "../../components/auth/CinematicAuthBackdr
 import { useApi } from "../../hooks/useApi";
 import { AuthTokenResponse, RegistrationOtpChallengeResponse } from "../../types/domain";
 import { beginSocialAuth, type SocialProvider } from "../../utils/socialAuth";
+
+const OAUTH_ERROR_CODE_MESSAGES: Record<string, string> = {
+  oauth_provider_not_configured: "Google OAuth is not configured on the server. Verify client ID, client secret, and redirect URI in deployment settings.",
+  oauth_state_missing: "OAuth state was missing. Retry sign-in from the login page.",
+  oauth_state_invalid: "OAuth state validation failed. Retry sign-in and ensure only one login tab is active.",
+  oauth_state_provider_mismatch: "OAuth provider mismatch detected. Restart sign-in with the same provider.",
+  oauth_nonce_mismatch: "Security nonce check failed during OAuth callback. Retry sign-in.",
+  oauth_invalid_grant: "Google rejected the authorization code (expired or revoked grant). Retry sign-in.",
+  oauth_invalid_client: "Google OAuth client credentials are invalid. Verify production client configuration.",
+  oauth_token_timeout: "Google token exchange timed out. Check network connectivity and retry.",
+  oauth_token_network_error: "Google token exchange failed due to a network error. Retry shortly.",
+  oauth_google_userinfo_failed: "Unable to fetch your Google profile. Verify granted scopes include openid email profile.",
+  oauth_identity_missing: "OAuth response did not include required identity claims.",
+};
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,9 +37,28 @@ export default function LoginPage() {
   const [socialError, setSocialError] = useState<string | null>(null);
   const [socialProviderLoading, setSocialProviderLoading] = useState<SocialProvider | null>(null);
   const oauthError = typeof router.query.oauth_error === "string" ? router.query.oauth_error : null;
+  const oauthErrorCode = typeof router.query.oauth_error_code === "string" ? router.query.oauth_error_code : null;
+  const mappedOauthError = oauthErrorCode ? OAUTH_ERROR_CODE_MESSAGES[oauthErrorCode] ?? null : null;
   const visibleSocialError =
-    socialError ?? (oauthError === "OAuth sign-in failed" ? "OAuth callback missing token" : oauthError);
-  const resolvedNextPath = "/";
+    socialError ?? mappedOauthError ?? (oauthError === "OAuth sign-in failed" ? "OAuth callback missing token" : oauthError);
+  const resolvedNextPath = useMemo(() => {
+    const candidate = typeof router.query.next === "string" ? router.query.next : "";
+    if (candidate.startsWith("/")) {
+      return candidate;
+    }
+    return "/";
+  }, [router.query.next]);
+
+  useEffect(() => {
+    if (!router.isReady || typeof window === "undefined") {
+      return;
+    }
+
+    const existingToken = window.localStorage.getItem("onlooker_token");
+    if (existingToken) {
+      void router.replace(resolvedNextPath);
+    }
+  }, [resolvedNextPath, router, router.isReady]);
 
   async function completeLogin(token: AuthTokenResponse): Promise<void> {
     if (typeof window !== "undefined") {

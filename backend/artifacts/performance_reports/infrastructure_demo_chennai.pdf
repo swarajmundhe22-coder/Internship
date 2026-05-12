@@ -1,0 +1,10 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] >> endobj
+% Infrastructure Compliance Report | validation_id=90b7bcdc-d567-4914-8627-64a4a39ba8c6 | overall=True | stamped=2026-04-09T11:16:52.295731+00:00
+% engine_version=infra-structural-v2.0.0+microclimate-v2.0.0 | generated_at=2026-04-09T11:16:52.295731+00:00
+% code=ASCE7-22 | pass=True | governing=ASCE-ULS-3 | util=0.5757 | mos=0.7370
+% code=EUROCODE-IN-NA | pass=True | governing=EC-ULS-FUND | util=0.6399 | mos=0.5628
+% code=GB-50009-50011-50017 | pass=True | governing=GB-ULS-2 | util=0.6304 | mos=0.5863
+%%EOF

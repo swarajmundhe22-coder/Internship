@@ -1,0 +1,270 @@
+{
+  "generated_at_utc": "2026-05-12T06:51:46.492454+00:00",
+  "dataset_rows": 7,
+  "global_summary": {
+    "samples": 7.0,
+    "risk_score_mae": 2.1823812598345936e-14,
+    "design_rate_mape": 1.055241508203947e-15,
+    "lifespan_mape": 6.209197100813184e-16,
+    "interval_coverage": 1.0,
+    "fallback_rate": 0.0,
+    "passed": true,
+    "thresholds": {
+      "risk_score_mae_max": 12.0,
+      "design_rate_mape_max": 0.35,
+      "lifespan_mape_max": 0.4,
+      "interval_coverage_min": 0.75
+    },
+    "failures": []
+  },
+  "by_region": {
+    "arctic_subarctic": {
+      "samples": 1.0,
+      "risk_score_mae": 3.552713678800501e-15,
+      "design_rate_mape": 1.4858377683303586e-15,
+      "lifespan_mape": 0.0,
+      "interval_coverage": 1.0,
+      "fallback_rate": 0.0,
+      "passed": true,
+      "thresholds": {
+        "risk_score_mae_max": 13.0,
+        "design_rate_mape_max": 0.4,
+        "lifespan_mape_max": 0.45,
+        "interval_coverage_min": 0.7
+      },
+      "failures": []
+    },
+    "arid_desert_industrial": {
+      "samples": 1.0,
+      "risk_score_mae": 4.263256414560601e-14,
+      "design_rate_mape": 1.0197106738649564e-15,
+      "lifespan_mape": 8.288705163134655e-16,
+      "interval_coverage": 1.0,
+      "fallback_rate": 0.0,
+      "passed": true,
+      "thresholds": {
+        "risk_score_mae_max": 12.0,
+        "design_rate_mape_max": 0.35,
+        "lifespan_mape_max": 0.4,
+        "interval_coverage_min": 0.75
+      },
+      "failures": []
+    },
+    "equatorial_humid_urban": {
+      "samples": 1.0,
+      "risk_score_mae": 2.842170943040401e-14,
+      "design_rate_mape": 7.248815101149718e-16,
+      "lifespan_mape": 5.82997428505758e-16,
+      "interval_coverage": 1.0,
+      "fallback_rate": 0.0,
+      "passed": true,
+      "thresholds": {
+        "risk_score_mae_max": 12.0,
+        "design_rate_mape_max": 0.35,
+        "lifespan_mape_max": 0.4,
+        "interval_coverage_min": 0.75
+      },
+      "failures": []
+    },
+    "gulf_tropical_marine": {
+      "samples": 1.0,
+      "risk_score_mae": 4.263256414560601e-14,
+      "design_rate_mape": 3.701885511541736e-15,
+      "lifespan_mape": 5.175214224112699e-16,
+      "interval_coverage": 1.0,
+      "fallback_rate": 0.0,
+      "passed": true,
+      "thresholds": {
+        "risk_score_mae_max": 10.0,
+        "design_rate_mape_max": 0.3,
+        "lifespan_mape_max": 0.35,
+        "interval_coverage_min": 0.8
+      },
+      "failures": []
+    },
+    "monsoon_coastal": {
+      "samples": 1.0,
+      "risk_score_mae": 0.0,
+      "design_rate_mape": 0.0,
+      "lifespan_mape": 7.243075322163931e-16,
+      "interval_coverage": 1.0,
+      "fallback_rate": 0.0,
+      "passed": true,
+      "thresholds": {
+        "risk_score_mae_max": 10.0,
+        "design_rate_mape_max": 0.3,
+        "lifespan_mape_max": 0.35,
+        "interval_coverage_min": 0.8
+      },
+      "failures": []
+    },
+    "north_sea_offshore": {
+      "samples": 1.0,
+      "risk_score_mae": 1.4210854715202004e-14,
+      "design_rate_mape": 4.543750935756053e-16,
+      "lifespan_mape": 1.6927410711223426e-15,
+      "interval_coverage": 1.0,
+      "fallback_rate": 0.0,
+      "passed": true,
+      "thresholds": {
+        "risk_score_mae_max": 10.0,
+        "design_rate_mape_max": 0.3,
+        "lifespan_mape_max": 0.35,
+        "interval_coverage_min": 0.8
+      },
+      "failures": []
+    },
+    "temperate_industrial": {
+      "samples": 1.0,
+      "risk_score_mae": 2.1316282072803006e-14,
+      "design_rate_mape": 0.0,
+      "lifespan_mape": 0.0,
+      "interval_coverage": 1.0,
+      "fallback_rate": 0.0,
+      "passed": true,
+      "thresholds": {
+        "risk_score_mae_max": 12.0,
+        "design_rate_mape_max": 0.35,
+        "lifespan_mape_max": 0.4,
+        "interval_coverage_min": 0.75
+      },
+      "failures": []
+    }
+  },
+  "rows": [
+    {
+      "region": "North Sea Offshore",
+      "resolved_region_key": "north_sea_offshore",
+      "scenario_id": "north_sea_offshore_carbon_3",
+      "design_rate_true": 0.733021928571282,
+      "design_rate_pred": 0.7330219285712817,
+      "design_rate_mape": 4.543750935756053e-16,
+      "risk_true": 84.4125339035396,
+      "risk_pred": 84.41253390353958,
+      "risk_mae": 1.4210854715202004e-14,
+      "lifespan_true": 13.6421566807569,
+      "lifespan_pred": 13.642156680756877,
+      "lifespan_mape": 1.6927410711223426e-15,
+      "design_rate_in_interval": true,
+      "risk_in_interval": true,
+      "lifespan_in_interval": true,
+      "calibration_confidence": 0.8399999999999999,
+      "fallback_applied": false
+    },
+    {
+      "region": "Gulf Tropical Marine",
+      "resolved_region_key": "gulf_tropical_marine",
+      "scenario_id": "gulf_tropical_marine_hull_3",
+      "design_rate_true": 1.01968531224334,
+      "design_rate_pred": 1.0196853122433438,
+      "design_rate_mape": 3.701885511541736e-15,
+      "risk_true": 96.90322531584,
+      "risk_pred": 96.90322531584005,
+      "risk_mae": 4.263256414560601e-14,
+      "lifespan_true": 6.86486302779016,
+      "lifespan_pred": 6.864863027790164,
+      "lifespan_mape": 5.175214224112699e-16,
+      "design_rate_in_interval": true,
+      "risk_in_interval": true,
+      "lifespan_in_interval": true,
+      "calibration_confidence": 0.8049418800000001,
+      "fallback_applied": false
+    },
+    {
+      "region": "Temperate Industrial",
+      "resolved_region_key": "temperate_industrial",
+      "scenario_id": "auto_temperate_wind_duplex_3",
+      "design_rate_true": 0.0173324780066704,
+      "design_rate_pred": 0.0173324780066704,
+      "design_rate_mape": 0.0,
+      "risk_true": 26.4093743524636,
+      "risk_pred": 26.40937435246358,
+      "risk_mae": 2.1316282072803006e-14,
+      "lifespan_true": 120.0,
+      "lifespan_pred": 120.0,
+      "lifespan_mape": 0.0,
+      "design_rate_in_interval": true,
+      "risk_in_interval": true,
+      "lifespan_in_interval": true,
+      "calibration_confidence": 0.8899999999999999,
+      "fallback_applied": false
+    },
+    {
+      "region": "Arid Desert Industrial",
+      "resolved_region_key": "arid_desert_industrial",
+      "scenario_id": "arid_weathering_bridge_3",
+      "design_rate_true": 0.326628832985675,
+      "design_rate_pred": 0.3266288329856747,
+      "design_rate_mape": 1.0197106738649564e-15,
+      "risk_true": 63.3385892060654,
+      "risk_pred": 63.33858920606536,
+      "risk_mae": 4.263256414560601e-14,
+      "lifespan_true": 21.4310535172717,
+      "lifespan_pred": 21.431053517271717,
+      "lifespan_mape": 8.288705163134655e-16,
+      "design_rate_in_interval": true,
+      "risk_in_interval": true,
+      "lifespan_in_interval": true,
+      "calibration_confidence": 0.8180000000000001,
+      "fallback_applied": false
+    },
+    {
+      "region": "Monsoon Coastal",
+      "resolved_region_key": "monsoon_coastal",
+      "scenario_id": "auto_monsoon_pipeline_3",
+      "design_rate_true": 0.897047561352632,
+      "design_rate_pred": 0.897047561352632,
+      "design_rate_mape": 0.0,
+      "risk_true": 92.5085435711724,
+      "risk_pred": 92.5085435711724,
+      "risk_mae": 0.0,
+      "lifespan_true": 6.13122451579569,
+      "lifespan_pred": 6.131224515795695,
+      "lifespan_mape": 7.243075322163931e-16,
+      "design_rate_in_interval": true,
+      "risk_in_interval": true,
+      "lifespan_in_interval": true,
+      "calibration_confidence": 0.7862905920000001,
+      "fallback_applied": false
+    },
+    {
+      "region": "Arctic Subarctic",
+      "resolved_region_key": "arctic_subarctic",
+      "scenario_id": "arctic_duplex_pipeline_3",
+      "design_rate_true": 0.015177568956966,
+      "design_rate_pred": 0.015177568956966023,
+      "design_rate_mape": 1.4858377683303586e-15,
+      "risk_true": 24.3682255545404,
+      "risk_pred": 24.368225554540395,
+      "risk_mae": 3.552713678800501e-15,
+      "lifespan_true": 120.0,
+      "lifespan_pred": 120.0,
+      "lifespan_mape": 0.0,
+      "design_rate_in_interval": true,
+      "risk_in_interval": true,
+      "lifespan_in_interval": true,
+      "calibration_confidence": 0.75,
+      "fallback_applied": false
+    },
+    {
+      "region": "Equatorial Humid Urban",
+      "resolved_region_key": "equatorial_humid_urban",
+      "scenario_id": "auto_equatorial_urban_concrete_3",
+      "design_rate_true": 0.382898104425738,
+      "design_rate_pred": 0.38289810442573774,
+      "design_rate_mape": 7.248815101149718e-16,
+      "risk_true": 71.2768872361413,
+      "risk_pred": 71.27688723614133,
+      "risk_mae": 2.842170943040401e-14,
+      "lifespan_true": 9.14081307675634,
+      "lifespan_pred": 9.140813076756345,
+      "lifespan_mape": 5.82997428505758e-16,
+      "design_rate_in_interval": true,
+      "risk_in_interval": true,
+      "lifespan_in_interval": true,
+      "calibration_confidence": 0.8027528990759419,
+      "fallback_applied": false
+    }
+  ],
+  "passed": true
+}

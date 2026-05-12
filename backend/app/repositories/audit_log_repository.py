@@ -1,19 +1,26 @@
 from __future__ import annotations
 
 from datetime import datetime
+import logging
 from uuid import UUID
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.audit_batch_processor import AuditWriteRequest, get_audit_batch_processor
+from app.core.config import get_settings
 from app.database.models import AuditLogEntity
 from app.models.audit import AuditLogRead
 from app.models.pagination import AuditLogListQuery, PaginatedResponse
 
+logger = logging.getLogger("gifip.audit")
 
 class AuditLogRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
+        self.settings = get_settings()
+        self.batch_processor = get_audit_batch_processor()
+        self._warned_batch_unavailable = False
 
     async def create(
         self,
@@ -25,7 +32,7 @@ class AuditLogRepository:
         user_email: str | None = None,
         detail: str | None = None,
     ) -> AuditLogEntity:
-        entity = AuditLogEntity(
+        request = AuditWriteRequest(
             event_type=event_type,
             success=success,
             tenant_id=tenant_id,
@@ -33,10 +40,50 @@ class AuditLogRepository:
             user_email=user_email,
             detail=detail,
         )
-        self.session.add(entity)
-        await self.session.commit()
-        await self.session.refresh(entity)
-        return entity
+
+        if self.settings.audit_async_enabled:
+            if self.batch_processor.is_running:
+                if self.batch_processor.enqueue(request):
+                    return AuditLogEntity(
+                        event_type=event_type,
+                        success=success,
+                        tenant_id=tenant_id,
+                        user_id=user_id,
+                        user_email=user_email,
+                        detail=detail,
+                    )
+
+                logger.warning(
+                    "Audit queue is full; falling back to synchronous write",
+                    extra={"event_type": event_type, "tenant_id": str(tenant_id) if tenant_id else None},
+                )
+            elif not self._warned_batch_unavailable:
+                logger.warning(
+                    "Audit async is enabled but batch processor is not running; falling back to synchronous writes",
+                    extra={"event_type": event_type},
+                )
+                self._warned_batch_unavailable = True
+
+        try:
+            entity = AuditLogEntity(
+                event_type=event_type,
+                success=success,
+                tenant_id=tenant_id,
+                user_id=user_id,
+                user_email=user_email,
+                detail=detail,
+            )
+            self.session.add(entity)
+            await self.session.commit()
+            await self.session.refresh(entity)
+            return entity
+        except Exception as exc:
+            await self.session.rollback()
+            logger.exception(
+                "Audit log creation failed",
+                extra={"event_type": event_type, "tenant_id": str(tenant_id) if tenant_id else None},
+            )
+            return AuditLogEntity(event_type=event_type, success=success)
 
     async def list_events(
         self,

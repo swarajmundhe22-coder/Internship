@@ -1,0 +1,553 @@
+{
+  "miami": {
+    "validation_id": "a16bd418-c0ea-4a63-96ab-55862a3e0b2b",
+    "generated_at": "2026-04-09T11:16:52.294320Z",
+    "engine_version": "infra-structural-v2.0.0+microclimate-v2.0.0",
+    "location": {
+      "country_code": "US",
+      "state": "Florida",
+      "county": "Miami-Dade",
+      "city": "Miami",
+      "latitude": 25.7617,
+      "longitude": -80.1918
+    },
+    "weather": {
+      "source_station_id": "US-MIA-0001",
+      "fallback_station_id": null,
+      "basic_wind_speed_mph": 175.0,
+      "height_adjusted_wind_speed_mph": 233.65,
+      "exposure_category": "C",
+      "seismic_zone": 1,
+      "ss_g": 0.18,
+      "s1_g": 0.06,
+      "precipitation_intensity_mm_hr": 195.0,
+      "idf_100_year_mm_hr": 260.0,
+      "freeze_thaw_cycles": 0,
+      "salt_spray_mg_m2_day": 294.0,
+      "so2_deposition_ug_m3": 12.5,
+      "pressure_hpa": 1013.2,
+      "interpolation_steps": [
+        "interpolation_timestamp_utc=2026-04-09T11:16:52.293253+00:00",
+        "applied county-level ASCE 7-22 3-second gust wind map",
+        "height adjusted wind speed using exposure C",
+        "USGS spectral proxies pulled from nearest station profile",
+        "calculated freeze-thaw and salt-spray severity proxies",
+        "resolved SO2 and pressure from NOAA/IMD aligned station channels"
+      ]
+    },
+    "tolerance_check": null,
+    "code_results": [
+      {
+        "code_family": "ASCE7-22",
+        "material_system": "steel",
+        "governing_limit_state_id": "ASCE-ULS-3",
+        "passes": true,
+        "limit_states": [
+          {
+            "limit_state_id": "ASCE-ULS-1",
+            "expression": "1.4D",
+            "code_reference": "ASCE 7-22 Chapter 2, Sec 2.3.1",
+            "design_intent": "ULS",
+            "demand_kN": 868.0,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.3338,
+            "margin_of_safety": 1.9954,
+            "passes": true
+          },
+          {
+            "limit_state_id": "ASCE-ULS-2",
+            "expression": "1.2D + 1.6L + 0.5S + 0.5T",
+            "code_reference": "ASCE 7-22 Chapter 2, Sec 2.3.2",
+            "design_intent": "ULS",
+            "demand_kN": 1097.5,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.4221,
+            "margin_of_safety": 1.369,
+            "passes": true
+          },
+          {
+            "limit_state_id": "ASCE-ULS-3",
+            "expression": "1.2D + 1.0W + 1.0L + 0.5S + 0.2T",
+            "code_reference": "ASCE 7-22 Chapters 26-31",
+            "design_intent": "ULS",
+            "demand_kN": 1930.7331,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.7426,
+            "margin_of_safety": 0.3466,
+            "passes": true
+          },
+          {
+            "limit_state_id": "ASCE-ULS-4",
+            "expression": "0.9D + 1.0W",
+            "code_reference": "ASCE 7-22 Chapters 26-31",
+            "design_intent": "ULS",
+            "demand_kN": 1526.2331,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.587,
+            "margin_of_safety": 0.7035,
+            "passes": true
+          },
+          {
+            "limit_state_id": "ASCE-ULS-5",
+            "expression": "1.2D + 1.0E + 0.5L + 0.2S",
+            "code_reference": "ASCE 7-22 Chapter 12",
+            "design_intent": "ULS",
+            "demand_kN": 875.5214,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.3367,
+            "margin_of_safety": 1.9697,
+            "passes": true
+          },
+          {
+            "limit_state_id": "ASCE-SLS-1",
+            "expression": "1.0D + 1.0L",
+            "code_reference": "ASCE 7-22 Chapter 2, Sec 2.4",
+            "design_intent": "SLS",
+            "demand_kN": 830.0,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.3952,
+            "margin_of_safety": 1.5301,
+            "passes": true
+          },
+          {
+            "limit_state_id": "ASCE-SLS-2",
+            "expression": "1.0D + 0.7W + 0.5L",
+            "code_reference": "ASCE 7-22 Chapter 2, Sec 2.4",
+            "design_intent": "SLS",
+            "demand_kN": 1402.7632,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.668,
+            "margin_of_safety": 0.497,
+            "passes": true
+          }
+        ]
+      },
+      {
+        "code_family": "EUROCODE-IN-NA",
+        "material_system": "steel",
+        "governing_limit_state_id": "EC-ULS-FUND",
+        "passes": true,
+        "limit_states": [
+          {
+            "limit_state_id": "EC-ULS-FUND",
+            "expression": "gammaG*G + gammaQ*Q + gammaQ*psi0,w*W + gammaQ*psi0,s*S + gammaQ*psi0,t*T",
+            "code_reference": "EN 1990 + EN 1991 + EN 1993/1992 (India NA)",
+            "design_intent": "ULS",
+            "demand_kN": 2054.1598,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.7901,
+            "margin_of_safety": 0.2657,
+            "passes": true
+          },
+          {
+            "limit_state_id": "EC-ULS-SEIS",
+            "expression": "gammaG*G + E + psi2,l*Q + psi2,s*S",
+            "code_reference": "EN 1998 seismic combination (India NA)",
+            "design_intent": "ULS",
+            "demand_kN": 925.5214,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.356,
+            "margin_of_safety": 1.8092,
+            "passes": true
+          },
+          {
+            "limit_state_id": "EC-SLS-RARE",
+            "expression": "G + Q + psi0,w*W + psi0,s*S + psi0,t*T",
+            "code_reference": "EN 1990 SLS rare",
+            "design_intent": "SLS",
+            "demand_kN": 1431.4399,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.6816,
+            "margin_of_safety": 0.4671,
+            "passes": true
+          },
+          {
+            "limit_state_id": "EC-SLS-FREQ",
+            "expression": "G + psi1,l*Q + psi1,w*W + psi1,s*S",
+            "code_reference": "EN 1990 SLS frequent",
+            "design_intent": "SLS",
+            "demand_kN": 919.6466,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.4379,
+            "margin_of_safety": 1.2835,
+            "passes": true
+          },
+          {
+            "limit_state_id": "EC-SLS-QUASI",
+            "expression": "G + psi2,l*Q + psi2,w*W + psi2,s*S + psi2,t*T",
+            "code_reference": "EN 1990 SLS quasi-permanent",
+            "design_intent": "SLS",
+            "demand_kN": 692.0,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.3295,
+            "margin_of_safety": 2.0347,
+            "passes": true
+          },
+          {
+            "limit_state_id": "EC-ULS-FIRE-ROBUST",
+            "expression": "1.0G + 0.7Q + 0.6T",
+            "code_reference": "EN 1990 accidental/robustness envelope",
+            "design_intent": "ULS",
+            "demand_kN": 785.0,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.3019,
+            "margin_of_safety": 2.3121,
+            "passes": true
+          }
+        ]
+      },
+      {
+        "code_family": "GB-50009-50011-50017",
+        "material_system": "steel",
+        "governing_limit_state_id": "GB-ULS-2",
+        "passes": true,
+        "limit_states": [
+          {
+            "limit_state_id": "GB-ULS-1",
+            "expression": "1.2D + 1.4L",
+            "code_reference": "GB 50009-2012 load combination",
+            "design_intent": "ULS",
+            "demand_kN": 1038.0,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.3992,
+            "margin_of_safety": 1.5048,
+            "passes": true
+          },
+          {
+            "limit_state_id": "GB-ULS-2",
+            "expression": "1.2D + 1.4W + 0.7L",
+            "code_reference": "GB 50009-2012 wind governed",
+            "design_intent": "ULS",
+            "demand_kN": 2246.5263,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.864,
+            "margin_of_safety": 0.1573,
+            "passes": true
+          },
+          {
+            "limit_state_id": "GB-ULS-3",
+            "expression": "1.2D + 1.3E + 0.5L",
+            "code_reference": "GB 50011-2010 seismic governed",
+            "design_intent": "ULS",
+            "demand_kN": 882.1778,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.3393,
+            "margin_of_safety": 1.9473,
+            "passes": true
+          },
+          {
+            "limit_state_id": "GB-SLS-1",
+            "expression": "D + L + 0.6W",
+            "code_reference": "GB 50009-2012 serviceability",
+            "design_intent": "SLS",
+            "demand_kN": 1410.9399,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.6719,
+            "margin_of_safety": 0.4884,
+            "passes": true
+          },
+          {
+            "limit_state_id": "GB-SLS-2",
+            "expression": "D + 0.7L + 0.7S + 0.6T",
+            "code_reference": "GB 50009-2012 variable load serviceability",
+            "design_intent": "SLS",
+            "demand_kN": 788.5,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.3755,
+            "margin_of_safety": 1.6633,
+            "passes": true
+          },
+          {
+            "limit_state_id": "GB-STEEL-50017",
+            "expression": "1.1D + 1.1L + 1.1W",
+            "code_reference": "GB 50017-2017 steel member stability envelope",
+            "design_intent": "ULS",
+            "demand_kN": 1978.0564,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.7608,
+            "margin_of_safety": 0.3144,
+            "passes": true
+          }
+        ]
+      }
+    ],
+    "overall_passes": true
+  },
+  "chennai": {
+    "validation_id": "90b7bcdc-d567-4914-8627-64a4a39ba8c6",
+    "generated_at": "2026-04-09T11:16:52.295731Z",
+    "engine_version": "infra-structural-v2.0.0+microclimate-v2.0.0",
+    "location": {
+      "country_code": "IN",
+      "state": "Tamil Nadu",
+      "county": "Chennai",
+      "city": "Chennai",
+      "latitude": 13.0827,
+      "longitude": 80.2707
+    },
+    "weather": {
+      "source_station_id": "IN-MAA-0001",
+      "fallback_station_id": null,
+      "basic_wind_speed_mph": 130.0,
+      "height_adjusted_wind_speed_mph": 173.57,
+      "exposure_category": "C",
+      "seismic_zone": 3,
+      "ss_g": 0.36,
+      "s1_g": 0.18,
+      "precipitation_intensity_mm_hr": 232.5,
+      "idf_100_year_mm_hr": 310.0,
+      "freeze_thaw_cycles": 0,
+      "salt_spray_mg_m2_day": 276.0,
+      "so2_deposition_ug_m3": 18.8,
+      "pressure_hpa": 1008.5,
+      "interpolation_steps": [
+        "interpolation_timestamp_utc=2026-04-09T11:16:52.294320+00:00",
+        "height adjusted wind speed using exposure C",
+        "BIS 1893 zone converted to Ss/S1 proxy values",
+        "calculated freeze-thaw and salt-spray severity proxies",
+        "resolved SO2 and pressure from NOAA/IMD aligned station channels"
+      ]
+    },
+    "tolerance_check": null,
+    "code_results": [
+      {
+        "code_family": "ASCE7-22",
+        "material_system": "steel",
+        "governing_limit_state_id": "ASCE-ULS-3",
+        "passes": true,
+        "limit_states": [
+          {
+            "limit_state_id": "ASCE-ULS-1",
+            "expression": "1.4D",
+            "code_reference": "ASCE 7-22 Chapter 2, Sec 2.3.1",
+            "design_intent": "ULS",
+            "demand_kN": 868.0,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.3338,
+            "margin_of_safety": 1.9954,
+            "passes": true
+          },
+          {
+            "limit_state_id": "ASCE-ULS-2",
+            "expression": "1.2D + 1.6L + 0.5S + 0.5T",
+            "code_reference": "ASCE 7-22 Chapter 2, Sec 2.3.2",
+            "design_intent": "ULS",
+            "demand_kN": 1097.5,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.4221,
+            "margin_of_safety": 1.369,
+            "passes": true
+          },
+          {
+            "limit_state_id": "ASCE-ULS-3",
+            "expression": "1.2D + 1.0W + 1.0L + 0.5S + 0.2T",
+            "code_reference": "ASCE 7-22 Chapters 26-31",
+            "design_intent": "ULS",
+            "demand_kN": 1496.8154,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.5757,
+            "margin_of_safety": 0.737,
+            "passes": true
+          },
+          {
+            "limit_state_id": "ASCE-ULS-4",
+            "expression": "0.9D + 1.0W",
+            "code_reference": "ASCE 7-22 Chapters 26-31",
+            "design_intent": "ULS",
+            "demand_kN": 1092.3154,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.4201,
+            "margin_of_safety": 1.3803,
+            "passes": true
+          },
+          {
+            "limit_state_id": "ASCE-ULS-5",
+            "expression": "1.2D + 1.0E + 0.5L + 0.2S",
+            "code_reference": "ASCE 7-22 Chapter 12",
+            "design_intent": "ULS",
+            "demand_kN": 905.683,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.3483,
+            "margin_of_safety": 1.8708,
+            "passes": true
+          },
+          {
+            "limit_state_id": "ASCE-SLS-1",
+            "expression": "1.0D + 1.0L",
+            "code_reference": "ASCE 7-22 Chapter 2, Sec 2.4",
+            "design_intent": "SLS",
+            "demand_kN": 830.0,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.3952,
+            "margin_of_safety": 1.5301,
+            "passes": true
+          },
+          {
+            "limit_state_id": "ASCE-SLS-2",
+            "expression": "1.0D + 0.7W + 0.5L",
+            "code_reference": "ASCE 7-22 Chapter 2, Sec 2.4",
+            "design_intent": "SLS",
+            "demand_kN": 1099.0208,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.5233,
+            "margin_of_safety": 0.9108,
+            "passes": true
+          }
+        ]
+      },
+      {
+        "code_family": "EUROCODE-IN-NA",
+        "material_system": "steel",
+        "governing_limit_state_id": "EC-ULS-FUND",
+        "passes": true,
+        "limit_states": [
+          {
+            "limit_state_id": "EC-ULS-FUND",
+            "expression": "gammaG*G + gammaQ*Q + gammaQ*psi0,w*W + gammaQ*psi0,s*S + gammaQ*psi0,t*T",
+            "code_reference": "EN 1990 + EN 1991 + EN 1993/1992 (India NA)",
+            "design_intent": "ULS",
+            "demand_kN": 1663.6339,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.6399,
+            "margin_of_safety": 0.5628,
+            "passes": true
+          },
+          {
+            "limit_state_id": "EC-ULS-SEIS",
+            "expression": "gammaG*G + E + psi2,l*Q + psi2,s*S",
+            "code_reference": "EN 1998 seismic combination (India NA)",
+            "design_intent": "ULS",
+            "demand_kN": 955.683,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.3676,
+            "margin_of_safety": 1.7206,
+            "passes": true
+          },
+          {
+            "limit_state_id": "EC-SLS-RARE",
+            "expression": "G + Q + psi0,w*W + psi0,s*S + psi0,t*T",
+            "code_reference": "EN 1990 SLS rare",
+            "design_intent": "SLS",
+            "demand_kN": 1171.0892,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.5577,
+            "margin_of_safety": 0.7932,
+            "passes": true
+          },
+          {
+            "limit_state_id": "EC-SLS-FREQ",
+            "expression": "G + psi1,l*Q + psi1,w*W + psi1,s*S",
+            "code_reference": "EN 1990 SLS frequent",
+            "design_intent": "SLS",
+            "demand_kN": 832.8631,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.3966,
+            "margin_of_safety": 1.5214,
+            "passes": true
+          },
+          {
+            "limit_state_id": "EC-SLS-QUASI",
+            "expression": "G + psi2,l*Q + psi2,w*W + psi2,s*S + psi2,t*T",
+            "code_reference": "EN 1990 SLS quasi-permanent",
+            "design_intent": "SLS",
+            "demand_kN": 692.0,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.3295,
+            "margin_of_safety": 2.0347,
+            "passes": true
+          },
+          {
+            "limit_state_id": "EC-ULS-FIRE-ROBUST",
+            "expression": "1.0G + 0.7Q + 0.6T",
+            "code_reference": "EN 1990 accidental/robustness envelope",
+            "design_intent": "ULS",
+            "demand_kN": 785.0,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.3019,
+            "margin_of_safety": 2.3121,
+            "passes": true
+          }
+        ]
+      },
+      {
+        "code_family": "GB-50009-50011-50017",
+        "material_system": "steel",
+        "governing_limit_state_id": "GB-ULS-2",
+        "passes": true,
+        "limit_states": [
+          {
+            "limit_state_id": "GB-ULS-1",
+            "expression": "1.2D + 1.4L",
+            "code_reference": "GB 50009-2012 load combination",
+            "design_intent": "ULS",
+            "demand_kN": 1038.0,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.3992,
+            "margin_of_safety": 1.5048,
+            "passes": true
+          },
+          {
+            "limit_state_id": "GB-ULS-2",
+            "expression": "1.2D + 1.4W + 0.7L",
+            "code_reference": "GB 50009-2012 wind governed",
+            "design_intent": "ULS",
+            "demand_kN": 1639.0416,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.6304,
+            "margin_of_safety": 0.5863,
+            "passes": true
+          },
+          {
+            "limit_state_id": "GB-ULS-3",
+            "expression": "1.2D + 1.3E + 0.5L",
+            "code_reference": "GB 50011-2010 seismic governed",
+            "design_intent": "ULS",
+            "demand_kN": 921.3879,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.3544,
+            "margin_of_safety": 1.8218,
+            "passes": true
+          },
+          {
+            "limit_state_id": "GB-SLS-1",
+            "expression": "D + L + 0.6W",
+            "code_reference": "GB 50009-2012 serviceability",
+            "design_intent": "SLS",
+            "demand_kN": 1150.5892,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.5479,
+            "margin_of_safety": 0.8252,
+            "passes": true
+          },
+          {
+            "limit_state_id": "GB-SLS-2",
+            "expression": "D + 0.7L + 0.7S + 0.6T",
+            "code_reference": "GB 50009-2012 variable load serviceability",
+            "design_intent": "SLS",
+            "demand_kN": 788.5,
+            "capacity_kN": 2100.0,
+            "utilization_ratio": 0.3755,
+            "margin_of_safety": 1.6633,
+            "passes": true
+          },
+          {
+            "limit_state_id": "GB-STEEL-50017",
+            "expression": "1.1D + 1.1L + 1.1W",
+            "code_reference": "GB 50017-2017 steel member stability envelope",
+            "design_intent": "ULS",
+            "demand_kN": 1500.7469,
+            "capacity_kN": 2600.0,
+            "utilization_ratio": 0.5772,
+            "margin_of_safety": 0.7325,
+            "passes": true
+          }
+        ]
+      }
+    ],
+    "overall_passes": true
+  },
+  "artifacts": {
+    "miami_pdf": "C:\\Users\\s22td\\OneDrive\\Documents\\The On Lookers\\backend\\artifacts\\performance_reports\\infrastructure_demo_miami.pdf",
+    "chennai_pdf": "C:\\Users\\s22td\\OneDrive\\Documents\\The On Lookers\\backend\\artifacts\\performance_reports\\infrastructure_demo_chennai.pdf"
+  }
+}

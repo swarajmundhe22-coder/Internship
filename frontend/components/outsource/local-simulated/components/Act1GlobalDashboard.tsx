@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { OrbitControls, Stars, PerspectiveCamera, Float, Html } from '@react-three/drei';
 import * as THREE from 'three';
@@ -8,15 +8,16 @@ import type { RealtimeHudMetrics } from '../useRealtimeHudMetrics';
 
 const AtmosphereShader = {
   uniforms: {
-    lightDirection: { value: new THREE.Vector3(1, 0.5, 1).normalize() }
+    lightDirection: { value: new THREE.Vector3(1, 0.5, 1).normalize() },
+    time: { value: 0 }
   },
   vertexShader: `
     varying vec3 vNormal;
     varying vec3 vPosition;
     void main() {
       vNormal = normalize(normalMatrix * normal);
-      vPosition = position;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
+      gl_Position = projectionMatrix * vec4(vPosition, 1.0);
     }
   `,
   fragmentShader: `
@@ -24,22 +25,33 @@ const AtmosphereShader = {
     varying vec3 vPosition;
     uniform vec3 lightDirection;
     void main() {
-      float intensity = pow(0.65 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+      // Basic atmospheric rim lighting
+      float intensity = pow(0.65 - dot(normalize(vNormal), vec3(0.0, 0.0, 1.0)), 3.0);
       vec3 col = mix(vec3(0.2, 0.5, 1.0), vec3(0.78, 1.0, 0.34), 0.15);
-      float li = max(0.0, dot(normalize(vPosition), lightDirection));
+      
+      // Calculate light intensity
+      float li = dot(normalize(vNormal), normalize(lightDirection));
+      
+      // Fade out on the dark side of the terminator
+      float isDay = smoothstep(-0.2, 0.2, li);
       col = mix(col, vec3(0.9, 1.0, 0.8), li * 0.2);
-      gl_FragColor = vec4(col, 1.0) * intensity;
+      
+      // Multiply by intensity for the rim effect and isDay for the terminator
+      gl_FragColor = vec4(col, 1.0) * intensity * isDay * 1.5;
     }
   `
 };
 
 type FUIOverlayProps = {
+  seismicData: number[];
+  systemStats: { cpuCores: number; memTotal: number; memUsed: number; memPercent: number; cpuUsage: number; activeConns: number };
+  threatData: { count: number; level: string };
   metrics: RealtimeHudMetrics;
 };
 
-const FUIOverlay = ({ metrics }: FUIOverlayProps) => {
+const FUIOverlay = ({ metrics, seismicData, systemStats, threatData }: FUIOverlayProps) => {
   return (
-    <div className="absolute inset-0 pointer-events-none z-20 p-6 md:p-12 flex flex-col justify-between overflow-y-auto custom-scrollbar">
+    <div className="absolute inset-0 pointer-events-none z-20 p-6 pt-24 md:p-12 md:pt-32 flex flex-col justify-between overflow-y-auto custom-scrollbar">
       {/* Top Bar */}
       <div className="flex flex-col md:flex-row justify-between items-start gap-6">
         <div className="space-y-4">
@@ -81,20 +93,21 @@ const FUIOverlay = ({ metrics }: FUIOverlayProps) => {
               <span className="text-[8px] md:text-[10px] font-display font-bold uppercase tracking-widest">Seismic Activity</span>
             </div>
             <div className="h-10 md:h-12 flex items-end gap-1">
-              {[...Array(20)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ height: [10, 40, 15, 30, 10] }}
-                  transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.05 }}
-                  className="flex-1 bg-accent/40"
-                />
-              ))}
+              {seismicData.slice(0, 20).map((val, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{ height: [val * 0.8, val, val * 0.9] }}
+                    transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.05 }}
+                    className="flex-1 bg-accent/40"
+                    style={{ minHeight: '4px', height: `${val * 10}px` }}
+                  />
+                ))}
             </div>
           </div>
           
           <div className="glass p-4 md:p-6 rounded-none border-l-2 border-white/20 space-y-1 md:space-y-2">
-            <div className="text-[8px] md:text-[9px] text-white/40 uppercase tracking-widest">Active Nodes</div>
-            <div className="text-xl md:text-2xl font-display font-bold text-white">1,248</div>
+            <div className="text-[8px] md:text-[9px] text-white/40 uppercase tracking-widest">Active Nodes (Threads)</div>
+            <div className="text-xl md:text-2xl font-display font-bold text-white">{systemStats.cpuCores}</div>
           </div>
         </div>
 
@@ -107,18 +120,19 @@ const FUIOverlay = ({ metrics }: FUIOverlayProps) => {
             <div className="space-y-2">
               <div className="flex justify-between md:justify-end items-center gap-3">
                 <span className="text-[8px] text-white/40 uppercase tracking-widest">Critical Nodes</span>
-                <span className="text-sm md:text-base font-mono font-bold text-red-500">12</span>
+                <span className="text-sm md:text-base font-mono font-bold text-red-500">{threatData.count}</span>
               </div>
               <div className="flex justify-between md:justify-end items-center gap-3">
                 <span className="text-[8px] text-white/40 uppercase tracking-widest">Risk Level</span>
-                <span className="text-sm md:text-base font-mono font-bold text-orange-500">HIGH</span>
+                <span className={`text-sm md:text-base font-mono font-bold ${threatData.level === "CRITICAL" ? "text-red-500" : threatData.level === "HIGH" ? "text-orange-500" : "text-accent"}`}>{threatData.level}</span>
               </div>
             </div>
           </div>
 
           <div className="glass p-4 md:p-6 rounded-none border-r-0 md:border-r-2 border-l-2 md:border-l-0 border-white/20 space-y-1 md:space-y-2">
-            <div className="text-[8px] md:text-[9px] text-white/40 uppercase tracking-widest">Compute Load</div>
-            <div className="text-xl md:text-2xl font-display font-bold text-white">{metrics.computeLoadLabel}</div>
+            <div className="text-[8px] md:text-[9px] text-white/40 uppercase tracking-widest">Compute Load & RAM</div>
+            <div className="text-xl md:text-2xl font-display font-bold text-white">CPU {systemStats.cpuUsage}%</div>
+   <div className="text-xs font-mono text-white/60 mt-1">RAM {systemStats.memUsed}G / {systemStats.memTotal}G ({systemStats.memPercent}%)</div>
           </div>
         </div>
       </div>
@@ -242,32 +256,98 @@ type Act1GlobalDashboardProps = {
 
 const Act1GlobalDashboard = ({ metrics }: Act1GlobalDashboardProps) => {
   const [corrosionCost, setCorrosionCost] = React.useState(0);
-  
+  const [seismicData, setSeismicData] = React.useState([...Array(20)].map(() => 10));
+  const [systemStats, setSystemStats] = React.useState({ cpuCores: 0, memTotal: 0, memUsed: 0, memPercent: 0, cpuUsage: 0, activeConns: 0 });
+  const [threatData, setThreatData] = React.useState({ count: 12, level: 'LOADING...' });
+
   React.useEffect(() => {
-    // Annual cost is $2.5T. 
-    // $2.5T / 365 / 24 / 60 / 60 = ~$79,274 per second.
     const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime();
     const updateCost = () => {
       const now = Date.now();
       const secondsSinceYearStart = (now - startOfYear) / 1000;
       setCorrosionCost(secondsSinceYearStart * 79274.48);
     };
-    
     const timer = setInterval(updateCost, 1000);
     updateCost();
-    return () => clearInterval(timer);
+
+    const fetchSeismic = async () => {
+      try {
+        const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
+        const data = await res.json();
+        let heights = [];
+        if (data && data.features) {
+          heights = data.features.slice(0, 20).map((f) => Math.max(2, (f.properties?.mag || 1) * 5));
+        }
+        if (heights.length < 20) {
+          while (heights.length < 20) heights.push(2);
+        }
+        setSeismicData(heights);
+      } catch (err) {}
+    };
+
+    const fetchSystem = async () => {
+      const localCores = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4;
+      try {
+        const res = await fetch('http://localhost:8000/ops/metrics/live?api_key=SIMULATED_KEY_123');
+        if (res.ok) {
+          const s = await res.json();
+          setSystemStats({
+            cpuCores: s.cpu?.cores || localCores,
+            memTotal: s.memory?.total_gb || 0,
+            memUsed: s.memory?.used_gb || 0,
+            memPercent: s.memory?.usage_percent || 0,
+            cpuUsage: s.cpu?.usage_percent || 0,
+            activeConns: s.network?.active_connections || 0
+          });
+        }
+      } catch (err) {
+        setSystemStats(prev => ({ ...prev, cpuCores: localCores }));
+      }
+    };
+
+    const fetchThreats = async () => {
+      try {
+        const res = await fetch('https://urlhaus-api.abuse.ch/v1/urls/recent/', { method: 'GET'});
+        if (res.ok) {
+          const data = await res.json();
+          const count = data.urls ? data.urls.length : 12;
+          setThreatData({ count, level: count > 50 ? 'CRITICAL' : 'HIGH' });
+        } else {
+          setThreatData({ count: 12, level: 'HIGH' });
+        }
+      } catch (err) {
+        setThreatData({ count: 12, level: 'HIGH' });
+      }
+    };
+
+    fetchSeismic();
+    fetchSystem();
+    fetchThreats();
+
+    const intS = setInterval(fetchSeismic, 5 * 60 * 1000);
+    const intH = setInterval(fetchSystem, 3000);
+    const intT = setInterval(fetchThreats, 10 * 60 * 1000);
+
+    return () => {
+      clearInterval(timer);
+      clearInterval(intS);
+      clearInterval(intH);
+      clearInterval(intT);
+    };
   }, []);
 
   const stats = [
     { label: 'Est. Global Loss (YTD)', value: `$${(corrosionCost / 1e9).toFixed(2)}B`, icon: GlobeIcon, color: 'text-accent' },
     { label: 'Annual GDP Impact', value: '3.4%', icon: Shield, color: 'text-blue-400' },
-    { label: 'Neural Nodes', value: '1,248', icon: Cpu, color: 'text-accent' },
-    { label: 'Active Simulations', value: '0', icon: Activity, color: 'text-accent' },
+    { label: 'Network Connections', value: systemStats.activeConns.toLocaleString(), icon: Cpu, color: 'text-accent' },
+    { label: 'Threat Traces', value: threatData.count.toLocaleString(), icon: Activity, color: 'text-accent' },
   ];
+
+  
 
   return (
     <div className="relative w-full h-screen bg-bg overflow-hidden">
-      <FUIOverlay metrics={metrics} />
+      <FUIOverlay metrics={metrics} seismicData={seismicData} systemStats={systemStats} threatData={threatData} />
       
       {/* Background Grid */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">

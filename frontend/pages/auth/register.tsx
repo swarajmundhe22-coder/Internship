@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Lock, Mail, Shield } from "lucide-react";
@@ -22,7 +22,13 @@ export default function RegisterPage() {
   const [devOtp, setDevOtp] = useState<string | null>(null);
   const [socialError, setSocialError] = useState<string | null>(null);
   const [socialProviderLoading, setSocialProviderLoading] = useState<SocialProvider | null>(null);
-  const resolvedNextPath = "/";
+  const resolvedNextPath = useMemo(() => {
+    const candidate = typeof router.query.next === "string" ? router.query.next : "";
+    if (candidate.startsWith("/")) {
+      return candidate;
+    }
+    return "/";
+  }, [router.query.next]);
 
   async function requestOtp(): Promise<void> {
     const challenge = await run<RegistrationOtpChallengeResponse>("/auth/register/request-otp", {

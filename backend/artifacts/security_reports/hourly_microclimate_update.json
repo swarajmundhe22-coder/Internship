@@ -1,0 +1,74 @@
+{
+  "generated_at": "2026-04-09T11:16:51.756803Z",
+  "record_count": 2,
+  "audit_log_path": "C:\\Users\\s22td\\OneDrive\\Documents\\The On Lookers\\backend\\artifacts\\security_reports\\microclimate_interpolation_audit.jsonl",
+  "records": [
+    {
+      "location": {
+        "country_code": "US",
+        "state": "Florida",
+        "county": "Miami-Dade",
+        "city": "Miami",
+        "latitude": 25.7617,
+        "longitude": -80.1918
+      },
+      "snapshot": {
+        "source_station_id": "US-MIA-0001",
+        "fallback_station_id": null,
+        "basic_wind_speed_mph": 175.0,
+        "height_adjusted_wind_speed_mph": 197.23,
+        "exposure_category": "C",
+        "seismic_zone": 1,
+        "ss_g": 0.18,
+        "s1_g": 0.06,
+        "precipitation_intensity_mm_hr": 195.0,
+        "idf_100_year_mm_hr": 260.0,
+        "freeze_thaw_cycles": 0,
+        "salt_spray_mg_m2_day": 294.0,
+        "so2_deposition_ug_m3": 12.5,
+        "pressure_hpa": 1013.2,
+        "interpolation_steps": [
+          "interpolation_timestamp_utc=2026-04-09T11:16:51.756803+00:00",
+          "applied county-level ASCE 7-22 3-second gust wind map",
+          "height adjusted wind speed using exposure C",
+          "USGS spectral proxies pulled from nearest station profile",
+          "calculated freeze-thaw and salt-spray severity proxies",
+          "resolved SO2 and pressure from NOAA/IMD aligned station channels"
+        ]
+      }
+    },
+    {
+      "location": {
+        "country_code": "IN",
+        "state": "Tamil Nadu",
+        "county": "Chennai",
+        "city": "Chennai",
+        "latitude": 13.0827,
+        "longitude": 80.2707
+      },
+      "snapshot": {
+        "source_station_id": "IN-MAA-0001",
+        "fallback_station_id": null,
+        "basic_wind_speed_mph": 130.0,
+        "height_adjusted_wind_speed_mph": 146.51,
+        "exposure_category": "C",
+        "seismic_zone": 3,
+        "ss_g": 0.36,
+        "s1_g": 0.18,
+        "precipitation_intensity_mm_hr": 232.5,
+        "idf_100_year_mm_hr": 310.0,
+        "freeze_thaw_cycles": 0,
+        "salt_spray_mg_m2_day": 276.0,
+        "so2_deposition_ug_m3": 18.8,
+        "pressure_hpa": 1008.5,
+        "interpolation_steps": [
+          "interpolation_timestamp_utc=2026-04-09T11:16:51.756803+00:00",
+          "height adjusted wind speed using exposure C",
+          "BIS 1893 zone converted to Ss/S1 proxy values",
+          "calculated freeze-thaw and salt-spray severity proxies",
+          "resolved SO2 and pressure from NOAA/IMD aligned station channels"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "generated_at_utc": "2026-04-04T06:55:52.659633+00:00",
+  "base_url": "http://127.0.0.1:8002/api/v1",
+  "checks": [
+    {
+      "name": "google_client_id_present",
+      "passed": true,
+      "value": true,
+      "expected": true
+    },
+    {
+      "name": "google_client_secret_present",
+      "passed": true,
+      "value": true,
+      "expected": true
+    },
+    {
+      "name": "google_redirect_uri_present",
+      "passed": true,
+      "value": "http://localhost:8000/api/v1/auth/oauth/google/callback",
+      "expected": "non-empty URI"
+    },
+    {
+      "name": "google_redirect_uri_path",
+      "passed": true,
+      "value": "/api/v1/auth/oauth/google/callback",
+      "expected": "/api/v1/auth/oauth/google/callback"
+    },
+    {
+      "name": "google_redirect_uri_scheme",
+      "passed": true,
+      "value": "http",
+      "expected": "http or https"
+    },
+    {
+      "name": "auth_url_has_state",
+      "passed": true,
+      "value": true,
+      "expected": true
+    },
+    {
+      "name": "auth_url_client_id_matches",
+      "passed": true,
+      "value": "723167494467-5gv13dsb0vbroveefvh7obag3olp5kjn.apps.googleusercontent.com",
+      "expected": "723167494467-5gv13dsb0vbroveefvh7obag3olp5kjn.apps.googleusercontent.com"
+    },
+    {
+      "name": "auth_url_redirect_uri_matches",
+      "passed": false,
+      "value": "https://api.theonlookers.com/api/v1/auth/oauth/google/callback",
+      "expected": "http://localhost:8000/api/v1/auth/oauth/google/callback"
+    },
+    {
+      "name": "auth_url_scope_contains_openid",
+      "passed": true,
+      "value": [
+        "email",
+        "openid",
+        "profile"
+      ],
+      "expected": "openid"
+    },
+    {
+      "name": "auth_url_scope_contains_email",
+      "passed": true,
+      "value": [
+        "email",
+        "openid",
+        "profile"
+      ],
+      "expected": "email"
+    },
+    {
+      "name": "auth_url_scope_contains_profile",
+      "passed": true,
+      "value": [
+        "email",
+        "openid",
+        "profile"
+      ],
+      "expected": "profile"
+    },
+    {
+      "name": "auth_url_has_nonce",
+      "passed": true,
+      "value": true,
+      "expected": true
+    }
+  ],
+  "authorize_response": {
+    "status_code": 200,
+    "authorization_url": "https://accounts.google.com/o/oauth2/v2/auth?client_id=723167494467-5gv13dsb0vbroveefvh7obag3olp5kjn.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fapi.theonlookers.com%2Fapi%2Fv1%2Fauth%2Foauth%2Fgoogle%2Fcallback&response_type=code&scope=openid+email+profile&state=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0aGUtb24tbG9va2VyIiwidHlwZSI6Im9hdXRoX3N0YXRlIiwicHJvdmlkZXIiOiJnb29nbGUiLCJyZXR1cm5fdG8iOiJodHRwOi8vbG9jYWxob3N0OjMwMDAvYXV0aC9vYXV0aC9jYWxsYmFjaz9uZXh0PSUyRmRhc2hib2FyZCIsIm5vbmNlIjoibDlkLUVuU1RHNExfUlhYZmllZkgzQSIsImlhdCI6MTc3NTI4NTc1MiwiZXhwIjoxNzc1Mjg2MDUyfQ.t4kCMcmfhD5AxE5f3-Z0Wv2UMNoeWTdrAcj4-oqUjAo&nonce=l9d-EnSTG4L_RXXfiefH3A&access_type=offline&prompt=consent+select_account",
+    "error": null
+  },
+  "manual_console_checks": [
+    "Google Cloud OAuth consent screen is published for target user type.",
+    "Google OAuth app is in the correct project and client ID matches deployment secret.",
+    "Authorized redirect URI exactly matches OAUTH_GOOGLE_REDIRECT_URI.",
+    "Firebase Authentication authorized domains include all app hosts used for popup flow.",
+    "Requested scopes are approved on consent screen: openid, email, profile."
+  ],
+  "passed": false
+}

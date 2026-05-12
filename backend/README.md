@@ -56,6 +56,44 @@ alembic -c alembic.ini history -v
 pytest
 ```
 
+## Infrastructure Validation (ASCE/Eurocode/GB + Microclimate)
+
+- New infrastructure endpoints (included in Swagger/OpenAPI):
+	- `POST /api/v1/infrastructure/validate`
+	- `POST /api/v1/infrastructure/validate/pdf`
+	- `POST /api/v1/infrastructure/hourly-update`
+
+- Standards and checks covered:
+	- ASCE 7-22 load envelope with Chapters 26-31 wind handling
+	- Eurocode ULS/SLS combinations (EN 1990/1991/1993/1998) with India NA factors
+	- GB 50009-2012, GB 50011-2010, GB 50017-2017 combinations
+	- Limit-state pass/fail plus margin-of-safety per combination
+
+- Microclimate coverage:
+	- Wind speed 0-200 mph in 1 mph increments with ASCE exposure-based height adjustment
+	- Seismic zones 0-8 with Ss/S1 spectral proxies
+	- Precipitation intensity 1-1000 mm/hr and 100-year IDF values
+	- Freeze-thaw cycles, salt-spray intensity, SO2 deposition, and pressure (850-1100 hPa)
+	- Interpolation audit trail and nearest-validated-station fallback
+
+- Coverage and range gate:
+
+```bash
+python scripts/validate_infrastructure_parameter_coverage.py --strict
+```
+
+- Hourly update pipeline:
+
+```bash
+python scripts/run_hourly_microclimate_update.py
+```
+
+- Demo for Miami (US) and Chennai (IN):
+
+```bash
+python scripts/infrastructure_demo_miami_chennai.py
+```
+
 ## Calibration Validation Reports
 
 - Run structured multi-scenario calibration validation:
@@ -113,8 +151,74 @@ python scripts/security_dast_gate.py --base-url http://127.0.0.1:8000/api/v1 --s
 
 ```bash
 python scripts/performance_reliability_gate.py --base-url http://127.0.0.1:8000/api/v1 --strict
+python scripts/monitor_p99_latency.py --base-url http://127.0.0.1:8000/api/v1 --strict
 python scripts/failure_mode_chaos_gate.py --base-url http://127.0.0.1:8000/api/v1 --strict
+python scripts/e2e_regression_suite.py --base-url http://127.0.0.1:8000/api/v1 --strict
+python scripts/profile_simulation_endpoint.py --base-url http://127.0.0.1:8000/api/v1
+python scripts/sustained_p99_analyzer.py --base-url http://127.0.0.1:8000/api/v1 --strict
+python scripts/load_resilience_10x.py --base-url http://127.0.0.1:8000/api/v1 --concurrency 4000 --total-requests 12000 --p99-budget-ms 100 --strict
 ```
+
+- Runtime telemetry endpoint (RBAC-protected):
+	- `GET /api/v1/ops/performance`
+	- Optional query params: `path`, `include_paths`, `top`
+
+- Prometheus scrape endpoint:
+	- `GET /api/v1/ops/metrics/prometheus`
+	- Intended for internal scrape only.
+
+### Tiered P99 Program (Low/Medium/High)
+
+- Tier policy defaults:
+	- Low (1x baseline QPS): p99 <= 100 ms
+	- Medium (3x baseline QPS): p99 <= 150 ms
+	- High (5x baseline QPS): p99 <= 200 ms
+	- Spike ceiling: no p99 spikes > 250 ms in sustained runs
+
+- Run tiered sustained analyzer:
+
+```bash
+python scripts/sustained_p99_analyzer.py \
+  --base-url http://127.0.0.1:8000/api/v1 \
+  --baseline-qps 20 \
+  --duration-seconds 1800 \
+  --chaos-fault-rate 0.01 \
+  --strict
+```
+
+- Enforce candidate regression gate (<5% vs baseline):
+
+```bash
+python scripts/assert_p99_regression.py \
+  --baseline docs/performance_baseline_reference.json \
+  --candidate artifacts/performance_reports/sustained_p99_analysis_<timestamp>.json \
+  --max-regression-pct 5
+```
+
+### Gatling 7-Day Traffic Replay
+
+- Gatling suite location:
+	- `performance/gatling/src/test/scala/onlookers/SustainedLatencySimulation.scala`
+
+- Runner script (creates token, executes low/medium/high tiers, emits artifact):
+
+```bash
+python scripts/run_gatling_latency_suite.py \
+  --base-url http://127.0.0.1:8000/api/v1 \
+  --duration-minutes 60 \
+  --chaos-rate 0.01
+```
+
+### Deploy/Observability Assets
+
+- Kubernetes deployment + service:
+	- `deploy/k8s/backend-deployment.yaml`
+- HPA policy (CPU 60%, memory 70%, 10-200 replicas, 30s scale-up window):
+	- `deploy/k8s/backend-hpa.yaml`
+- Prometheus alerts:
+	- `deploy/observability/prometheus-alert-rules.yaml`
+- Grafana dashboard JSON:
+	- `deploy/observability/grafana-p99-dashboard.json`
 
 ### Backup and Restore Drill
 
@@ -127,8 +231,28 @@ python scripts/backup_restore_drill.py --strict
 - `docs/model_risk_controls.md`
 - `docs/security_compliance_runbook.md`
 - `docs/performance_reliability_runbook.md`
+- `docs/performance_optimization_strategy.md`
+- `docs/p99_engineering_report.md`
+- `docs/performance_sla_benchmarks.md`
 - `docs/ops_sre_readiness_runbook.md`
 - `docs/production_readiness_checklist.md`
+- `docs/google_oauth_configuration_requirements.md`
+- `docs/google_oauth_configuration_record_template.md`
+- `docs/google_oauth_verification_evidence_template.md`
+
+### OAuth Operations
+
+- Diagnose Google OAuth configuration and callback readiness:
+
+```bash
+python scripts/diagnose_google_oauth.py --base-url http://127.0.0.1:8000/api/v1 --strict
+```
+
+- Monitor authentication login success SLO (target 99.9%):
+
+```bash
+python scripts/auth_login_slo_monitor.py --window-hours 24 --target-success-rate-pct 99.9 --strict
+```
 
 ## Pagination And Filtering
 

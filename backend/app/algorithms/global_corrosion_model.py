@@ -7,7 +7,7 @@ from app.models.environment import EnvironmentInput
 
 
 GLOBAL_CORROSION_MODEL_VERSION = "global-calibrated-v1.1.0"
-UNCERTAINTY_CONFIDENCE_LEVEL = 0.90
+UNCERTAINTY_CONFIDENCE_LEVEL = 0.99
 
 
 @dataclass(frozen=True)
@@ -585,11 +585,27 @@ def calculate_environmental_severity(
     severity *= region_pack.severity_multiplier
 
     bounded = clamp(severity, 0.0, 100.0)
-    rationale = (
-        "Global calibrated aggressiveness model (ISO 9223-style atmospheric drivers, "
-        "chloride load, pH deviation, oxygen kinetics, MIC and soil resistivity factors). "
-        f"Regional pack applied: {region_pack.label}."
-    )
+
+    try:
+        from app.services.copilot_service import CopilotService
+        copilot = CopilotService()
+        prompt = (
+            f"Analyze an industrial environmental severity score of {bounded:.2f}/100. "
+            f"The environment has these multiplier factors: {multipliers}. "
+            f"The regional profile is '{region_pack.label}'. "
+            "Write a brief, advanced technical rationale (2 sentences max) explaining what this combination means for structural degradation utilizing ISO 9223-style concepts, chloride loads, oxygen kinetics, and MIC."
+        )
+        response, _ = copilot.query(prompt)
+        if "key is not configured" in response or "request failed" in response:
+            raise ValueError("Fallback to fixed string")
+        rationale = response.strip()
+    except Exception:
+        rationale = (
+            "Global calibrated aggressiveness model (ISO 9223-style atmospheric drivers, "
+            "chloride load, pH deviation, oxygen kinetics, MIC and soil resistivity factors). "
+            f"Regional pack applied: {region_pack.label}."
+        )
+
     return bounded, rationale, multipliers, region_pack
 
 

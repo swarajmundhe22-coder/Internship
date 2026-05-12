@@ -1,0 +1,42 @@
+{
+  "generated_at_utc": "2026-04-03T13:09:26.154312+00:00",
+  "base_url": "http://127.0.0.1:8000/api/v1",
+  "passed": true,
+  "checks": [
+    {
+      "name": "health_endpoint",
+      "passed": true,
+      "detail": "status=200"
+    },
+    {
+      "name": "header_x-content-type-options",
+      "passed": true,
+      "detail": "expected=nosniff; actual=nosniff"
+    },
+    {
+      "name": "header_x-frame-options",
+      "passed": true,
+      "detail": "expected=DENY; actual=DENY"
+    },
+    {
+      "name": "header_referrer-policy",
+      "passed": true,
+      "detail": "expected=no-referrer; actual=no-referrer"
+    },
+    {
+      "name": "simulate_requires_auth",
+      "passed": true,
+      "detail": "status=403"
+    },
+    {
+      "name": "simulate_payload_validation",
+      "passed": true,
+      "detail": "status=422"
+    },
+    {
+      "name": "simulate_authenticated_success",
+      "passed": true,
+      "detail": "status=200"
+    }
+  ]
+}

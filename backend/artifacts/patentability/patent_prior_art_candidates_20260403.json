@@ -1,0 +1,26 @@
+{
+  "generated_at_utc": "2026-04-03T12:16:01.722335+00:00",
+  "source": "Google Patents /xhr/query",
+  "query_count": 3,
+  "candidate_count": 0,
+  "query_errors": [
+    {
+      "query": "q=(corrosion prediction) AND (pipeline OR offshore OR steel OR infrastructure)",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+    },
+    {
+      "query": "q=(machine learning) AND (corrosion prediction)",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+    },
+    {
+      "query": "q=(digital twin) AND (corrosion monitoring OR corrosion prediction)",
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+    }
+  ],
+  "queries": [
+    "q=(corrosion prediction) AND (pipeline OR offshore OR steel OR infrastructure)",
+    "q=(machine learning) AND (corrosion prediction)",
+    "q=(digital twin) AND (corrosion monitoring OR corrosion prediction)"
+  ],
+  "candidates": []
+}

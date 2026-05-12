@@ -1,0 +1,89 @@
+groups:
+  - name: onlookers-p99-alerts
+    interval: 10s
+    rules:
+      - alert: OnLookersEndpointP99SlaBreachLow
+        expr: |
+          histogram_quantile(
+            0.99,
+            sum by (le, path) (rate(onlooker_http_request_latency_seconds_bucket{path="/simulation/simulate"}[5m]))
+          ) > 0.11
+        for: 5m
+        labels:
+          severity: warning
+          slo_tier: low
+        annotations:
+          summary: "P99 exceeded low-tier SLA+10% for /simulation/simulate"
+          description: "P99 > 110ms for 5m on /simulation/simulate"
+
+      - alert: OnLookersEndpointP99SlaBreachMedium
+        expr: |
+          histogram_quantile(
+            0.99,
+            sum by (le, path) (rate(onlooker_http_request_latency_seconds_bucket{path="/simulation/simulate"}[5m]))
+          ) > 0.165
+        for: 5m
+        labels:
+          severity: warning
+          slo_tier: medium
+        annotations:
+          summary: "P99 exceeded medium-tier SLA+10% for /simulation/simulate"
+          description: "P99 > 165ms for 5m on /simulation/simulate"
+
+      - alert: OnLookersEndpointP99SlaBreachHigh
+        expr: |
+          histogram_quantile(
+            0.99,
+            sum by (le, path) (rate(onlooker_http_request_latency_seconds_bucket{path="/simulation/simulate"}[5m]))
+          ) > 0.22
+        for: 5m
+        labels:
+          severity: critical
+          slo_tier: high
+        annotations:
+          summary: "P99 exceeded high-tier SLA+10% for /simulation/simulate"
+          description: "P99 > 220ms for 5m on /simulation/simulate"
+
+      - alert: OnLookersSloBurnRate2PercentIn1Hour
+        expr: |
+          (
+            sum(rate(onlooker_http_requests_total{status_code=~"5.."}[1h]))
+            /
+            clamp_min(sum(rate(onlooker_http_requests_total[1h])), 1)
+          ) > 0.0004
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Error-budget burn indicates 2% budget consumption in <=1h"
+          description: "Investigate elevated 5xx rate and tail latency regressions."
+
+      - alert: OnLookersRequestSheddingDetected
+        expr: |
+          sum(rate(onlooker_request_shed_total[2m])) > 1
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Resilience layer is shedding requests"
+          description: "Investigate overload pressure, queue depth, and breaker states."
+
+      - alert: OnLookersCircuitBreakerOpen
+        expr: |
+          max(onlooker_circuit_breaker_state) > 0.9
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Circuit breaker is open for one or more critical paths"
+          description: "Traffic is being rejected to protect latency and error budgets."
+
+      - alert: OnLookersActiveRequestSaturation
+        expr: |
+          max(onlooker_active_requests / clamp_min(onlooker_request_capacity, 1)) > 0.90
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "In-flight request saturation exceeds 90%"
+          description: "Scale out or tune inflight capacity and heavy endpoint behavior."

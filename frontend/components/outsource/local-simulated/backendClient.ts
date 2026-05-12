@@ -39,19 +39,6 @@ type EnvironmentInput = {
   dissolved_oxygen_mg_l: number;
 };
 
-type MetricConfidenceIntervalRecord = {
-  lower: number;
-  upper: number;
-  confidence_level: number;
-};
-
-type SimulationUncertaintyBandsRecord = {
-  corrosion_rate_mm_per_year?: MetricConfidenceIntervalRecord;
-  design_corrosion_rate_mm_per_year?: MetricConfidenceIntervalRecord;
-  estimated_lifespan_years?: MetricConfidenceIntervalRecord;
-  composite_risk_score?: MetricConfidenceIntervalRecord;
-};
-
 type SimulationAlgorithmResult = {
   simulation_id: string;
   generated_at: string;
@@ -61,19 +48,9 @@ type SimulationAlgorithmResult = {
     rationale: string;
   };
   corrosion_rate_mm_per_year: number;
-  design_corrosion_rate_mm_per_year?: number;
-  composite_risk_score?: number;
   estimated_lifespan_years: number;
   risk_classification: string;
   recommendation_summary: string;
-  model_version?: string;
-  asset_profile?: string;
-  region_key?: string;
-  region_name?: string;
-  initial_thickness_mm?: number;
-  minimum_safe_thickness_mm?: number;
-  calibration_confidence?: number;
-  uncertainty_bands?: SimulationUncertaintyBandsRecord;
 };
 
 type SimulationRecord = {
@@ -100,38 +77,18 @@ export type SimulationInputPayload = {
   customMaterial?: string;
   structure?: string;
   customStructure?: string;
-  compliance?: string;
-  criticality?: string;
-  region?: string;
   temperature?: number;
   humidity?: number;
   salinity?: number;
   pH?: number;
   oxygenLevel?: number;
-  uvIndex?: number;
-  micActivity?: string;
-  soilResistivity?: number;
   assetValue?: number;
   downtimeCost?: number;
-};
-
-export type MetricConfidenceIntervalPayload = {
-  lower: number;
-  upper: number;
-  confidenceLevel: number;
-};
-
-export type SimulationUncertaintyPayload = {
-  corrosionRate?: MetricConfidenceIntervalPayload;
-  designCorrosionRate?: MetricConfidenceIntervalPayload;
-  predictedLifespan?: MetricConfidenceIntervalPayload;
-  riskScore?: MetricConfidenceIntervalPayload;
 };
 
 export type SimulationResultPayload = {
   riskScore: number;
   corrosionRate: number;
-  designCorrosionRate?: number;
   predictedLifespan: number;
   degradationTimeline: Array<{ year: number; thickness: number }>;
   capexRequirement: number;
@@ -142,14 +99,6 @@ export type SimulationResultPayload = {
   recommendationSummary: string;
   riskBand: string;
   backendSimulationId: string;
-  modelVersion?: string;
-  assetProfile?: string;
-  regionKey?: string;
-  regionName?: string;
-  initialThicknessMm?: number;
-  minimumSafeThicknessMm?: number;
-  calibrationConfidence?: number;
-  uncertaintyBands?: SimulationUncertaintyPayload;
 };
 
 export type TokenClaims = {
@@ -390,7 +339,8 @@ function estimateExposedAreaM2(structureLabel: string): number {
   return 140;
 }
 
-function buildTimeline(corrosionRateMmPerYear: number, baseThicknessMm: number = 12): Array<{ year: number; thickness: number }> {
+function buildTimeline(corrosionRateMmPerYear: number): Array<{ year: number; thickness: number }> {
+  const baseThicknessMm = 12;
   const years = [0, 5, 10, 15, 20];
   return years.map((year) => {
     const consumedMm = corrosionRateMmPerYear * year;
@@ -401,49 +351,6 @@ function buildTimeline(corrosionRateMmPerYear: number, baseThicknessMm: number =
       thickness: Number(thicknessPct.toFixed(2))
     };
   });
-}
-
-function mapConfidenceInterval(
-  interval?: MetricConfidenceIntervalRecord
-): MetricConfidenceIntervalPayload | undefined {
-  if (!interval) {
-    return undefined;
-  }
-
-  const lower = Number(interval.lower);
-  const upper = Number(interval.upper);
-  const confidenceLevel = Number(interval.confidence_level);
-
-  if (!Number.isFinite(lower) || !Number.isFinite(upper) || !Number.isFinite(confidenceLevel)) {
-    return undefined;
-  }
-
-  return {
-    lower: Number(lower.toFixed(4)),
-    upper: Number(upper.toFixed(4)),
-    confidenceLevel: Number(confidenceLevel.toFixed(3)),
-  };
-}
-
-function mapUncertaintyBands(
-  uncertainty?: SimulationUncertaintyBandsRecord
-): SimulationUncertaintyPayload | undefined {
-  if (!uncertainty) {
-    return undefined;
-  }
-
-  const mapped = {
-    corrosionRate: mapConfidenceInterval(uncertainty.corrosion_rate_mm_per_year),
-    designCorrosionRate: mapConfidenceInterval(uncertainty.design_corrosion_rate_mm_per_year),
-    predictedLifespan: mapConfidenceInterval(uncertainty.estimated_lifespan_years),
-    riskScore: mapConfidenceInterval(uncertainty.composite_risk_score),
-  };
-
-  if (!mapped.corrosionRate && !mapped.designCorrosionRate && !mapped.predictedLifespan && !mapped.riskScore) {
-    return undefined;
-  }
-
-  return mapped;
 }
 
 function buildInterventions(riskBand: string): Array<{ title: string; description: string; status: string }> {
@@ -494,8 +401,6 @@ export async function runSimulationWithPersistence(
   const traceContext = buildTraceContext(options);
   const materialLabel = input.material === "Custom" ? input.customMaterial || "Custom Alloy" : input.material || "Carbon Steel";
   const structureLabel = input.structure === "Custom" ? input.customStructure || "Custom Structure" : input.structure || "Infrastructure Asset";
-  const normalizedRegion = (input.region ?? "").trim();
-  const regionHint = normalizedRegion && !/^auto/i.test(normalizedRegion) ? normalizedRegion : null;
 
   emitDomainEvent(
     "simulation.pipeline.started",
@@ -536,14 +441,7 @@ export async function runSimulationWithPersistence(
             material,
             environment: buildEnvironmentInput(input),
             exposed_area_m2: exposedAreaM2,
-            exposure_time_hours: DEFAULT_EXPOSURE_HOURS,
-            asset_type: structureLabel,
-            compliance_standard: input.compliance ?? null,
-            criticality: input.criticality ?? null,
-            region: regionHint,
-            uv_index: Number(input.uvIndex ?? 5),
-            mic_activity: input.micActivity ?? "Low",
-            soil_resistivity_ohm_cm: Number(input.soilResistivity ?? 5000),
+            exposure_time_hours: DEFAULT_EXPOSURE_HOURS
           })
         }),
       {
@@ -595,19 +493,10 @@ export async function runSimulationWithPersistence(
       traceContext
     );
 
-    const riskScore = Number((simulated.composite_risk_score ?? simulated.environment_risk.risk_score).toFixed(2));
-    const predictedLifespan = Number(clamp(simulated.estimated_lifespan_years, 0.5, 200).toFixed(2));
+    const riskScore = Number(simulated.environment_risk.risk_score.toFixed(2));
+    const predictedLifespan = Number(simulated.estimated_lifespan_years.toFixed(2));
     const corrosionRate = Number(simulated.corrosion_rate_mm_per_year.toFixed(4));
-    const designCorrosionRate =
-      typeof simulated.design_corrosion_rate_mm_per_year === "number"
-        ? Number(simulated.design_corrosion_rate_mm_per_year.toFixed(4))
-        : undefined;
-    const initialThicknessMm =
-      typeof simulated.initial_thickness_mm === "number"
-        ? Number(simulated.initial_thickness_mm.toFixed(2))
-        : 12;
-    const uncertaintyBands = mapUncertaintyBands(simulated.uncertainty_bands);
-    const degradationTimeline = buildTimeline(designCorrosionRate ?? corrosionRate, initialThicknessMm);
+    const degradationTimeline = buildTimeline(corrosionRate);
     const financials = deriveFinancials(input, riskScore, predictedLifespan);
 
     emitDomainEvent(
@@ -623,7 +512,6 @@ export async function runSimulationWithPersistence(
     return {
       riskScore,
       corrosionRate,
-      designCorrosionRate,
       predictedLifespan,
       degradationTimeline,
       capexRequirement: financials.capexRequirement,
@@ -632,22 +520,8 @@ export async function runSimulationWithPersistence(
       esgCompliance: financials.esgCompliance,
       interventions: buildInterventions(simulated.risk_classification),
       recommendationSummary: simulated.recommendation_summary,
-      riskBand: simulated.risk_classification,
-      backendSimulationId: persisted.id,
-      modelVersion: simulated.model_version,
-      assetProfile: simulated.asset_profile,
-      regionKey: simulated.region_key,
-      regionName: simulated.region_name,
-      initialThicknessMm,
-      minimumSafeThicknessMm:
-        typeof simulated.minimum_safe_thickness_mm === "number"
-          ? Number(simulated.minimum_safe_thickness_mm.toFixed(2))
-          : undefined,
-      calibrationConfidence:
-        typeof simulated.calibration_confidence === "number"
-          ? Number(simulated.calibration_confidence.toFixed(2))
-          : undefined,
-      uncertaintyBands,
+      riskBand: simulated.environment_risk.risk_band,
+      backendSimulationId: persisted.id
     };
   } catch (error) {
     emitDomainEvent(

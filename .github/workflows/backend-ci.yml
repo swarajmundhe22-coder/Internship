@@ -11,6 +11,7 @@ on:
     paths:
       - "backend/**"
       - ".github/workflows/backend-ci.yml"
+  workflow_dispatch:
 
 jobs:
   test:
@@ -55,6 +56,15 @@ jobs:
 
       - name: Run test suite
         run: python -m pytest -q
+
+      - name: Run infrastructure validation unit matrix
+        run: >-
+          python -m pytest -q
+          tests/unit/test_microclimate_engine.py
+          tests/unit/test_structural_validation_engine.py
+
+      - name: Run infrastructure parameter coverage gate (strict)
+        run: python scripts/validate_infrastructure_parameter_coverage.py --strict
 
       - name: Run calibration envelope validation (strict)
         run: python scripts/generate_calibration_report.py --strict
@@ -146,6 +156,12 @@ jobs:
       SIMULATION_SLO_P95_MS: "1200"
       SIMULATION_SLO_P99_MS: "2000"
       SIMULATION_ERROR_BUDGET_RATE: "0.02"
+      SIMULATION_SLO_LOW_LOAD_P99_MS: "100"
+      SIMULATION_SLO_MEDIUM_LOAD_P99_MS: "150"
+      SIMULATION_SLO_HIGH_LOAD_P99_MS: "200"
+      SIMULATION_SLO_SPIKE_CEILING_MS: "250"
+      AUDIT_ASYNC_ENABLED: "true"
+      KAFKA_ASYNC_BATCHING_ENABLED: "false"
 
     steps:
       - name: Checkout
@@ -207,6 +223,58 @@ jobs:
           --error-budget-rate ${SIMULATION_ERROR_BUDGET_RATE}
           --strict
 
+      - name: Run runtime P99 telemetry monitor (strict)
+        run: >-
+          python scripts/monitor_p99_latency.py
+          --base-url http://127.0.0.1:8000/api/v1
+          --p99-budget-ms ${SIMULATION_SLO_P99_MS}
+          --error-budget-rate ${SIMULATION_ERROR_BUDGET_RATE}
+          --strict
+
+      - name: Run sustained tiered P99 analyzer
+        run: >-
+          python scripts/sustained_p99_analyzer.py
+          --base-url http://127.0.0.1:8000/api/v1
+          --baseline-qps 5
+          --duration-seconds 120
+          --chaos-fault-rate 0.01
+          --sla-low-p99-ms ${SIMULATION_SLO_LOW_LOAD_P99_MS}
+          --sla-medium-p99-ms ${SIMULATION_SLO_MEDIUM_LOAD_P99_MS}
+          --sla-high-p99-ms ${SIMULATION_SLO_HIGH_LOAD_P99_MS}
+          --spike-ceiling-ms ${SIMULATION_SLO_SPIKE_CEILING_MS}
+
+      - name: Enforce P99 regression < 5% vs baseline
+        run: |
+          CANDIDATE=$(ls -t artifacts/performance_reports/sustained_p99_analysis_*.json | head -n 1)
+          python scripts/assert_p99_regression.py \
+            --baseline docs/performance_baseline_reference.json \
+            --candidate "$CANDIDATE" \
+            --max-regression-pct 5
+
+      - name: Run end-to-end regression suite (strict)
+        run: >-
+          python scripts/e2e_regression_suite.py
+          --base-url http://127.0.0.1:8000/api/v1
+          --p99-budget-ms ${SIMULATION_SLO_P99_MS}
+          --error-budget-rate ${SIMULATION_ERROR_BUDGET_RATE}
+          --strict
+
+      - name: Run hourly microclimate update pipeline
+        run: python scripts/run_hourly_microclimate_update.py
+
+      - name: Run infrastructure parameter coverage gate (strict)
+        run: python scripts/validate_infrastructure_parameter_coverage.py --strict
+
+      - name: Run Miami Chennai infrastructure demo
+        run: python scripts/infrastructure_demo_miami_chennai.py
+
+      - name: Profile simulation endpoint workload
+        run: >-
+          python scripts/profile_simulation_endpoint.py
+          --base-url http://127.0.0.1:8000/api/v1
+          --requests 40
+          --concurrency 8
+
       - name: Run failure-mode chaos gate (strict)
         run: python scripts/failure_mode_chaos_gate.py --base-url http://127.0.0.1:8000/api/v1 --strict
 
@@ -222,3 +290,88 @@ jobs:
         with:
           name: backend-production-readiness-artifacts
           path: backend/artifacts/
+
+  gatling-replay:
+    needs: test
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/'))
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: onlooker_test
+          POSTGRES_USER: onlooker
+          POSTGRES_PASSWORD: onlooker
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U onlooker -d onlooker_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://onlooker:onlooker@localhost:5432/onlooker_test
+      AUTO_INITIALIZE_DB: "false"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Java (for Gatling/sbt)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install sbt
+        run: |
+          echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
+          curl -fsSL https://keyserver.ubuntu.com/pks/lookup?op=get\&search=0x99e82a75642ac823 | gpg --dearmor | sudo tee /usr/share/keyrings/sbt-archive-keyring.gpg > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y sbt
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip; python -m pip install -r requirements.txt
+
+      - name: Run Alembic migrations
+        run: python -m alembic -c alembic.ini upgrade head
+
+      - name: Start API server
+        run: nohup python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/onlooker-api-gatling.log 2>&1 &
+
+      - name: Wait for API health
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:8000/api/v1/health >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/onlooker-api-gatling.log || true
+          exit 1
+
+      - name: Run Gatling sustained replay suite
+        run: >-
+          python scripts/run_gatling_latency_suite.py
+          --base-url http://127.0.0.1:8000/api/v1
+          --duration-minutes 60
+          --chaos-rate 0.01
+
+      - name: Upload Gatling artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-gatling-artifacts
+          path: |
+            backend/artifacts/performance_reports/
+            backend/performance/gatling/target/gatling/

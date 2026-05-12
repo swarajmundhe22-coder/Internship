@@ -180,12 +180,33 @@ class PredictionService:
 
         for index in range(steps + 1):
             offset_hours = index * step_hours
-            ratio = index / max(1, steps)
+            offset_years = offset_hours / 8760.0
 
-            # Lightweight exponential drift approximates gradual corrosion acceleration over time.
-            projected_corrosion = max(0.0, base_corrosion_rate * (1.0 + (0.18 * ratio) + (0.06 * ratio * ratio)))
-            projected_lifespan = max(0.0, base_lifespan - (base_lifespan * 0.45 * ratio))
-            risk_score = min(100.0, max(0.0, projected_corrosion * 420.0 + (100.0 - projected_lifespan * 6.0)))
+            # Predict corrosion propagation utilizing a standard kinetic power-law (e.g., d(t) = K * t^n)
+            # This yields a realistic, physically-sound decelerating instantaneous rate due to surface passivation.
+            time_factor = max(0.5, (1.0 + offset_years) ** -0.15)
+            projected_corrosion = max(0.0, base_corrosion_rate * time_factor)
+
+            # Lifespan strictly depletes by actual chronological time elapsed.
+            projected_lifespan = max(0.0, base_lifespan - offset_years)
+
+            # Reverse-engineer baseline risk score anchoring from the categorical risk string
+            baseline_anchor = {
+                "critical": 85.0,
+                "high": 65.0,
+                "moderate": 40.0,
+                "low": 15.0
+            }.get(base_risk.lower(), 40.0)
+
+            # Map the degradation of lifespan into an accelerating risk penalty
+            life_consumed_pct = 0.0 if base_lifespan <= 0 else min(1.0, offset_years / base_lifespan)
+            risk_penalty = (life_consumed_pct ** 1.5) * (100.0 - baseline_anchor)
+            
+            risk_score = min(100.0, max(0.0, baseline_anchor + risk_penalty))
+            
+            if projected_lifespan < 1.0:
+                risk_score = max(risk_score, 90.0)
+
             risk_classification = self._classify_risk(risk_score, base_risk)
 
             points.append(
@@ -214,8 +235,23 @@ class PredictionService:
     def _build_summary(self, timeline: list[PredictionTimelinePoint], baseline_risk: str) -> str:
         start = timeline[0]
         end = timeline[-1]
-        return (
-            f"Forecast from {baseline_risk.lower()} baseline to {end.risk_classification} over "
-            f"{end.offset_hours} hours. Corrosion shifts {start.corrosion_rate_mm_per_year:.4f} -> "
-            f"{end.corrosion_rate_mm_per_year:.4f} mm/year."
-        )
+        
+        try:
+            from app.services.copilot_service import CopilotService
+            copilot = CopilotService()
+            prompt = (
+                f"Act as a senior corrosion engineer. Summarize a forecast where the equipment risk level goes from '{baseline_risk.upper()}' "
+                f"to '{end.risk_classification.upper()}' over {end.offset_hours} hours. "
+                f"The corrosion rate progresses from {start.corrosion_rate_mm_per_year:.4f} mm/year to {end.corrosion_rate_mm_per_year:.4f} mm/year. "
+                "Provide an advanced analytical reasoning emphasizing the physics of kinetic accumulation and what the structural operator must be wary of. Keep it between 2 and 4 sentences. Do not use filler introductions."
+            )
+            response, _ = copilot.query(prompt)
+            if "key is not configured" in response or "request failed" in response:
+                raise ValueError("Fallback to fixed string.")
+            return response.strip()
+        except Exception:
+            return (
+                f"Forecast from {baseline_risk.lower()} baseline to {end.risk_classification} over "
+                f"{end.offset_hours} hours. Corrosion shifts {start.corrosion_rate_mm_per_year:.4f} -> "
+                f"{end.corrosion_rate_mm_per_year:.4f} mm/year."
+            )

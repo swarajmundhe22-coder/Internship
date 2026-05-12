@@ -1,0 +1,47 @@
+{
+  "generated_at_utc": "2026-05-12T06:48:50.912721+00:00",
+  "base_url": "http://127.0.0.1:8000/api/v1",
+  "checks": [
+    {
+      "name": "google_client_id_present",
+      "passed": true,
+      "value": true,
+      "expected": true
+    },
+    {
+      "name": "google_client_secret_present",
+      "passed": true,
+      "value": true,
+      "expected": true
+    },
+    {
+      "name": "google_redirect_uri_present",
+      "passed": true,
+      "value": "http://localhost:8000/api/v1/auth/oauth/google/callback",
+      "expected": "non-empty URI"
+    },
+    {
+      "name": "google_redirect_uri_path",
+      "passed": true,
+      "value": "/api/v1/auth/oauth/google/callback",
+      "expected": "/api/v1/auth/oauth/google/callback"
+    },
+    {
+      "name": "google_redirect_uri_scheme",
+      "passed": true,
+      "value": "http",
+      "expected": "http or https"
+    }
+  ],
+  "authorize_response": {
+    "status_code": null,
+    "authorization_url": null,
+    "error": "request_failed: All connection attempts failed"
+  },
+  "manual_console_checks": [
+    "Google Cloud OAuth consent screen is published for target user type.",
+    "Authorized redirect URI exactly matches OAUTH_GOOGLE_REDIRECT_URI.",
+    "Firebase Authentication authorized domains include production host."
+  ],
+  "passed": false
+}

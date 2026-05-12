@@ -61,6 +61,6 @@ describe("SimulationPlaybackPanel", () => {
     fireEvent.change(scrub, { target: { value: "2" } });
 
     expect(screen.getByText("Step 3 / 3")).toBeInTheDocument();
-    expect(screen.getByText("critical")).toBeInTheDocument();
+    expect(screen.getByTitle("48h | critical")).toBeInTheDocument();
   });
 });

@@ -106,14 +106,25 @@ Evidence:
 Release sign-off criteria:
 
 - `python scripts/performance_reliability_gate.py --base-url http://127.0.0.1:8000/api/v1 --p95-budget-ms 1200 --p99-budget-ms 2000 --error-budget-rate 0.02 --strict` passes.
+- `python scripts/monitor_p99_latency.py --base-url http://127.0.0.1:8000/api/v1 --p99-budget-ms 2000 --error-budget-rate 0.02 --strict` passes.
+- `python scripts/sustained_p99_analyzer.py --base-url http://127.0.0.1:8000/api/v1 --baseline-qps <release-baseline> --duration-seconds <release-window> --chaos-fault-rate 0.01 --strict` passes.
+- `python scripts/assert_p99_regression.py --baseline docs/performance_baseline_reference.json --candidate artifacts/performance_reports/sustained_p99_analysis_<timestamp>.json --max-regression-pct 5` passes.
+- `python scripts/load_resilience_10x.py --base-url http://127.0.0.1:8000/api/v1 --concurrency 4000 --total-requests 12000 --p99-budget-ms 100 --strict` passes.
 - `python scripts/failure_mode_chaos_gate.py --base-url http://127.0.0.1:8000/api/v1 --strict` passes.
+- `python scripts/e2e_regression_suite.py --base-url http://127.0.0.1:8000/api/v1 --p99-budget-ms 2000 --error-budget-rate 0.02 --strict` passes.
 - Latency and error budget behavior stay within the published SLOs.
+- Runtime `/api/v1/ops/performance` telemetry agrees with gate results.
 - Malformed, unauthorized, and negative-path traffic fails safely.
+- Latest simulation profiling artifact exists and has reviewed bottleneck notes.
+- Tiered P99 engineering report is updated and attached for release review.
 
 Evidence:
 
 - Performance artifacts in `artifacts/performance_reports/`.
 - Chaos artifacts in `artifacts/chaos_reports/`.
+- Profiling artifacts in `artifacts/performance_reports/simulation_profile_*.{prof,txt,json}`.
+- Engineering report: `docs/p99_engineering_report.md`.
+- 10x resilience artifact: `artifacts/performance_reports/load_resilience_10x_*.json`.
 - Runbook alignment with [docs/performance_reliability_runbook.md](performance_reliability_runbook.md).
 
 ### 9. Backup and Restore Drill

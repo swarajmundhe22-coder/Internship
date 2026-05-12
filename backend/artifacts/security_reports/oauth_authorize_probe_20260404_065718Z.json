@@ -1,0 +1,25 @@
+{
+  "generated_at_utc": "2026-04-04T06:57:18.031365+00:00",
+  "reports": [
+    {
+      "environment": "dev",
+      "base_url": "http://127.0.0.1:8001/api/v1",
+      "status_code": 200,
+      "client_id": "723167494467-5gv13dsb0vbroveefvh7obag3olp5kjn.apps.googleusercontent.com",
+      "redirect_uri": "http://localhost:8000/api/v1/auth/oauth/google/callback",
+      "scope": "openid email profile",
+      "has_state": true,
+      "has_nonce": true
+    },
+    {
+      "environment": "prod_mode",
+      "base_url": "http://127.0.0.1:8002/api/v1",
+      "status_code": 200,
+      "client_id": "723167494467-5gv13dsb0vbroveefvh7obag3olp5kjn.apps.googleusercontent.com",
+      "redirect_uri": "https://api.theonlookers.com/api/v1/auth/oauth/google/callback",
+      "scope": "openid email profile",
+      "has_state": true,
+      "has_nonce": true
+    }
+  ]
+}

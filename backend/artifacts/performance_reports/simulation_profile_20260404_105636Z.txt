@@ -1,0 +1,33 @@
+         158690 function calls (157567 primitive calls) in 0.652 seconds
+
+   Ordered by: cumulative time
+   List reduced from 1095 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.652    0.652 C:\Program Files\Python312\Lib\asyncio\runners.py:160(run)
+        3    0.000    0.000    0.651    0.217 C:\Program Files\Python312\Lib\asyncio\base_events.py:655(run_until_complete)
+        3    0.000    0.000    0.651    0.217 C:\Program Files\Python312\Lib\asyncio\windows_events.py:318(run_forever)
+        1    0.000    0.000    0.651    0.651 C:\Program Files\Python312\Lib\asyncio\runners.py:86(run)
+        3    0.000    0.000    0.651    0.217 C:\Program Files\Python312\Lib\asyncio\base_events.py:631(run_forever)
+      378    0.002    0.000    0.650    0.002 C:\Program Files\Python312\Lib\asyncio\base_events.py:1922(_run_once)
+      378    0.000    0.000    0.365    0.001 C:\Program Files\Python312\Lib\asyncio\windows_events.py:443(select)
+      379    0.001    0.000    0.365    0.001 C:\Program Files\Python312\Lib\asyncio\windows_events.py:761(_poll)
+      562    0.362    0.001    0.362    0.001 {built-in method _overlapped.GetQueuedCompletionStatus}
+      705    0.000    0.000    0.282    0.000 C:\Program Files\Python312\Lib\asyncio\events.py:86(_run)
+      705    0.001    0.000    0.282    0.000 {method 'run' of '_contextvars.Context' objects}
+       17    0.000    0.000    0.198    0.012 C:\Users\s22td\OneDrive\Documents\The On Lookers\backend\scripts\profile_simulation_endpoint.py:89(run_profile_workload)
+        1    0.000    0.000    0.187    0.187 C:\Users\s22td\OneDrive\Documents\The On Lookers\.venv\Lib\site-packages\httpx\_client.py:1375(__init__)
+        1    0.000    0.000    0.187    0.187 C:\Users\s22td\OneDrive\Documents\The On Lookers\.venv\Lib\site-packages\httpx\_client.py:1473(_init_transport)
+        1    0.000    0.000    0.187    0.187 C:\Users\s22td\OneDrive\Documents\The On Lookers\.venv\Lib\site-packages\httpx\_transports\default.py:266(__init__)
+        1    0.000    0.000    0.187    0.187 C:\Users\s22td\OneDrive\Documents\The On Lookers\.venv\Lib\site-packages\httpx\_config.py:49(create_ssl_context)
+        1    0.000    0.000    0.187    0.187 C:\Users\s22td\OneDrive\Documents\The On Lookers\.venv\Lib\site-packages\httpx\_config.py:67(__init__)
+        1    0.000    0.000    0.187    0.187 C:\Users\s22td\OneDrive\Documents\The On Lookers\.venv\Lib\site-packages\httpx\_config.py:81(load_ssl_context)
+        1    0.000    0.000    0.187    0.187 C:\Users\s22td\OneDrive\Documents\The On Lookers\.venv\Lib\site-packages\httpx\_config.py:104(load_ssl_context_verify)
+        1    0.185    0.185    0.185    0.185 {method 'load_verify_locations' of '_ssl._SSLContext' objects}
+      346    0.000    0.000    0.083    0.000 C:\Users\s22td\OneDrive\Documents\The On Lookers\.venv\Lib\site-packages\httpx\_client.py:1884(post)
+      346    0.000    0.000    0.083    0.000 C:\Users\s22td\OneDrive\Documents\The On Lookers\.venv\Lib\site-packages\httpx\_client.py:1530(request)
+      370    0.000    0.000    0.075    0.000 C:\Users\s22td\OneDrive\Documents\The On Lookers\backend\scripts\profile_simulation_endpoint.py:102(worker)
+      338    0.000    0.000    0.074    0.000 C:\Users\s22td\OneDrive\Documents\The On Lookers\backend\scripts\profile_simulation_endpoint.py:78(simulate_once)
+      346    0.000    0.000    0.071    0.000 C:\Users\s22td\OneDrive\Documents\The On Lookers\.venv\Lib\site-packages\httpx\_client.py:1639(send)
+
+

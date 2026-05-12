@@ -1,5 +1,10 @@
+from datetime import datetime, timedelta, timezone
+
+import jwt
 import pytest
 from httpx import AsyncClient
+
+from app.core.config import get_settings
 
 
 @pytest.mark.asyncio
@@ -32,6 +37,32 @@ async def test_refresh_token_rotation_and_logout(api_client: AsyncClient) -> Non
         json={"refresh_token": rotated["refresh_token"]},
     )
     assert refresh_after_logout.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_refresh_rejects_expired_refresh_token(api_client: AsyncClient) -> None:
+    register = await api_client.post(
+        "/api/v1/auth/register",
+        json={"email": "refresh-expired@example.com", "password": "StrongPass123"},
+    )
+    assert register.status_code == 200
+
+    refresh_token = register.json()["refresh_token"]
+    settings = get_settings()
+    claims = jwt.decode(refresh_token, options={"verify_signature": False})
+    claims["exp"] = int((datetime.now(timezone.utc) - timedelta(minutes=1)).timestamp())
+
+    expired_refresh_token = jwt.encode(
+        claims,
+        settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+    )
+
+    refreshed = await api_client.post(
+        "/api/v1/auth/refresh",
+        json={"refresh_token": expired_refresh_token},
+    )
+    assert refreshed.status_code == 401
 
 
 @pytest.mark.asyncio

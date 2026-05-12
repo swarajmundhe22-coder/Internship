@@ -1,0 +1,33 @@
+{
+  "generated_at_utc": "2026-04-04T00:00:00Z",
+  "source": "Committed baseline for CI regression checks",
+  "tiers": [
+    {
+      "name": "low",
+      "endpoint_metrics": {
+        "simulate_post": {"latency_ms": {"p99": 1050.0}},
+        "auth_login_post": {"latency_ms": {"p99": 250.0}},
+        "ops_performance_get": {"latency_ms": {"p99": 180.0}},
+        "health_get": {"latency_ms": {"p99": 80.0}}
+      }
+    },
+    {
+      "name": "medium",
+      "endpoint_metrics": {
+        "simulate_post": {"latency_ms": {"p99": 2200.0}},
+        "auth_login_post": {"latency_ms": {"p99": 320.0}},
+        "ops_performance_get": {"latency_ms": {"p99": 220.0}},
+        "health_get": {"latency_ms": {"p99": 110.0}}
+      }
+    },
+    {
+      "name": "high",
+      "endpoint_metrics": {
+        "simulate_post": {"latency_ms": {"p99": 2350.0}},
+        "auth_login_post": {"latency_ms": {"p99": 400.0}},
+        "ops_performance_get": {"latency_ms": {"p99": 260.0}},
+        "health_get": {"latency_ms": {"p99": 150.0}}
+      }
+    }
+  ]
+}

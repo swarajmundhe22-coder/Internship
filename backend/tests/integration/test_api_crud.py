@@ -4,11 +4,24 @@ from uuid import uuid4
 
 
 async def _auth_headers(api_client: AsyncClient, prefix: str = "crud") -> dict[str, str]:
+    payload = {
+        "email": f"{prefix}-{uuid4().hex}@example.com",
+        "password": "StrongPass123",
+        "role": "engineer"
+    }
     response = await api_client.post(
         "/api/v1/auth/register",
-        json={"email": f"{prefix}-{uuid4().hex}@example.com", "password": "StrongPass123"},
+        json=payload,
     )
-    assert response.status_code == 200
+    if response.status_code == 409:
+        response = await api_client.post(
+            "/api/v1/auth/login",
+            json={
+                "email": payload["email"],
+                "password": payload["password"]
+            },
+        )
+    assert response.status_code == 200, f"Auth failed: {response.text}"
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
 

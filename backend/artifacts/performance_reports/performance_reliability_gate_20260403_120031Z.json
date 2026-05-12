@@ -1,0 +1,31 @@
+{
+  "generated_at_utc": "2026-04-03T12:00:31.266296+00:00",
+  "base_url": "http://127.0.0.1:8000/api/v1",
+  "passed": true,
+  "sustained_load": {
+    "total_requests": 120,
+    "success_count": 120,
+    "error_count": 0,
+    "error_rate": 0.0,
+    "p95_latency_ms": 792.0797000115272,
+    "p99_latency_ms": 1360.6457999849226,
+    "budgets": {
+      "p95_latency_ms": 1200,
+      "p99_latency_ms": 2000,
+      "error_rate": 0.02
+    }
+  },
+  "failure_mode": {
+    "unauthorized_status": 403,
+    "malformed_status": 422,
+    "unexpected_5xx_count": 0
+  },
+  "checks": {
+    "p95_latency_budget": true,
+    "p99_latency_budget": true,
+    "error_budget": true,
+    "failure_mode_no_5xx": true,
+    "failure_mode_unauthorized_status": true,
+    "failure_mode_malformed_status": true
+  }
+}

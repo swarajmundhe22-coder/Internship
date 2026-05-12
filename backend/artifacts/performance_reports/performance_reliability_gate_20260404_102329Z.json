@@ -1,0 +1,44 @@
+{
+  "generated_at_utc": "2026-04-04T10:23:29.271358+00:00",
+  "base_url": "http://127.0.0.1:8000/api/v1",
+  "passed": true,
+  "sustained_load": {
+    "total_requests": 120,
+    "success_count": 120,
+    "error_count": 0,
+    "error_rate": 0.0,
+    "p95_latency_ms": 669.4037999841385,
+    "p99_latency_ms": 1046.6357999830507,
+    "budgets": {
+      "p95_latency_ms": 1200,
+      "p99_latency_ms": 2000,
+      "error_rate": 0.02
+    }
+  },
+  "failure_mode": {
+    "unauthorized_status": 403,
+    "malformed_status": 422,
+    "unexpected_5xx_count": 0
+  },
+  "server_telemetry": {
+    "available": true,
+    "status_code": 200,
+    "request_count": 122,
+    "p95_latency_ms": 667.6214999752119,
+    "p99_latency_ms": 1044.2781999590807,
+    "error_rate_5xx": 0.0
+  },
+  "checks": {
+    "p95_latency_budget": true,
+    "p99_latency_budget": true,
+    "error_budget": true,
+    "failure_mode_no_5xx": true,
+    "failure_mode_unauthorized_status": true,
+    "failure_mode_malformed_status": true,
+    "server_telemetry_available": true,
+    "server_telemetry_sample_size": true,
+    "server_telemetry_p95_budget": true,
+    "server_telemetry_p99_budget": true,
+    "server_telemetry_error_budget": true
+  }
+}

@@ -141,6 +141,34 @@ async def run_failure_mode_checks(client: httpx.AsyncClient, token: str) -> dict
     }
 
 
+async def read_server_telemetry(client: httpx.AsyncClient, token: str) -> dict[str, object]:
+    response = await client.get(
+        "/ops/performance",
+        headers=auth_header(token),
+        params={"path": "/api/v1/simulation/simulate"},
+    )
+    if response.status_code != 200:
+        return {
+            "available": False,
+            "status_code": response.status_code,
+            "request_count": 0,
+            "p95_latency_ms": 0.0,
+            "p99_latency_ms": 0.0,
+            "error_rate_5xx": 1.0,
+        }
+
+    payload = response.json()
+    latency = payload.get("latency_ms", {}) if isinstance(payload, dict) else {}
+    return {
+        "available": True,
+        "status_code": response.status_code,
+        "request_count": int(payload.get("request_count", 0)),
+        "p95_latency_ms": float(latency.get("p95", 0.0)),
+        "p99_latency_ms": float(latency.get("p99", 0.0)),
+        "error_rate_5xx": float(payload.get("error_rate_5xx", 1.0)),
+    }
+
+
 async def run_gate(
     base_url: str,
     password: str,
@@ -151,6 +179,7 @@ async def run_gate(
     p99_budget_ms: int,
     error_budget_rate: float,
     output_dir: Path,
+    verify_server_telemetry: bool,
 ) -> tuple[bool, Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
     timeout = httpx.Timeout(30.0)
@@ -175,6 +204,7 @@ async def run_gate(
         p99_latency = percentile(latencies, 0.99)
 
         failure_checks = await run_failure_mode_checks(client, token)
+        server_telemetry = await read_server_telemetry(client, token) if verify_server_telemetry else None
 
     checks = {
         "p95_latency_budget": p95_latency <= p95_budget_ms,
@@ -184,6 +214,19 @@ async def run_gate(
         "failure_mode_unauthorized_status": failure_checks["unauthorized_status"] in (401, 403),
         "failure_mode_malformed_status": failure_checks["malformed_status"] == 422,
     }
+
+    if verify_server_telemetry:
+        telemetry = server_telemetry or {}
+        checks.update(
+            {
+                "server_telemetry_available": bool(telemetry.get("available", False)),
+                "server_telemetry_sample_size": int(telemetry.get("request_count", 0)) >= total_requests,
+                "server_telemetry_p95_budget": float(telemetry.get("p95_latency_ms", 0.0)) <= p95_budget_ms,
+                "server_telemetry_p99_budget": float(telemetry.get("p99_latency_ms", 0.0)) <= p99_budget_ms,
+                "server_telemetry_error_budget": float(telemetry.get("error_rate_5xx", 1.0)) <= error_budget_rate,
+            }
+        )
+
     passed = all(checks.values())
 
     report = {
@@ -204,6 +247,7 @@ async def run_gate(
             },
         },
         "failure_mode": failure_checks,
+        "server_telemetry": server_telemetry,
         "checks": checks,
     }
 
@@ -226,6 +270,11 @@ def parse_args() -> argparse.Namespace:
         type=float,
         default=0.02,
         help="Maximum allowed request error rate.",
+    )
+    parser.add_argument(
+        "--skip-server-telemetry-check",
+        action="store_true",
+        help="Skip verification against /ops/performance runtime telemetry.",
     )
     parser.add_argument(
         "--output-dir",
@@ -252,6 +301,7 @@ def main() -> int:
             p99_budget_ms=args.p99_budget_ms,
             error_budget_rate=args.error_budget_rate,
             output_dir=output_dir,
+            verify_server_telemetry=not args.skip_server_telemetry_check,
         )
     )
 

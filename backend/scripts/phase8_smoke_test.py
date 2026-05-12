@@ -100,9 +100,9 @@ async def run_smoke(ctx: SmokeContext) -> None:
             },
             headers=_auth_header(engineer_token),
         )
-        if material.status_code != 200:
+        if material.status_code not in (200, 201):
             raise RuntimeError(f"create material failed: {material.status_code} {material.text}")
-        if environment.status_code != 200:
+        if environment.status_code not in (200, 201):
             raise RuntimeError(f"create environment failed: {environment.status_code} {environment.text}")
 
         print("[4/9] Create simulation with accuracy >= 0.95")

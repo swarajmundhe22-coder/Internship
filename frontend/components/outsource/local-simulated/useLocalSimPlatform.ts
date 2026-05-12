@@ -205,13 +205,7 @@ export function useLocalSimPlatform() {
         actorId: traceContext.actorId,
         projectId: traceContext.projectId,
       });
-      const normalizedResponse = (response || '').trim();
-      const loweredResponse = normalizedResponse.toLowerCase();
-      const copilotUnavailable =
-        loweredResponse.includes('nvidia copilot key is not configured') ||
-        loweredResponse.includes('nvidia copilot request failed');
-      const fallbackNarrative = result.recommendationSummary || 'Simulation complete. Priority intervention required.';
-      setNarrative(copilotUnavailable ? fallbackNarrative : (normalizedResponse || fallbackNarrative));
+      setNarrative(response || result.recommendationSummary || 'Simulation complete. Priority intervention required.');
       emitDomainEvent('narrative.generation.succeeded', { hasResponse: Boolean(response) }, traceContext);
     } catch (error) {
       emitDomainEvent(

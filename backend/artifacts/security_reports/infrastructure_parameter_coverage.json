@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "sample_count": 4,
+  "results": [
+    {
+      "country": "US",
+      "city": "Miami",
+      "overall_passes": true,
+      "missing_weather_fields": [],
+      "range_violations": [],
+      "code_result_count": 3
+    },
+    {
+      "country": "US",
+      "city": "Houston",
+      "overall_passes": true,
+      "missing_weather_fields": [],
+      "range_violations": [],
+      "code_result_count": 3
+    },
+    {
+      "country": "IN",
+      "city": "Chennai",
+      "overall_passes": true,
+      "missing_weather_fields": [],
+      "range_violations": [],
+      "code_result_count": 3
+    },
+    {
+      "country": "IN",
+      "city": "Delhi",
+      "overall_passes": true,
+      "missing_weather_fields": [],
+      "range_violations": [],
+      "code_result_count": 3
+    }
+  ]
+}
