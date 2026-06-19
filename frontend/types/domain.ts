@@ -48,6 +48,9 @@ export type SimulationPrediction = {
   estimated_lifespan_years: number;
   risk_classification: string;
   recommendation_summary: string;
+  operator_guidance?: string[];
+  service_age_years?: number;
+  service_utilization?: number;
   environment_risk: {
     risk_score: number;
     risk_band: string;

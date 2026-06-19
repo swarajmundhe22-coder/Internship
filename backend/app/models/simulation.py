@@ -82,8 +82,11 @@ class SimulationResult(BaseDomainModel):
     region_name: str | None = None
     initial_thickness_mm: float | None = Field(default=None, gt=0)
     minimum_safe_thickness_mm: float | None = Field(default=None, gt=0)
+    service_age_years: float | None = Field(default=None, ge=0)
+    service_utilization: float | None = Field(default=None, ge=0)
     calibration_confidence: float | None = Field(default=None, ge=0, le=1)
     uncertainty_bands: SimulationUncertaintyBands | None = None
+    operator_guidance: list[str] = Field(default_factory=list)
     fallback_applied: bool = False
     fallback_reason: str | None = None
     recalibration_due_by: datetime | None = None

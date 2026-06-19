@@ -13,7 +13,7 @@ from app.algorithms.global_corrosion_model import (
     get_asset_profile,
     get_material_calibration,
 )
-from app.algorithms.recommendations import prevention_recommendation
+from app.algorithms.recommendations import operational_guidance, prevention_recommendation
 from app.core.config import get_settings
 from app.models.environment import EnvironmentRiskResult
 from app.models.simulation import (
@@ -22,6 +22,9 @@ from app.models.simulation import (
     SimulationResult,
     SimulationUncertaintyBands,
 )
+
+
+HOURS_PER_YEAR = 24.0 * 365.0
 
 
 class SimulationService:
@@ -58,12 +61,23 @@ class SimulationService:
         )
 
         estimated_lifespan = estimate_lifespan_years(asset_profile, design_corrosion_rate)
+        service_age_years = payload.exposure_time_hours / HOURS_PER_YEAR
+        consumable_thickness_mm = max(
+            asset_profile.initial_thickness_mm - asset_profile.minimum_safe_thickness_mm,
+            0.1,
+        )
+        service_utilization = min(service_age_years / max(estimated_lifespan, 0.5), 2.0)
+        damage_fraction = min(
+            (design_corrosion_rate * service_age_years) / consumable_thickness_mm,
+            2.0,
+        )
         risk_score = compute_risk_score(
             environment_severity_score=severity_score,
             uniform_corrosion_rate_mm_per_year=corrosion_rate,
             lifespan_years=estimated_lifespan,
             criticality=payload.criticality,
         )
+        risk_score = min(risk_score + (service_utilization * 10.0) + (damage_fraction * 12.0), 100.0)
         risk_level = classify_failure_risk_from_score(risk_score)
         calibration_confidence = compute_calibration_confidence(
             region_pack=region_pack,
@@ -154,7 +168,12 @@ class SimulationService:
                 ),
             )
 
-        recommendation = prevention_recommendation(risk_level)
+        recommendation = prevention_recommendation(risk_level, asset_profile.key)
+        operator_guidance = operational_guidance(
+            risk_level,
+            asset_key=asset_profile.key,
+            fallback_applied=fallback_applied,
+        )
         if fallback_applied:
             recommendation = f"{recommendation} Conservative fallback policy is active until recalibration completes."
 
@@ -174,8 +193,11 @@ class SimulationService:
             region_name=region_pack.label,
             initial_thickness_mm=asset_profile.initial_thickness_mm,
             minimum_safe_thickness_mm=asset_profile.minimum_safe_thickness_mm,
+            service_age_years=service_age_years,
+            service_utilization=service_utilization,
             calibration_confidence=calibration_confidence,
             uncertainty_bands=uncertainty_bands,
+            operator_guidance=operator_guidance,
             fallback_applied=fallback_applied,
             fallback_reason=fallback_reason,
             recalibration_due_by=recalibration_due_by,
